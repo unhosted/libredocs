@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Publish</title>
+    <link rel="icon" type="image/png" href="/icons/noun_project_397.ico"/>
+    <script>
+      function bodyOnLoad() {
+        document.getElementById('loading').style.display='none';
+        if(localStorage.getItem('LibreDocsUserAddress')) {
+          if(localStorage.getItem('LibreDocsUserAddressHasStorage')) {
+            document.getElementById('loggedInAs').innerHTML='Logged in as '+localStorage.getItem('LibreDocsUserAddress')+'<br>';
+          } else {
+            require(['publisher'], function(publisher) {
+              publisher.on('fail', function(err) {
+                console.log('publisher fail ['+err.code+']:'+err.msg);
+                if(err.code == publisher.ERR_NO_STORAGE) {
+                  document.getElementById('loggedInAs').innerHTML=
+                    'Welcome '+localStorage.getItem('LibreDocsUserAddress')
+                    +', please choose between <br>'
+                    +'<br><br>'
+                    +'<table><tr><td>'
+                    +'<input type="submit" value="easy freedom" onclick="location=\'/beFree/easy.html\';">'
+                    +'</td><td>'
+                    +' or '
+                    +'</td><td>'
+                    +'<a href="/beFree/advanced.html">advanced freedom</a><br>'
+                    +'</td></tr><table>'
+                    +'<br><br>'
+                    +' or if you have remoteStorage without BrowserId support, enter your user address here: '
+                    +'<input id="userAddress"><input type="submit" value="Go" onclick="'
+                    +'localStorage.setItem(\'LibreDocsUserAddress\', document.getElementById(\'userAddress\').value);location=\'\';"><br>';
+                  document.getElementById('share').style.display='none';
+                  document.getElementById('empty').style.display='none';
+                }
+              });
+              publisher.on('status', function(status) {
+                if(status=='checking') {
+                  document.getElementById('loggedInAs').innerHTML='Checking user address '+localStorage.getItem('LibreDocsUserAddress')+'...<br>';
+                  document.getElementById('shareButton').disabled = true;
+                } else if(status=='noauth-') {
+                  document.getElementById('shareButton').disabled = false;
+                  document.getElementById('loggedInAs').innerHTML='Welcome '+localStorage.getItem('LibreDocsUserAddress')+'<br>';
+                } else if(status=='nobody') {
+                  console.log('logged out!? should update LibreDocsUserAddress and redirect to signIn');
+                }
+              });
+              publisher.setUserAddress(localStorage.getItem('LibreDocsUserAddress'));
+            });
+          }
+        } else {
+          location = './signIn.html';
+        }
+        show();
+        window.addEventListener('storage', function(e) {
+          if(e.key == 'text') {
+            show();
+          } 
+        }, false);
+      }
+      function show() {
+        document.getElementById('1').innerHTML = localStorage.getItem('text');
+        if(!localStorage.getItem('text') || localStorage.getItem('text').length == 0) {
+          document.getElementById('share').style.display='none';
+          document.getElementById('empty').style.display='block';
+        } else {
+          document.getElementById('empty').style.display='none';
+          document.getElementById('share').style.display='block';
+        }
+      }
+      function share() {
+        if(!localStorage.getItem('LibreDocsUserAddress')) {
+          location = './signIn.html';
+        }
+        document.getElementById('loading').style.display='block';
+        document.getElementById('share').style.display='none';
+        document.getElementById('empty').style.display='none';
+        require(['publisher'], function(publisher) {
+          publisher.publish(localStorage.getItem('text'), 'http://libredocs.org/rcvToken.html', function (hash) {
+            var url = 'http://libredocs.org/s.html?senderAddress='+encodeURIComponent(localStorage.getItem('LibreDocsUserAddress'))+'&hash='+encodeURIComponent(hash);
+            document.getElementById('share').innerHTML='Shared as: <a href="'+url+'" target="_blank">'+url+'</a>';
+            document.getElementById('loading').style.display='none';
+            document.getElementById('share').style.display='block';
+          });
+        });
+      }
+    </script>
+  </head>
+  <body onload="bodyOnLoad();">
+    <h2>Libre Docs - Publish</h2>
+    <div id="loggedInAs">
+    </div>
+    <div id="share" style="display:none;">
+      <input type="submit" id="shareButton" value="Share the current document" onclick="share();">
+      <br>Preview:</br><textarea id="1"></textarea>
+    </div>
+    <div id="empty" style="display:none;">
+      Oops! There is nothing to publish yet. Please go back to the home screen and click 'Write' there instead of 'Publish'.
+    </div>
+    <div id="loading">
+      Loading, please wait...
+    </div>
+  <script data-main="http://unhosted.nodejitsu.com/publisher" src="http://unhosted.org/require.js"></script>
+  </body>
+</html>
