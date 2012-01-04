@@ -24,20 +24,20 @@
       // So far this will connect to the default etherpad server.
       // This is just a test for the editor embedding
       function connectToOwnpad() {
+        var userName;
         if(localStorage.getItem('LibreDocsUserAddress') != null) {
-          $('#editorPad').pad({
-            'padId':'still-hosted-unsaved',
-            //'host':'http://localhost:9001',
-            'userName':localStorage.getItem('LibreDocsUserAddress')
-            //we'll hopefully send the storage data here at some point.
-          });
-        } else {
-          $('#editorPad').pad({
-            'padId':'still-hosted-unsaved',
-            //'host':'http://localhost:9001',
-            'userName':'LibreDocsUser@AddressNotSetYet'
-          });
+          userName = localStorage.getItem('LibreDocsUserAddress');
+          } else {
+          userName = 'LibreDocsUser@AddressNotSetYet'
         }
+        $('#editorPad').pad({
+          'padId':'still-hosted-unsaved',
+          //'host':'http://localhost:9001',
+          'userName':userName,
+          'showControls':true,
+          'showLineNumbers':true,
+          //we'll hopefully send the storage data here at some point.
+        });
       }
 
     </script>
@@ -45,6 +45,7 @@
       * { padding:0; margin:0; border:0; outline:0; }
       html { overflow-x:hidden; overflow-y:hidden; }
       #editorPad { position:absolute; padding:10% 20%; font:1.5em FreeSans,Helvetica,sans-serif; color:#333; background:#eee; text-shadow:0 0 1px #666677; width:60%; height:80%; overflow-x:hidden; overflow-y:auto; resize:none; }
+      #epframeeditorPad { width:100%; height:100% }
     </style>
 
   </head>
