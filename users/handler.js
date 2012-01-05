@@ -40,7 +40,8 @@ exports.handler = (function() {
         console.log(options);
         var token = randStr(40);
         var data= {
-          token: token
+          token: token,
+          userAddress: userAddress
         }
         res.writeHead(200, {
           'Content-type': 'application/json',
@@ -113,8 +114,8 @@ exports.handler = (function() {
                 } else {
                   console.log('END; writing to res: "'+resStr+'"');
                   res.writeHead(response.statusCode, response.headers);
-                  res.write('hi');
-                  res.end(resStr);
+                  res.write(resStr);
+                  res.end();
                 }
               });
             });

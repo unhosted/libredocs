@@ -14,12 +14,12 @@
           + localStorage.getItem('LibreDocsUserAddress')
           + ' <input type="submit" value="logout" onclick="localStorage.clear();location=\'\';">';
       }
-      function getUserNameForIrisCouch(email) {
-        return email.replace(/-/g, '--').replace(/@/g, '-');;
+      function getUserNameForIrisCouch(userAddress) {
+        return userAddress.replace(/-/g, '--').replace(/@/g, '-');;
       }
       function enroll(enrollment) {
-        var userName = getUserNameForIrisCouch(enrollment.email);
-        pimper.provision(userName, enrollment.firstName, enrollment.lastName, enrollment.token, function(result) {
+        var userName = getUserNameForIrisCouch(enrollment.userAddress);
+        pimper.provision(userName, enrollment.firstName, enrollment.lastName, enrollment.userAddress, enrollment.token, function(result) {
           if(result=='taken') {
             alert('That username is taken! :( please try a different one');
           } else if(result=='ok') {
@@ -47,7 +47,7 @@
           var enrollment = JSON.parse(localStorage.getItem('enrollment'));
           if(enrollment) {
             if(enrollment.state == 'agree') {
-              document.getElementById('header').innerHTML = 'Libre Docs - '+enrollment.email+' (pending)';
+              document.getElementById('header').innerHTML = 'Libre Docs - '+enrollment.userAddress+' (pending)';
               enroll(enrollment);
             }
           }

@@ -11,7 +11,7 @@
         navigator.id.get(function(assertion) {
           document.getElementById("2").innerHTML='<h2>Checking your user address...</h2>';
           var xhr=new XMLHttpRequest();
-          xhr.open('POST', 'http://user.unhosted.org/', true);
+          xhr.open('POST', '/users', true);
           xhr.onreadystatechange = function() {
             if(xhr.readyState == 4) {
               var storageObj = {};
@@ -26,7 +26,7 @@
                 localStorage.setItem('enrollment', JSON.stringify({
                     state: 'needed',
                     token: storageObj.token,
-                    email: storageObj.email
+                    userAddress: storageObj.userAddress
                   })
                 );
                 document.getElementById("2").style.display='none';
@@ -47,7 +47,7 @@
             firstName: document.getElementById('firstName').value,
             lastName: document.getElementById('lastName').value,
             token: enrollment.token,
-            email: enrollment.email
+            userAddress: enrollment.userAddress
           })
         );
         window.location='/loggedIn.html';
