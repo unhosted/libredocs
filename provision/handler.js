@@ -2,6 +2,7 @@ exports.handler = (function() {
   var url = require('url'),
     https = require('https'),
     querystring = require('querystring'),
+    browseridVerify = require('browserid-verifier'),
     irisCouchProvisioning = require('./config').irisCouchProvisioning;
 
   function serve(req, res, baseDir) {
