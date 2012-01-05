@@ -7,11 +7,33 @@
     <meta charset="utf-8">
     <title>Libre Docs</title>
     <link rel="icon" type="image/png" href="/icons/noun_project_826.ico"/>
+    <script src="beFree/pimp.js"></script>
     <script>
       function displayLogin() {
         document.getElementById('header').innerHTML = 'Libre Docs - '
           + localStorage.getItem('LibreDocsUserAddress')
           + ' <input type="submit" value="logout" onclick="localStorage.clear();location=\'\';">';
+      }
+      function getUserNameForIrisCouch(email) {
+        return email.replace(/-/g, '--').replace(/@/g, '-');;
+      }
+      function enroll(enrollment) {
+        var userName = getUserNameForIrisCouch(enrollment.email);
+        pimper.provision(userName, enrollment.firstName, enrollment.lastName, enrollment.token, function(result) {
+          if(result=='taken') {
+            alert('That username is taken! :( please try a different one');
+          } else if(result=='ok') {
+            ping(userName, proxy, 0, function() {
+              pimper.squat(userName+'.iriscouch.com', userName, password, assertion, function() {
+                pimper.populate(userName+'.iriscouch.com', userName, password, assertion, proxy, function() {
+                  alert('done');
+                });
+              });
+            });
+          } else {
+            alert('Oops! Error code '+result);
+          }
+        });
       }
       function checkForLogin() {
         window.addEventListener('storage', function(e) {
@@ -26,6 +48,7 @@
           if(enrollment) {
             if(enrollment.state == 'agree') {
               document.getElementById('header').innerHTML = 'Libre Docs - '+enrollment.email+' (pending)';
+              enroll(enrollment);
             }
           }
         }
