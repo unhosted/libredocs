@@ -19,7 +19,7 @@ exports.handler = (function() {
         assertion: incoming.browserIdAssertion
       };
       console.log(postData);
-      checkToken(incoming.userAddres, incoming.token, function(err, r) {
+      checkToken(incoming.userAddress, incoming.token, function() {
         var authStr = irisCouchProvisioning.usr + ':' + irisCouchProvisioning.pwd;
         console.log(authStr);
         var options = {
