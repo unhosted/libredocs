@@ -16,7 +16,9 @@
           + ' <input type="submit" value="logout" onclick="localStorage.clear();location=\'\';">';
       }
       function getUserNameForIrisCouch(userAddress, userNameTry) {
-        return userAddress.replace(/-/g, '--').replace(/@/g, '-at-').replace(/./g, '-dot-')+(userNameTry?'-'+userNameTry:'');
+        //return 
+        //alert(userAddress.replace(/-/g, '--').replace(/@/g, '-at-').replace(/\./g, '-dot-')+(userNameTry?'-'+userNameTry:'')
+        //);
       }
       function enroll(sessionObj, userNameTry) {
         var userName = getUserNameForIrisCouch(sessionObj.userAddress, userNameTry);
@@ -57,21 +59,52 @@
       function checkWebfinger(sessionObj) {
         if(sessionObj.state == 'wf1') {
           require(['webfinger'], function(webfinger) {
-            webfinger.getAttributes(sessionObj.userAddress, {}, function() {}, function(attr) {
-              if(attr) {
-                sessionObj.attr = attr;
-                sessionObj.state = 'connecting';
-                localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
-                checkForLogin();
-              } else {
-                sessionObj.state = 'needed';
-                localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
-                checkForLogin();
+            webfinger.getAttributes(sessionObj.userAddress, {
+              onError: function(code, msg) {
+                if(code == 5) {
+                  sessionObj.state = 'needed';
+                  localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
+                  checkForLogin();
+                }
               }
+            }, function() {}, function(attr) {
+              sessionObj.attr = attr;
+              sessionObj.state = 'connecting';
+              localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
+              checkForLogin();
             });
           });
         }
       }
+      function signIn(sessionObj) {
+        var xhr=new XMLHttpRequest();
+        xhr.open('POST', '/users', true);
+        xhr.onreadystatechange = function() {
+          if(xhr.readyState == 4) {
+            var storageObj = {};
+            try {
+              storageObj = JSON.parse(xhr.responseText);
+            } catch(e) {
+            }
+            if(storageObj.ok) {
+              //this happens if we have a UserAddress record stored (for webfingerless user addresses)
+              //localStorage.setItem('LibreDocsUserAddress', storageObj.userAddress);
+              //window.location='/loggedIn.html';
+            } else {
+              sessionObj.state = 'wf1';
+              sessionObj.token = storageObj.token;
+              sessionObj.userAddress = storageObj.userAddress;
+              localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
+              checkForLogin();
+            }
+          }
+        };
+        xhr.send(JSON.stringify({
+          audience: 'http://libredocs.org',
+          assertion: sessionObj.assertion
+        }));
+      }
+
       function checkForLogin() {
         window.addEventListener('storage', function(e) {
           if(e.key == 'LibreDocsUserAddress') {
@@ -83,7 +116,10 @@
         } else {
           var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
           if(sessionObj) {
-            if(sessionObj.state == 'wf1') {
+            if(sessionObj.state == 'signIn') {
+              document.getElementById('header').innerHTML = 'Libre Docs - (signing you in)';
+              signIn(sessionObj);
+            } else if(sessionObj.state == 'wf1') {
               document.getElementById('header').innerHTML = 'Libre Docs - '+sessionObj.userAddress+' (checking)';
               checkWebfinger(sessionObj);
             } else if(sessionObj.state == 'needed') {

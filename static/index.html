@@ -4,41 +4,16 @@
     <meta charset="utf-8">
     <title>Libre Docs - Write, Draw, Sync, Publish, Be free</title>
     <script>
-      var enrollToken;
       function go() {
         document.getElementById("1").style.display='none';
         document.getElementById("2").style.display='block';
         navigator.id.get(function(assertion) {
-          document.getElementById("2").innerHTML='<h2>Checking your user address...</h2>';
-          var xhr=new XMLHttpRequest();
-          xhr.open('POST', '/users', true);
-          xhr.onreadystatechange = function() {
-            if(xhr.readyState == 4) {
-              var storageObj = {};
-              try {
-                storageObj = JSON.parse(xhr.responseText);
-              } catch(e) {
-              }
-              if(storageObj.ok) {
-                localStorage.setItem('LibreDocsUserAddress', storageObj.userAddress);
-                window.location='/loggedIn.html';
-              } else {
-                localStorage.setItem('sessionObj', JSON.stringify({
-                    state: 'wf1',
-                    token: storageObj.token,
-                    userAddress: storageObj.userAddress,
-                    audience: 'http://libredocs.org',
-                    assertion: assertion
-                  })
-                );
-                window.location='/loggedIn.html';
-              }
-            }
-          };
-          xhr.send(JSON.stringify({
+          localStorage.setItem('sessionObj', JSON.stringify({
+            state: 'signIn',
             audience: 'http://libredocs.org',
             assertion: assertion
           }));
+          window.location='/loggedIn.html';
         });
       }
     </script>
