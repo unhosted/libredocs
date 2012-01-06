@@ -57,7 +57,7 @@
               if(attr) {
                 sessionObj.attr = attr;
                 sessionObj.state = 'connecting';
-                localStorage.setItem('sessionObj', JSON.strinfify(sessionObj));
+                localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
                 document.getElementById('header').innerHTML = 'Libre Docs - '+sessionObj.userAddress+' (connecting)';
                 getToken(sessionObj, function(token) {
                   sessionObj.token = token;
