@@ -15,27 +15,38 @@
           + localStorage.getItem('LibreDocsUserAddress')
           + ' <input type="submit" value="logout" onclick="localStorage.clear();location=\'\';">';
       }
-      function getUserNameForIrisCouch(userAddress, userNameTry) {
-        //return 
-        //alert(userAddress.replace(/-/g, '--').replace(/@/g, '-at-').replace(/\./g, '-dot-')+(userNameTry?'-'+userNameTry:'')
-        //);
+      function ping(userName, proxy, counter, onSuccess) {
+        //for(var i=0; i<=counter; i++) {
+        //  document.getElementById('status').innerHTML += '.';
+        //}
+        pimper.ping(userName, proxy, function(result) {
+          if(result=='ok') {
+            onSuccess();
+          } else if(result='no') {
+            console.log('ping '+counter+'...');
+            ping(userName, proxy, counter+1, onSuccess);
+          } else {
+            alert('Error code '+result);
+          }
+        });
       }
-      function enroll(sessionObj, userNameTry) {
-        var userName = getUserNameForIrisCouch(sessionObj.userAddress, userNameTry);
+      function getUserNameForIrisCouch(userAddress, userNameTry) {
+        return userAddress.replace(/-/g, '--').replace(/@/g, '-at-').replace(/\./g, '-dot-')+(userNameTry?'-'+userNameTry:'');
+      }
+      function enroll(sessionObj) {
+        var userName = getUserNameForIrisCouch(sessionObj.userAddress, sessionObj.userNameTry);
         pimper.provision(userName, sessionObj.firstName, sessionObj.lastName, sessionObj.userAddress, sessionObj.token, function(result) {
           if(result=='taken') {
-            console.log('Username '+userName+'is taken! :( trying a different one');
-            enroll(sessionObj, (userNameTry?userNameTry:0)+1);
+            console.log('Username '+userName+' is taken! :( trying a different one');
+            sessionObj.userNameTry = (sessionObj.userNameTry?sessionObj.userNameTry:0)+1;
+            localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
+            checkForLogin();
           } else if(result=='ok') {
-            ping(userName, proxy, 0, function() {
-              pimper.squat(userName+'.iriscouch.com', userName, password, assertion, function() {
-                pimper.populate(userName+'.iriscouch.com', userName, password, assertion, proxy, function() {
-                  alert('done');
-                });
-              });
-            });
-          } else {
-            alert('Oops! Error code '+result);
+            sessionObj.state = 'pinging';
+            sessionObj.subdomain = userName;
+            sessionObj.proxy = 'yourremotestorage.net/CouchDB/proxy/';
+            localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
+            checkForLogin();
           }
         });
       }
@@ -129,6 +140,30 @@
               document.getElementById("3").style.display='none';
               document.getElementById('header').innerHTML = 'Libre Docs - '+sessionObj.userAddress+' (pending)';
               enroll(sessionObj);
+            } else if(sessionObj.state == 'pinging') {
+              ping(sessionObj.subdomain, sessionObj.proxy, 0, function() {
+                sessionObj.state = 'squatting';
+                localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
+                checkForLogin();
+              });
+            } else if(sessionObj.state == 'squatting') {
+              pimper.squat(sessionObj.subdomain+'.iriscouch.com', 'admin', sessionObj.token, function() {
+                sessionObj.state = 'createDb';
+                localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
+                checkForLogin();
+              });
+            } else if(sessionObj.state == 'createDb') {
+              pimper.createDb(sessionObj.subdomain+'.iriscouch.com', 'admin', sessionObj.token, function() {
+                sessionObj.state = 'pop1';
+                localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
+                checkForLogin();
+              });
+            } else if(sessionObj.state == 'pop1') {
+              pimper.populate(sessionObj.subdomain+'.iriscouch.com', 'admin', sessionObj.token, proxy, function() {
+                sessionObj.state = 'done';
+                localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
+                checkForLogin();
+              });
             } else if(sessionObj.state == 'connecting') {
               document.getElementById('header').innerHTML = 'Libre Docs - '+sessionObj.userAddress+' (connecting)';
               getToken(sessionObj, function() {
