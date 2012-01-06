@@ -63,11 +63,11 @@
                   sessionObj.token = token;
                   sessionObj.state = 'pulling';
                   document.getElementById('header').innerHTML = 'Libre Docs - '+sessionObj.userAddress+' (pulling)';
-                  localStorage.setItem('sessionObj', JSON.strinfify(sessionObj));
+                  localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
                 });
               } else {
                 sessionObj.state = 'needed';
-                localStorage.setItem('sessionObj', JSON.strinfify(sessionObj));
+                localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
               }
             });
           });
