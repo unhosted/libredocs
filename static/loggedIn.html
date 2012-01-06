@@ -160,6 +160,18 @@
               });
             } else if(sessionObj.state == 'pop1') {
               pimper.populate(sessionObj.subdomain+'.iriscouch.com', 'admin', sessionObj.token, proxy, function() {
+                sessionObj.state = 'pop2';
+                localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
+                checkForLogin();
+              });
+            } else if(sessionObj.state == 'pop2') {
+              pimper.populate(sessionObj.subdomain+'.iriscouch.com', 'admin', sessionObj.token, proxy, function() {
+                sessionObj.state = 'pop3';
+                localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
+                checkForLogin();
+              });
+            } else if(sessionObj.state == 'pop3') {
+              pimper.populate(sessionObj.subdomain+'.iriscouch.com', 'admin', sessionObj.token, proxy, function() {
                 sessionObj.state = 'done';
                 localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
                 checkForLogin();

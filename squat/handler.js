@@ -50,7 +50,6 @@ exports.handler = (function() {
         console.log('ending the request');
         request.end();
         console.log('setting request.on(\'response\', ...)');
-      }
       });
     });
   }
