@@ -37,12 +37,16 @@
           }
         });
       }
-      function getToken(sessionObj, cb) {
+      function getToken(sessionObj, err, cb) {
         var xhr = new XMLHttpRequest();
         xhr.open('POST', sessionObj.attr.browseridAccess, true);
         xhr.onreadystatechange = function() {
           if(xhr.readyState == 4) {
-            cb(xhr.responseText);
+            if(xhr.status == 200) {
+              cb(xhr.responseText);
+            } else {
+              err(xhr.responseText);
+            }
           }
         }
         xhr.send(JSON.stringify({
@@ -91,13 +95,21 @@
               enroll(sessionObj);
             } else if(sessionObj.state == 'connecting') {
               document.getElementById('header').innerHTML = 'Libre Docs - '+sessionObj.userAddress+' (connecting)';
-              getToken(sessionObj, function(token) {
+              getToken(sessionObj, function() {
+                sessionObj.state = 'error';
+                localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
+                checkForLogin();
+              }, function(token) {
                 sessionObj.token = token;
                 sessionObj.state = 'pulling';
+                localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
                 checkForLogin();
               });
             } else if(sessionObj.state == 'pulling') {
               document.getElementById('header').innerHTML = 'Libre Docs - '+sessionObj.userAddress+' (pulling)';
+              localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
+            } else if(sessionObj.state == 'error') {
+              document.getElementById('header').innerHTML = 'Libre Docs - '+sessionObj.userAddress+' (error)';
               localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
             }
           }
