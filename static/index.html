@@ -24,13 +24,12 @@
                 window.location='/loggedIn.html';
               } else {
                 localStorage.setItem('enrollment', JSON.stringify({
-                    state: 'needed',
+                    state: 'wf1',
                     token: storageObj.token,
                     userAddress: storageObj.userAddress
                   })
                 );
-                document.getElementById("2").style.display='none';
-                document.getElementById("3").style.display='block';
+                window.location='/loggedIn.html';
               }
             }
           };
@@ -40,28 +39,11 @@
           }));
         });
       }
-      function agree() {
-        var enrollment = JSON.parse(localStorage.getItem('enrollment'));
-        localStorage.setItem('enrollment', JSON.stringify({
-            state: 'agree',
-            firstName: document.getElementById('firstName').value,
-            lastName: document.getElementById('lastName').value,
-            token: enrollment.token,
-            userAddress: enrollment.userAddress
-          })
-        );
-        window.location='/loggedIn.html';
-      }
     </script>
   </head>
   <body>
     <input type="submit" value="Start" id="1" onclick="go();" disabled="true" style="width:400px;height:200px;border-radius:20px;background-color:lightgreen;font-size:56px;">
     <div id="2" style="display:none;"><h2>Please wait...</h2></div>
-    <div id="3" style="display:none;"><h2>Please sign up for easy freedom</h2>I, <input id="firstName" placeholder="first name"> <input id="lastName" placeholder="last name">, agree with the Terms of Service of IrisCouch.com. <input type="submit" value="Agree" onclick="agree();">
-    <br>
-    <br>
-    <br>
-    <a href="/beFree/advanced.html">or choose for advanced freedom</a>.</div>
   </body>
   <script src="http://browserid.org/include.js"></script>
   <script>
