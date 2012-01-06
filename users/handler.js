@@ -81,7 +81,7 @@ exports.handler = (function() {
       console.log(postData);
       browseridVerify(postData, function(err, r) {
         if(err) {
-          res.writeHead(200, {'Content-type': 'application/json'});
+          res.writeHead(500, {'Content-type': 'text/plain'});
           res.write(JSON.stringify(err));
           res.end();
         } else {

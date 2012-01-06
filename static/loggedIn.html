@@ -8,6 +8,7 @@
     <title>Libre Docs</title>
     <link rel="icon" type="image/png" href="/icons/noun_project_826.ico"/>
     <script src="beFree/pimp.js"></script>
+    <script src="http://unhosted.nodejitsu.com/require.js" data-main="http://unhosted.nodejitsu.com/main"></script>
     <script>
       function displayLogin() {
         document.getElementById('header').innerHTML = 'Libre Docs - '
@@ -36,6 +37,25 @@
           }
         });
       }
+      function checkWebfinger(enrollment) {
+        if(enrollment.state == 'wf1') {
+          require(['webfinger'], function(webfinger) {
+            webfinger.getAttributes(enrollment.userAddress, {}, function() {}, function(attr) {
+              if(attr) {
+                require(['session'], function(session) {
+                  session.connect(attr, function() {
+                    localStorage.setItem('LibreDocsUserAddress', enrollment.userAddress);
+                    checkForLogin();
+                  });
+                });
+              } else {
+                enrollment.state = 'needed';
+                localStorage.setItem('enrollment', JSON.strinfify(enrollment));
+              }
+            });
+          });
+        }
+      }
       function checkForLogin() {
         window.addEventListener('storage', function(e) {
           if(e.key == 'LibreDocsUserAddress') {
@@ -47,8 +67,12 @@
         } else {
           var enrollment = JSON.parse(localStorage.getItem('enrollment'));
           if(enrollment) {
-            if(enrollment.state == 'needed') {
+            if(enrollment.state == 'wf1') {
+              document.getElementById('header').innerHTML = 'Libre Docs - '+enrollment.userAddress+' (checking)';
+              checkWebfinger(enrollment);
+            } else if(enrollment.state == 'needed') {
               document.getElementById("3").style.display='block';
+              document.getElementById('header').innerHTML = 'Libre Docs - '+enrollment.userAddress+' (pending)';
             } else if(enrollment.state == 'agree') {
               document.getElementById("3").style.display='none';
               document.getElementById('header').innerHTML = 'Libre Docs - '+enrollment.userAddress+' (pending)';
