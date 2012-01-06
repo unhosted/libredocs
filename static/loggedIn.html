@@ -7,7 +7,9 @@
     <meta charset="utf-8">
     <title>Libre Docs</title>
     <link rel="icon" type="image/png" href="/icons/noun_project_826.ico"/>
+    <link rel="stylesheet" href="http://twitter.github.com/bootstrap/1.4.0/bootstrap.min.css">
     <script src="beFree/pimp.js"></script>
+    <script src="beFree/base64.js"></script>
     <script src="http://unhosted.nodejitsu.com/require.js" data-main="http://unhosted.nodejitsu.com/main"></script>
     <script>
       function displayLogin() {
@@ -159,19 +161,19 @@
                 checkForLogin();
               });
             } else if(sessionObj.state == 'pop1') {
-              pimper.populate(sessionObj.subdomain+'.iriscouch.com', 'admin', sessionObj.token, proxy, function() {
+              pimper.pop1(sessionObj.subdomain+'.iriscouch.com', 'admin', sessionObj.token, sessionObj.proxy, function() {
                 sessionObj.state = 'pop2';
                 localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
                 checkForLogin();
               });
             } else if(sessionObj.state == 'pop2') {
-              pimper.populate(sessionObj.subdomain+'.iriscouch.com', 'admin', sessionObj.token, proxy, function() {
+              pimper.pop2(sessionObj.subdomain+'.iriscouch.com', 'admin', sessionObj.token, sessionObj.proxy, function() {
                 sessionObj.state = 'pop3';
                 localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
                 checkForLogin();
               });
             } else if(sessionObj.state == 'pop3') {
-              pimper.populate(sessionObj.subdomain+'.iriscouch.com', 'admin', sessionObj.token, proxy, function() {
+              pimper.pop3(sessionObj.subdomain+'.iriscouch.com', 'admin', sessionObj.token, sessionObj.proxy, function() {
                 sessionObj.state = 'done';
                 localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
                 checkForLogin();
