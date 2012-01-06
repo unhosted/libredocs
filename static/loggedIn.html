@@ -18,12 +18,12 @@
       function getUserNameForIrisCouch(userAddress, userNameTry) {
         return userAddress.replace(/-/g, '--').replace(/@/g, '-at-').replace(/./g, '-dot-')+(userNameTry?'-'+userNameTry:'');
       }
-      function enroll(enrollment, userNameTry) {
-        var userName = getUserNameForIrisCouch(enrollment.userAddress, userNameTry);
-        pimper.provision(userName, enrollment.firstName, enrollment.lastName, enrollment.userAddress, enrollment.token, function(result) {
+      function enroll(sessionObj, userNameTry) {
+        var userName = getUserNameForIrisCouch(sessionObj.userAddress, userNameTry);
+        pimper.provision(userName, sessionObj.firstName, sessionObj.lastName, sessionObj.userAddress, sessionObj.token, function(result) {
           if(result=='taken') {
             console.log('Username '+userName+'is taken! :( trying a different one');
-            enroll(enrollment, (userNameTry?userNameTry:0)+1);
+            enroll(sessionObj, (userNameTry?userNameTry:0)+1);
           } else if(result=='ok') {
             ping(userName, proxy, 0, function() {
               pimper.squat(userName+'.iriscouch.com', userName, password, assertion, function() {
@@ -37,37 +37,37 @@
           }
         });
       }
-      function getToken(enrollment, cb) {
+      function getToken(sessionObj, cb) {
         var xhr = new XMLHttpRequest();
-        xhr.open('POST', enrollment.attr.browseridAccess, true);
+        xhr.open('POST', sessionObj.attr.browseridAccess, true);
         xhr.onreadystatechange = function() {
           if(xhr.readyState == 4) {
             cb(xhr.responseText);
           }
         }
         xhr.send(JSON.stringify({
-          audience: enrollment.audience,
-          assertion: enrollment.assertion
+          audience: sessionObj.audience,
+          assertion: sessionObj.assertion
         });
       }
-      function checkWebfinger(enrollment) {
-        if(enrollment.state == 'wf1') {
+      function checkWebfinger(sessionObj) {
+        if(sessionObj.state == 'wf1') {
           require(['webfinger'], function(webfinger) {
-            webfinger.getAttributes(enrollment.userAddress, {}, function() {}, function(attr) {
+            webfinger.getAttributes(sessionObj.userAddress, {}, function() {}, function(attr) {
               if(attr) {
-                enrollment.attr = attr;
-                enrollment.state = 'connecting';
-                localStorage.setItem('enrollment', JSON.strinfify(enrollment));
-                document.getElementById('header').innerHTML = 'Libre Docs - '+enrollment.userAddress+' (connecting)';
-                getToken(enrollment, function(token) {
-                  enrollment.token = token;
-                  enrollment.state = 'pulling';
-                  document.getElementById('header').innerHTML = 'Libre Docs - '+enrollment.userAddress+' (pulling)';
-                  localStorage.setItem('enrollment', JSON.strinfify(enrollment));
+                sessionObj.attr = attr;
+                sessionObj.state = 'connecting';
+                localStorage.setItem('sessionObj', JSON.strinfify(sessionObj));
+                document.getElementById('header').innerHTML = 'Libre Docs - '+sessionObj.userAddress+' (connecting)';
+                getToken(sessionObj, function(token) {
+                  sessionObj.token = token;
+                  sessionObj.state = 'pulling';
+                  document.getElementById('header').innerHTML = 'Libre Docs - '+sessionObj.userAddress+' (pulling)';
+                  localStorage.setItem('sessionObj', JSON.strinfify(sessionObj));
                 });
               } else {
-                enrollment.state = 'needed';
-                localStorage.setItem('enrollment', JSON.strinfify(enrollment));
+                sessionObj.state = 'needed';
+                localStorage.setItem('sessionObj', JSON.strinfify(sessionObj));
               }
             });
           });
@@ -82,30 +82,30 @@
         if(localStorage.getItem('LibreDocsUserAddress')) {
           displayLogin();
         } else {
-          var enrollment = JSON.parse(localStorage.getItem('enrollment'));
-          if(enrollment) {
-            if(enrollment.state == 'wf1') {
-              document.getElementById('header').innerHTML = 'Libre Docs - '+enrollment.userAddress+' (checking)';
-              checkWebfinger(enrollment);
-            } else if(enrollment.state == 'needed') {
+          var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
+          if(sessionObj) {
+            if(sessionObj.state == 'wf1') {
+              document.getElementById('header').innerHTML = 'Libre Docs - '+sessionObj.userAddress+' (checking)';
+              checkWebfinger(sessionObj);
+            } else if(sessionObj.state == 'needed') {
               document.getElementById("3").style.display='block';
-              document.getElementById('header').innerHTML = 'Libre Docs - '+enrollment.userAddress+' (pending)';
-            } else if(enrollment.state == 'agree') {
+              document.getElementById('header').innerHTML = 'Libre Docs - '+sessionObj.userAddress+' (pending)';
+            } else if(sessionObj.state == 'agree') {
               document.getElementById("3").style.display='none';
-              document.getElementById('header').innerHTML = 'Libre Docs - '+enrollment.userAddress+' (pending)';
-              enroll(enrollment);
+              document.getElementById('header').innerHTML = 'Libre Docs - '+sessionObj.userAddress+' (pending)';
+              enroll(sessionObj);
             }
           }
         }
       }
       function agree() {
-        var enrollment = JSON.parse(localStorage.getItem('enrollment'));
-        localStorage.setItem('enrollment', JSON.stringify({
+        var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
+        localStorage.setItem('sessionObj', JSON.stringify({
             state: 'agree',
             firstName: document.getElementById('firstName').value,
             lastName: document.getElementById('lastName').value,
-            token: enrollment.token,
-            userAddress: enrollment.userAddress
+            token: sessionObj.token,
+            userAddress: sessionObj.userAddress
           })
         );
         checkForLogin();

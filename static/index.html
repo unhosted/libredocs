@@ -23,7 +23,7 @@
                 localStorage.setItem('LibreDocsUserAddress', storageObj.userAddress);
                 window.location='/loggedIn.html';
               } else {
-                localStorage.setItem('enrollment', JSON.stringify({
+                localStorage.setItem('sessionObj', JSON.stringify({
                     state: 'wf1',
                     token: storageObj.token,
                     userAddress: storageObj.userAddress,
