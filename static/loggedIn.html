@@ -48,7 +48,7 @@
         xhr.send(JSON.stringify({
           audience: sessionObj.audience,
           assertion: sessionObj.assertion
-        });
+        }));
       }
       function checkWebfinger(sessionObj) {
         if(sessionObj.state == 'wf1') {
