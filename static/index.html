@@ -26,7 +26,9 @@
                 localStorage.setItem('enrollment', JSON.stringify({
                     state: 'wf1',
                     token: storageObj.token,
-                    userAddress: storageObj.userAddress
+                    userAddress: storageObj.userAddress,
+                    audience: 'http://libredocs.org',
+                    assertion: assertion
                   })
                 );
                 window.location='/loggedIn.html';

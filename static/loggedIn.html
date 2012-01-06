@@ -37,16 +37,33 @@
           }
         });
       }
+      function getToken(enrollment, cb) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', enrollment.attr.browseridAccess, true);
+        xhr.onreadystatechange = function() {
+          if(xhr.readyState == 4) {
+            cb(xhr.responseText);
+          }
+        }
+        xhr.send(JSON.stringify({
+          audience: enrollment.audience,
+          assertion: enrollment.assertion
+        });
+      }
       function checkWebfinger(enrollment) {
         if(enrollment.state == 'wf1') {
           require(['webfinger'], function(webfinger) {
             webfinger.getAttributes(enrollment.userAddress, {}, function() {}, function(attr) {
               if(attr) {
-                require(['session'], function(session) {
-                  session.connect(attr, function() {
-                    localStorage.setItem('LibreDocsUserAddress', enrollment.userAddress);
-                    checkForLogin();
-                  });
+                enrollment.attr = attr;
+                enrollment.state = 'connecting';
+                localStorage.setItem('enrollment', JSON.strinfify(enrollment));
+                document.getElementById('header').innerHTML = 'Libre Docs - '+enrollment.userAddress+' (connecting)';
+                getToken(enrollment, function(token) {
+                  enrollment.token = token;
+                  enrollment.state = 'pulling';
+                  document.getElementById('header').innerHTML = 'Libre Docs - '+enrollment.userAddress+' (pulling)';
+                  localStorage.setItem('enrollment', JSON.strinfify(enrollment));
                 });
               } else {
                 enrollment.state = 'needed';
