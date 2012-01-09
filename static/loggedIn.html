@@ -52,7 +52,7 @@
           }
         });
       }
-      function getToken(sessionObj, err, cb) {
+      function getTokenThroughBackdoor(sessionObj, err, cb) {
         var xhr = new XMLHttpRequest();
         xhr.open('POST', sessionObj.attr.browseridAccess, true);
         xhr.onreadystatechange = function() {
@@ -82,7 +82,11 @@
               }
             }, function() {}, function(attr) {
               sessionObj.attr = attr;
-              sessionObj.state = 'connecting';
+              if(false){//sessionObj.attr.browseridAccess) {
+                sessionObj.state = 'connectingBackdoor';
+              } else {
+                sessionObj.state = 'allowRemoteStorage';
+              }
               localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
               checkForLogin();
             });
@@ -178,9 +182,9 @@
                 localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
                 checkForLogin();
               });
-            } else if(sessionObj.state == 'connecting') {
+            } else if(sessionObj.state == 'connectingBackdoor') {
               document.getElementById('header').innerHTML = 'Libre Docs - '+sessionObj.userAddress+' (connecting)';
-              getToken(sessionObj, function() {
+              getTokenThroughBackdoor(sessionObj, function() {
                 sessionObj.state = 'error';
                 localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
                 checkForLogin();
@@ -190,6 +194,8 @@
                 localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
                 checkForLogin();
               });
+            } else if(sessionObj.state == 'allowRemoteStorage') {
+              document.getElementById('header').innerHTML = 'Libre Docs - '+sessionObj.userAddress+' <input type="submit" value="Allow remote storage" onclick="allow();">';
             } else if(sessionObj.state == 'pulling') {
               document.getElementById('header').innerHTML = 'Libre Docs - '+sessionObj.userAddress+' (pulling)';
               localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
@@ -199,6 +205,10 @@
             }
           }
         }
+      }
+      function allow() {
+        var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
+        window.open(sessionObj.attr.auth);
       }
       function agree() {
         var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
