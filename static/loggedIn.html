@@ -208,7 +208,7 @@
       }
       function allow() {
         var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
-        window.open(sessionObj.attr.auth);
+        window.open(sessionObj.attr.auth+'?redirect_uri=http://libredocs.org/rcvToken.html&scope=documents');
       }
       function agree() {
         var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
@@ -226,16 +226,7 @@
     <link rel="icon" type="image/png" href="/icons/noun_project_817.ico"/>
     <script>
       window.addEventListener('storage', function(e) {
-        if(e.key=='LibreDocsState') {
-          console.log('LibreDocsState '+e.newValue+' received');
-          if(e.newValue == 'exit') {
-            window.close();
-          } else if(e.newValue == 'offline') {
-            document.getElementById('spinner').style.display='block';
-          } else {
-            document.getElementById('spinner').style.display='none';
-          }
-        } else if(e.key == 'text') {
+        if(e.key == 'text') {
           displayText();
         }
       }, false);
