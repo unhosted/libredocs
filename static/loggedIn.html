@@ -134,7 +134,7 @@
         });
       }
       function selfAccess3(sessionObj, cb) {
-        pimper.giveAccess(sessionObj.subdomain+'.iriscouch.com', sessionObj.adminUsr, sessionObj.adminPwd, 'http___libredocs_org', 'documents', function() {
+        pimper.giveAccess(sessionObj.subdomain+'.iriscouch.com', sessionObj.adminUsr, sessionObj.adminPwd, 'documents', 'http___libredocs_org', function() {
           cb();
         });
       }
@@ -202,21 +202,21 @@
               checkForLogin();
             });
           } else if(sessionObj.state == 'selfAccess1') {
-            selfAccess(sessionObj, function(token) {
+            selfAccess1(sessionObj, function(token) {
               sessionObj.token = token;
               sessionObj.state = 'selfAccess2';
               localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
               checkForLogin();
             });
           } else if(sessionObj.state == 'selfAccess2') {
-            selfAccess(sessionObj, function(token) {
+            selfAccess2(sessionObj, function(token) {
               sessionObj.token = token;
               sessionObj.state = 'selfAccess3';
               localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
               checkForLogin();
             });
           } else if(sessionObj.state == 'selfAccess3') {
-            selfAccess(sessionObj, function(token) {
+            selfAccess3(sessionObj, function(token) {
               sessionObj.token = token;
               sessionObj.state = 'storing';
               localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
