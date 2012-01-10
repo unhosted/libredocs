@@ -25,10 +25,11 @@
       // This is just a test for the editor embedding
       function connectToOwnpad() {
         var userName;
-        if(localStorage.getItem('LibreDocsUserAddress') != null) {
-          userName = localStorage.getItem('LibreDocsUserAddress');
+        var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
+        if(sessionObj.userAddress != null) {
+          userName = sessionObj.userAddress;
           } else {
-          userName = 'LibreDocsUser@AddressNotSetYet'
+          userName = 'Address Not Set Yet'
         }
         $('#editorPad').pad({
           'padId':'still-hosted-unsaved',
