@@ -172,13 +172,13 @@
               checkForLogin();
             });
           } else if(sessionObj.state == 'squatting') {
-            pimper.squat(sessionObj.subdomain+'.iriscouch.com', 'admin', sessionObj.adminPwd, function() {
+            pimper.createAdminUser(sessionObj.subdomain+'.iriscouch.com', 'admin', sessionObj.adminPwd, function() {
               sessionObj.state = 'createDb';
               localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
               checkForLogin();
             });
           } else if(sessionObj.state == 'createDb') {
-            pimper.createDb(sessionObj.subdomain+'.iriscouch.com', 'admin', sessionObj.adminPwd, function() {
+            pimper.createDb(sessionObj.subdomain+'.iriscouch.com', 'admin', sessionObj.adminPwd, 'cors', function() {
               sessionObj.state = 'pop1';
               localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
               checkForLogin();
