@@ -9,7 +9,8 @@
     <link rel="icon" type="image/png" href="/icons/noun_project_826.ico"/>
     <link rel="stylesheet" href="http://twitter.github.com/bootstrap/1.4.0/bootstrap.min.css">
     <script src="beFree/pimp.js"></script>
-    <script src="beFree/base64.js"></script>
+    <script src="beFree/files/base64.js"></script>
+    <script src="beFree/files/sha1.js"></script>
     <script src="http://unhosted.nodejitsu.com/require.js" data-main="http://unhosted.nodejitsu.com/main"></script>
     <script>
       function displayLogin(userAddress) {
@@ -122,9 +123,19 @@
           assertion: sessionObj.assertion
         }));
       }
-      function selfAccess(sessionObj, cb) {
-        pimper.createUser(sessionObj.scope, sessionObj.adminUsr, sessionObj.adminPwd, function(token) {
-          cb(token);
+      function selfAccess1(sessionObj, cb) {
+        pimper.createUser(sessionObj.subdomain+'.iriscouch.com', sessionObj.adminUsr, sessionObj.adminPwd, 'http___libredocs_org', function(newPass) {
+          cb(newPass);
+        });
+      }
+      function selfAccess2(sessionObj, cb) {
+        pimper.createDb(sessionObj.subdomain+'.iriscouch.com', sessionObj.adminUsr, sessionObj.adminPwd, 'documents', function() {
+          cb();
+        });
+      }
+      function selfAccess3(sessionObj, cb) {
+        pimper.giveAccess(sessionObj.subdomain+'.iriscouch.com', sessionObj.adminUsr, sessionObj.adminPwd, 'http___libredocs_org', 'documents', function() {
+          cb();
         });
       }
       function store(sessionObj, cb) {
@@ -186,11 +197,25 @@
             });
           } else if(sessionObj.state == 'pop3') {
             pimper.pop3(sessionObj.subdomain+'.iriscouch.com', 'admin', sessionObj.adminPwd, sessionObj.proxy, function() {
-              sessionObj.state = 'selfAccess';
+              sessionObj.state = 'selfAccess1';
               localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
               checkForLogin();
             });
-          } else if(sessionObj.state == 'selfAccess') {
+          } else if(sessionObj.state == 'selfAccess1') {
+            selfAccess(sessionObj, function(token) {
+              sessionObj.token = token;
+              sessionObj.state = 'selfAccess2';
+              localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
+              checkForLogin();
+            });
+          } else if(sessionObj.state == 'selfAccess2') {
+            selfAccess(sessionObj, function(token) {
+              sessionObj.token = token;
+              sessionObj.state = 'selfAccess3';
+              localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
+              checkForLogin();
+            });
+          } else if(sessionObj.state == 'selfAccess3') {
             selfAccess(sessionObj, function(token) {
               sessionObj.token = token;
               sessionObj.state = 'storing';
