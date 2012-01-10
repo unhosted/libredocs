@@ -107,8 +107,10 @@
             }
             if(storageObj.ok) {
               //this happens if we have a UserAddress record stored (for webfingerless user addresses)
-              //localStorage.setItem('LibreDocsUserAddress', storageObj.userAddress);
-              //window.location='/loggedIn.html';
+              var sessionObj = storageObj;
+              sessionObj.state = 'pulling';
+              localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
+              checkForLogin();
             } else {
               sessionObj.state = 'wf1';
               sessionObj.adminPwd = storageObj.adminPwd;
