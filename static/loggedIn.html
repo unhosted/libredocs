@@ -111,7 +111,7 @@
               //window.location='/loggedIn.html';
             } else {
               sessionObj.state = 'wf1';
-              sessionObj.adminPwd = storageObj.token;
+              sessionObj.adminPwd = storageObj.adminPwd;
               sessionObj.userAddress = storageObj.userAddress;
               localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
               checkForLogin();
@@ -140,6 +140,7 @@
       }
       function store(sessionObj, cb) {
         sessionObj.action='set';
+        sessionObj.ok=true;
         var xhr = new XMLHttpRequest();
         xhr.open('PUT', 'http://libredocs.org/users', true);
         xhr.onreadystatechange = function() {

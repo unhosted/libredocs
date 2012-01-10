@@ -38,9 +38,9 @@ exports.handler = (function() {
           }
         };
         console.log(options);
-        var token = randStr(40);
+        var adminPwd = randStr(40);
         var data= {
-          token: token,
+          adminPwd: adminPwd,
           userAddress: userAddress
         }
         res.writeHead(200, {
@@ -193,7 +193,7 @@ exports.handler = (function() {
         } else {
           console.log('END; got res: "'+resStr+'"');
           var existingRecord = JSON.parse(resStr);
-          if(params.adminPwd == existingRecord.token) {
+          if(params.adminPwd == existingRecord.adminPwd) {
             console.log('password "'+params.adminPwd+'" accepted');
             params._rev = existingRecord._rev;
             store(params, function() {
