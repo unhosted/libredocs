@@ -121,7 +121,21 @@
           assertion: sessionObj.assertion
         }));
       }
-
+      function selfAccess(sessionObj, cb) {
+        pimper.createUser(sessionObj.scope, sessionObj.adminUsr, sessionObj.adminPwd, function(token) {
+          cb(token);
+        });
+      }
+      function store(sessionObj, cb) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('PUT', 'http://libredocs.org/users', true);
+        xhr.onreadystatechange = function() {
+          if(xhr.readyState == 4) {
+            cb();
+          }
+        };
+        xhr.send(JSON.stringify(sessionObj));
+      }
       function checkForLogin() {
         window.addEventListener('storage', function(e) {
           if(e.key == 'sessionObj') {
@@ -178,7 +192,21 @@
               });
             } else if(sessionObj.state == 'pop3') {
               pimper.pop3(sessionObj.subdomain+'.iriscouch.com', 'admin', sessionObj.token, sessionObj.proxy, function() {
-                sessionObj.state = 'done';
+                sessionObj.state = 'selfAccess';
+                localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
+                checkForLogin();
+              });
+            } else if(sessionObj.state == 'selfAccess') {
+              selfAccess(sessionObj, function(token) {
+                sessionObj.adminToken = sesisonObj.token;
+                sessionObj.token = token;
+                sessionObj.state = 'storing';
+                localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
+                checkForLogin();
+              });
+            } else if(sessionObj.state == 'storing') {
+              store(sessionObj, function() {
+                sessionObj.state = 'pulling';
                 localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
                 checkForLogin();
               });
