@@ -66,6 +66,156 @@ exports.handler = (function() {
     //  }
     //});
   }
+  function serveGet(req, res, postData) {
+    console.log(postData);
+    browseridVerify(postData, function(err, r) {
+      if(err) {
+        res.writeHead(500, {'Content-type': 'text/plain'});
+        res.write(JSON.stringify(err));
+        res.end();
+      } else {
+        if(r.email) {
+          console.log(r.email+' confirmed by browserid verifier');
+          var authStr = userDb.usr + ':' + userDb.pwd;
+          console.log(authStr);
+          var options = {
+            host: userDb.host,
+            port: 443,
+            path: '/'+userDb.dbName+'/'+r.email,
+            method: 'GET', 
+            headers: {
+              'Authorization': 'Basic ' + new Buffer(authStr).toString('base64')
+            }
+          };
+          console.log(options);
+          var request = https.request(options, function(response) {
+            console.log('STATUS: ' + response.statusCode);
+            console.log('HEADERS: ' + JSON.stringify(response.headers));
+            response.setEncoding('utf8');
+            var resStr = '';
+            response.on('data', function (chunk) {
+              resStr += chunk;
+              console.log('BODY: ' + chunk);
+            });
+            response.on('end', function() {
+              if(response.statusCode == 404) {
+                webfingerLookup(r.email, 'http://libredocs.org', res);
+              } else {
+                console.log('END; writing to res: "'+resStr+'"');
+                res.writeHead(response.statusCode, response.headers);
+                res.write(resStr);
+                res.end();
+              }
+            });
+          });
+          //console.log('writing to the request');
+
+          //var data = JSON.stringify({
+          //});
+          //console.log(data);
+          //request.write(data);
+          console.log('ending the request');
+          request.end();
+          console.log('setting request.on(\'response\', ...)');
+        }
+      }
+    });
+  }
+  function store(userObj, err, cb) {
+    console.log('storing userObj:');
+    console.log(userObj);
+    var authStr = userDb.usr + ':' + userDb.pwd;
+    console.log(authStr);
+    var options = {
+      host: userDb.host,
+      port: 443,
+      path: '/'+userDb.dbName+'/'+userObj.userAddress,
+      method: 'PUT', 
+      headers: {
+        'Authorization': 'Basic ' + new Buffer(authStr).toString('base64')
+      }
+    };
+    console.log(options);
+    var request = https.request(options, function(response) {
+      console.log('STATUS: ' + response.statusCode);
+      console.log('HEADERS: ' + JSON.stringify(response.headers));
+      response.setEncoding('utf8');
+      var resStr = '';
+      response.on('data', function (chunk) { 
+        resStr += chunk;
+        console.log('BODY: ' + chunk);
+      });
+      response.on('end', function() { 
+        if(response.statusCode == 200) {
+           cb();
+        } else {
+          console.log(response.statusCode)
+          console.log(response.headers);
+          console.log('oops:'+resStr);
+          err();
+        }
+      });
+    });
+    console.log('sending the userObj');
+    request.write(JSON.stringify(userObj));
+    console.log('ending the request');
+    request.end();
+  }
+
+  function serveSet(req, res, params) {
+    console.log(params);
+    var authStr = userDb.usr + ':' + userDb.pwd;
+    console.log(authStr);
+    var options = {
+      host: userDb.host,
+      port: 443,
+      path: '/'+userDb.dbName+'/'+params.userAddress,
+      method: 'GET', 
+      headers: {
+        'Authorization': 'Basic ' + new Buffer(authStr).toString('base64')
+      }
+    };
+    console.log(options);
+    var request = https.request(options, function(response) {
+      console.log('STATUS: ' + response.statusCode);
+      console.log('HEADERS: ' + JSON.stringify(response.headers));
+      response.setEncoding('utf8');
+      var resStr = '';
+      response.on('data', function (chunk) { 
+        resStr += chunk;
+        console.log('BODY: ' + chunk);
+      });
+      response.on('end', function() { 
+        if(response.statusCode == 404) {
+          res.writeHead(response.statusCode, response.headers);
+          res.write('cannot find user "'+params.userAddress+'":'+resStr);
+          res.end();
+        } else {
+          console.log('END; got res: "'+resStr+'"');
+          var existingRecord = JSON.parse(resStr);
+          if(params.adminPwd == existingRecord.token) {
+            console.log('password "'+params.adminPwd+'" accepted');
+            params._revision = existinRecord._revision;
+            store(params, function() {
+              res.writeHead(500, {});
+              res.end();
+            }, function() {
+              res.writeHead(200, {});
+              res.write('stored');
+              res.end();
+            });
+          } else {
+            console.log('password "'+params.adminPwd+'" rejected');
+            res.writeHead(401, {});
+            res.write('not the right adminPwd');
+            res.end();
+          }
+        }
+      });
+    });
+    console.log('ending the request');
+    request.end();
+  }
   function serve(req, res, baseDir) {
     var dataStr = '';
     req.on('data', function(chunk) {
@@ -74,63 +224,14 @@ exports.handler = (function() {
     req.on('end', function() {
       var incoming = JSON.parse(dataStr);
       console.log(incoming);
-      postData = {
-        audience: 'http://libredocs.org',
-        assertion: incoming.assertion
-      };
-      console.log(postData);
-      browseridVerify(postData, function(err, r) {
-        if(err) {
-          res.writeHead(500, {'Content-type': 'text/plain'});
-          res.write(JSON.stringify(err));
-          res.end();
-        } else {
-          if(r.email) {
-            console.log(r.email+' confirmed by browserid verifier');
-            var authStr = userDb.usr + ':' + userDb.pwd;
-            console.log(authStr);
-            var options = {
-              host: userDb.host,
-              port: 443,
-              path: '/'+userDb.dbName+'/'+r.email,
-              method: 'GET', 
-              headers: {
-                'Authorization': 'Basic ' + new Buffer(authStr).toString('base64')
-              }
-            };
-            console.log(options);
-            var request = https.request(options, function(response) {
-              console.log('STATUS: ' + response.statusCode);
-              console.log('HEADERS: ' + JSON.stringify(response.headers));
-              response.setEncoding('utf8');
-              var resStr = '';
-              response.on('data', function (chunk) {
-                resStr += chunk;
-                console.log('BODY: ' + chunk);
-              });
-              response.on('end', function() {
-                if(response.statusCode == 404) {
-                  webfingerLookup(r.email, 'http://libredocs.org', res);
-                } else {
-                  console.log('END; writing to res: "'+resStr+'"');
-                  res.writeHead(response.statusCode, response.headers);
-                  res.write(resStr);
-                  res.end();
-                }
-              });
-            });
-            //console.log('writing to the request');
-
-            //var data = JSON.stringify({
-            //});
-            //console.log(data);
-            //request.write(data);
-            console.log('ending the request');
-            request.end();
-            console.log('setting request.on(\'response\', ...)');
-          }
-        }
-      });
+      if(incoming.action == 'set') {
+        serveSet(req, res, incoming);
+      } else {
+        serveGet(req, res, {
+          audience: 'http://libredocs.org',
+          assertion: incoming.assertion
+        });
+      }
     });
   }
 
