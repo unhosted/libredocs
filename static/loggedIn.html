@@ -42,7 +42,7 @@
           if(result=='taken') {
             console.log('Username '+userName+' is taken! :( trying a different one');
             //sessionObj.userNameTry = (sessionObj.userNameTry?sessionObj.userNameTry:0)+1;
-            sessionObj.userNameTry = (sessionObj.userNameTry?sessionObj.userNameTry:10)+1;//skip straight to higher numbers, so debugging doesn't take that long
+            sessionObj.userNameTry = (sessionObj.userNameTry?sessionObj.userNameTry:14)+1;//skip straight to higher numbers, so debugging doesn't take that long
             localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
             checkForLogin();
           } else if(result=='ok') {
