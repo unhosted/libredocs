@@ -124,7 +124,7 @@
 
       function checkForLogin() {
         window.addEventListener('storage', function(e) {
-          if(e.key == 'LibreDocsUserAddress') {
+          if(e.key == 'sessionObj') {
             displayLogin();
           }
         }, false);
