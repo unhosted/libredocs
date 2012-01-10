@@ -109,7 +109,7 @@
               //window.location='/loggedIn.html';
             } else {
               sessionObj.state = 'wf1';
-              sessionObj.token = storageObj.token;
+              sessionObj.adminPwd = storageObj.token;
               sessionObj.userAddress = storageObj.userAddress;
               localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
               checkForLogin();
@@ -167,38 +167,37 @@
                 checkForLogin();
               });
             } else if(sessionObj.state == 'squatting') {
-              pimper.squat(sessionObj.subdomain+'.iriscouch.com', 'admin', sessionObj.token, function() {
+              pimper.squat(sessionObj.subdomain+'.iriscouch.com', 'admin', sessionObj.adminPwd, function() {
                 sessionObj.state = 'createDb';
                 localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
                 checkForLogin();
               });
             } else if(sessionObj.state == 'createDb') {
-              pimper.createDb(sessionObj.subdomain+'.iriscouch.com', 'admin', sessionObj.token, function() {
+              pimper.createDb(sessionObj.subdomain+'.iriscouch.com', 'admin', sessionObj.adminPwd, function() {
                 sessionObj.state = 'pop1';
                 localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
                 checkForLogin();
               });
             } else if(sessionObj.state == 'pop1') {
-              pimper.pop1(sessionObj.subdomain+'.iriscouch.com', 'admin', sessionObj.token, sessionObj.proxy, function() {
+              pimper.pop1(sessionObj.subdomain+'.iriscouch.com', 'admin', sessionObj.adminPwd, sessionObj.proxy, function() {
                 sessionObj.state = 'pop2';
                 localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
                 checkForLogin();
               });
             } else if(sessionObj.state == 'pop2') {
-              pimper.pop2(sessionObj.subdomain+'.iriscouch.com', 'admin', sessionObj.token, sessionObj.proxy, function() {
+              pimper.pop2(sessionObj.subdomain+'.iriscouch.com', 'admin', sessionObj.adminPwd, sessionObj.proxy, function() {
                 sessionObj.state = 'pop3';
                 localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
                 checkForLogin();
               });
             } else if(sessionObj.state == 'pop3') {
-              pimper.pop3(sessionObj.subdomain+'.iriscouch.com', 'admin', sessionObj.token, sessionObj.proxy, function() {
+              pimper.pop3(sessionObj.subdomain+'.iriscouch.com', 'admin', sessionObj.adminPwd, sessionObj.proxy, function() {
                 sessionObj.state = 'selfAccess';
                 localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
                 checkForLogin();
               });
             } else if(sessionObj.state == 'selfAccess') {
               selfAccess(sessionObj, function(token) {
-                sessionObj.adminToken = sesisonObj.token;
                 sessionObj.token = token;
                 sessionObj.state = 'storing';
                 localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
@@ -244,7 +243,7 @@
             state: 'agree',
             firstName: document.getElementById('firstName').value,
             lastName: document.getElementById('lastName').value,
-            token: sessionObj.token,
+            token: sessionObj.adminPwd,//the admin pwd that was generated doubles as provisioning token during provisioning
             userAddress: sessionObj.userAddress
           })
         );
