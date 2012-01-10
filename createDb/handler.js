@@ -22,8 +22,7 @@ exports.handler = (function() {
           path: '/'+incoming.dbName+'/',
           method: 'PUT',
           headers: {
-            'Authorization': req.headers.authorization,
-            'Content-Type': 'application/json'
+            'Authorization': 'Basic ' + new Buffer(incoming.user+':'+incoming.pwd).toString('base64')
           }
         };
         console.log(options);
