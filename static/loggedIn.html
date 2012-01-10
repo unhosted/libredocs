@@ -124,17 +124,17 @@
         }));
       }
       function selfAccess1(sessionObj, cb) {
-        pimper.createUser(sessionObj.subdomain+'.iriscouch.com', sessionObj.adminUsr, sessionObj.adminPwd, 'http___libredocs_org', function(newPass) {
+        pimper.createUser(sessionObj.subdomain+'.iriscouch.com', 'admin', sessionObj.adminPwd, 'http___libredocs_org', function(newPass) {
           cb(newPass);
         });
       }
       function selfAccess2(sessionObj, cb) {
-        pimper.createDb(sessionObj.subdomain+'.iriscouch.com', sessionObj.adminUsr, sessionObj.adminPwd, 'documents', function() {
+        pimper.createDb(sessionObj.subdomain+'.iriscouch.com', 'admin', sessionObj.adminPwd, 'documents', function() {
           cb();
         });
       }
       function selfAccess3(sessionObj, cb) {
-        pimper.giveAccess(sessionObj.subdomain+'.iriscouch.com', sessionObj.adminUsr, sessionObj.adminPwd, 'documents', 'http___libredocs_org', function() {
+        pimper.giveAccess(sessionObj.subdomain+'.iriscouch.com', 'admin', sessionObj.adminPwd, 'documents', 'http___libredocs_org', false, function() {
           cb();
         });
       }
