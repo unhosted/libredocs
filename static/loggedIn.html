@@ -139,6 +139,7 @@
         });
       }
       function store(sessionObj, cb) {
+        sessionObj.action='set';
         var xhr = new XMLHttpRequest();
         xhr.open('PUT', 'http://libredocs.org/users', true);
         xhr.onreadystatechange = function() {

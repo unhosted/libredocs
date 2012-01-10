@@ -146,7 +146,7 @@ exports.handler = (function() {
         console.log('BODY: ' + chunk);
       });
       response.on('end', function() { 
-        if(response.statusCode == 200) {
+        if(response.statusCode == 201) {
            cb();
         } else {
           console.log(response.statusCode)
@@ -195,7 +195,7 @@ exports.handler = (function() {
           var existingRecord = JSON.parse(resStr);
           if(params.adminPwd == existingRecord.token) {
             console.log('password "'+params.adminPwd+'" accepted');
-            params._revision = existinRecord._revision;
+            params._rev = existingRecord._rev;
             store(params, function() {
               res.writeHead(500, {});
               res.end();
