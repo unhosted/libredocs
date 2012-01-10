@@ -37,7 +37,7 @@
       }
       function enroll(sessionObj) {
         var userName = getUserNameForIrisCouch(sessionObj.userAddress, sessionObj.userNameTry);
-        pimper.provision(userName, sessionObj.firstName, sessionObj.lastName, sessionObj.userAddress, sessionObj.token, function(result) {
+        pimper.provision(userName, sessionObj.firstName, sessionObj.lastName, sessionObj.userAddress, sessionObj.adminPwd, function(result) {
           if(result=='taken') {
             console.log('Username '+userName+' is taken! :( trying a different one');
             //sessionObj.userNameTry = (sessionObj.userNameTry?sessionObj.userNameTry:0)+1;
@@ -238,7 +238,7 @@
             state: 'agree',
             firstName: document.getElementById('firstName').value,
             lastName: document.getElementById('lastName').value,
-            token: sessionObj.adminPwd,//the admin pwd that was generated doubles as provisioning token during provisioning
+            adminPwd: sessionObj.adminPwd,//the admin pwd that was generated doubles as provisioning token during provisioning
             userAddress: sessionObj.userAddress
           })
         );
