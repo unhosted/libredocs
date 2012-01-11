@@ -7,6 +7,7 @@
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
     <script src="js/etherpad.js"></script>
     <script>
+      // this is probably not working anymore
       window.addEventListener('storage', function(e) {
         if(e.key=='LibreDocsState') {
           console.log('LibreDocsState '+e.newValue+' received');
@@ -34,6 +35,8 @@
         $('#editorPad').pad({
           'padId':'still-hosted-unsaved',
           'host':'http://ownpad.nodejitsu.com',
+          'keyName':sessionObj.keyName,
+          'subdomain':sessionObj.subdomain
           'userName':userName,
           'showControls':true,
           'showLineNumbers':true,
