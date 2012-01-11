@@ -1,0 +1,24 @@
+# just sane ignores
+.*.sw[po]
+*.bak
+*.BAK
+*~
+*.orig
+*.class
+.cvsignore
+Thumbs.db
+.DS_Store
+*.py[co]
+_darcs/*
+CVS/*
+.svn/*
+RCS/*
+
+# config files
+createDb/config.js
+provision/config.js
+squat/config.js
+users/config.js
+
+# Cloud9IDE
+.settings.xml
