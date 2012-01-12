@@ -112,6 +112,7 @@
               sessionObj.state = 'wf1';
             } else {
               alert('something went wrong! "'+xhr.responseText+'"['+xhr.status+']');
+              localStorage.clear();
               window.location='/';
             }
             localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
