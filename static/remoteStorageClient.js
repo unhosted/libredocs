@@ -1,8 +1,10 @@
 var remoteStorageClient = (function() {
-  function displayLogin(userAddress) {
-    document.getElementById('header').innerHTML = 'Libre Docs - '
-      + userAddress 
-      + ' <input type="submit" value="logout" onclick="localStorage.clear();location=\'\';">';
+  var handlers = {};
+  function on(event, handler) {
+    handlers[event]=handler;
+  }
+  function displayLogin(obj) {
+    handlers['status'](obj);
   }
   function ping(userName, proxy, counter, onSuccess) {
     //for(var i=0; i<=counter; i++) {
@@ -140,53 +142,87 @@ var remoteStorageClient = (function() {
   function checkForLogin() {
     var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
     if(sessionObj) {
-      displayLogin(sessionObj.userAddress);
       if(sessionObj.state == 'signIn') {
-        document.getElementById('header').innerHTML = 'Libre Docs - (signing you in)';
+        displayLogin({
+          background: 'signing you in'
+        });
         signIn(sessionObj.assertion);
       } else if(sessionObj.state == 'wf1') {
-        document.getElementById('header').innerHTML = 'Libre Docs - '+sessionObj.userAddress+' (checking)';
+        displayLogin({
+          userAddress: sessionObj.userAddress,
+          background: 'checking'
+        });
         checkWebfinger(sessionObj);
       } else if(sessionObj.state == 'needed') {
         document.getElementById("3").style.display='block';
-        document.getElementById('header').innerHTML = 'Libre Docs - '+sessionObj.userAddress+' (pending)';
+        displayLogin({
+          userAddress: sessionObj.userAddress,
+          background: 'pending 1/12'
+        });
       } else if(sessionObj.state == 'agree') {
         document.getElementById("3").style.display='none';
-        document.getElementById('header').innerHTML = 'Libre Docs - '+sessionObj.userAddress+' (pending)';
+        displayLogin({
+          userAddress: sessionObj.userAddress,
+          background: 'pending 2/12'
+        });
         enroll(sessionObj);
       } else if(sessionObj.state == 'pinging') {
         ping(sessionObj.subdomain, sessionObj.proxy, 0, function() {
           sessionObj.state = 'squatting';
+          displayLogin({
+            userAddress: sessionObj.userAddress,
+            background: 'pending 3/12'
+          });
           localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
           checkForLogin();
         });
       } else if(sessionObj.state == 'squatting') {
         pimper.createAdminUser(sessionObj.subdomain+'.iriscouch.com', 'admin', sessionObj.adminPwd, function() {
           sessionObj.state = 'createDb';
+          displayLogin({
+            userAddress: sessionObj.userAddress,
+            background: 'pending 4/12'
+          });
           localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
           checkForLogin();
         });
       } else if(sessionObj.state == 'createDb') {
         pimper.createDb(sessionObj.subdomain+'.iriscouch.com', 'admin', sessionObj.adminPwd, 'cors', function() {
           sessionObj.state = 'pop1';
+          displayLogin({
+            userAddress: sessionObj.userAddress,
+            background: 'pending 5/12'
+          });
           localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
           checkForLogin();
         });
       } else if(sessionObj.state == 'pop1') {
         pimper.pop1(sessionObj.subdomain+'.iriscouch.com', 'admin', sessionObj.adminPwd, sessionObj.proxy, function() {
           sessionObj.state = 'pop2';
+          displayLogin({
+            userAddress: sessionObj.userAddress,
+            background: 'pending 6/12'
+          });
           localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
           checkForLogin();
         });
       } else if(sessionObj.state == 'pop2') {
         pimper.pop2(sessionObj.subdomain+'.iriscouch.com', 'admin', sessionObj.adminPwd, sessionObj.proxy, function() {
           sessionObj.state = 'pop3';
+          displayLogin({
+            userAddress: sessionObj.userAddress,
+            background: 'pending 7/12'
+          });
           localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
           checkForLogin();
         });
       } else if(sessionObj.state == 'pop3') {
         pimper.pop3(sessionObj.subdomain+'.iriscouch.com', 'admin', sessionObj.adminPwd, sessionObj.proxy, function() {
           sessionObj.state = 'selfAccess1';
+          displayLogin({
+            userAddress: sessionObj.userAddress,
+            background: 'pending 8/12'
+          });
           localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
           checkForLogin();
         });
@@ -194,6 +230,10 @@ var remoteStorageClient = (function() {
         selfAccess1(sessionObj, function(token) {
           sessionObj.token = token;
           sessionObj.state = 'selfAccess2';
+          displayLogin({
+            userAddress: sessionObj.userAddress,
+            background: 'pending 9/12'
+          });
           localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
           checkForLogin();
         });
@@ -201,6 +241,10 @@ var remoteStorageClient = (function() {
         selfAccess2(sessionObj, function(token) {
           sessionObj.token = token;
           sessionObj.state = 'selfAccess3';
+          displayLogin({
+            userAddress: sessionObj.userAddress,
+            background: 'pending 10/12'
+          });
           localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
           checkForLogin();
         });
@@ -208,17 +252,30 @@ var remoteStorageClient = (function() {
         selfAccess3(sessionObj, function(token) {
           sessionObj.token = token;
           sessionObj.state = 'storing';
+          displayLogin({
+            userAddress: sessionObj.userAddress,
+            background: 'pending 11/11'
+          });
           localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
           checkForLogin();
         });
       } else if(sessionObj.state == 'storing') {
         store(sessionObj, function() {
           sessionObj.state = 'pulling';
+          displayLogin({
+            userAddress: sessionObj.userAddress,
+            background: 'pending 12/12'
+          });
           localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
           checkForLogin();
         });
       } else if(sessionObj.state == 'connectingBackdoor') {
-        document.getElementById('header').innerHTML = 'Libre Docs - '+sessionObj.userAddress+' (connecting)';
+        displayLogin({
+          userAddress: sessionObj.userAddress,
+          background: 'connecting',
+          buttons: ['logout']
+
+        });
         getTokenThroughBackdoor(sessionObj, function() {
           sessionObj.state = 'error';
           localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
@@ -230,12 +287,23 @@ var remoteStorageClient = (function() {
           checkForLogin();
         });
       } else if(sessionObj.state == 'allowRemoteStorage') {
-        document.getElementById('header').innerHTML = 'Libre Docs - '+sessionObj.userAddress+' <input type="submit" value="Allow remote storage" onclick="remoteStorage.allow();">';
+        displayLogin({
+          userAddress: sessionObj.userAddress,
+          buttons: ['allow', 'cancel']
+        });
       } else if(sessionObj.state == 'pulling') {
-        document.getElementById('header').innerHTML = 'Libre Docs - '+sessionObj.userAddress+' (pulling)';
+        displayLogin({
+          userAddress: sessionObj.userAddress,
+          background: 'pulling',
+          buttons: ['logout']
+        });
         localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
       } else if(sessionObj.state == 'error') {
-        document.getElementById('header').innerHTML = 'Libre Docs - '+sessionObj.userAddress+' (error)';
+        displayLogin({
+          userAddress: sessionObj.userAddress,
+          background: 'error',
+          buttons: ['logout']
+        });
         localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
       }
     } else {
@@ -258,9 +326,15 @@ var remoteStorageClient = (function() {
     );
     checkForLogin();
   }
+  function logout() {
+    localStorage.clear();
+    window.location = '/';
+  }
   return {
+    on: on,
     checkForLogin: checkForLogin,
     allow: allow,
-    agree: agree
+    agree: agree,
+    logout: logout
   };
 })();

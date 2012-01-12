@@ -14,6 +14,12 @@
     <script src="http://unhosted.nodejitsu.com/require.js" data-main="http://unhosted.nodejitsu.com/main"></script>
     <script src="/remoteStorageClient.js"></script>
     <script>
+      remoteStorageClient.on('status', function(status) {
+        document.getElementById('header').innerHTML = 'LibreDocs - '+status.userAddress+(status.background?'('+status.background+')':'');
+        for(i in status.buttons) {
+          document.getElementById('header').innerHTML += ' <input type="submit" value="'+status.buttons[i]+'" onclick="remoteStorageClient.'+status.buttons[i]+'();">';
+        }
+      });
       function showList() {
         var str = '';
         var docs = JSON.parse(localStorage.getItem('list'));
