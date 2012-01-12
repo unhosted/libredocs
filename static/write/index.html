@@ -4,7 +4,10 @@
     <meta charset="utf-8">
     <title>Write</title>
     <link rel="icon" type="image/png" href="/icons/noun_project_817.ico"/>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+    <script src="js/etherpad.js"></script>
     <script>
+      // this is probably not working anymore
       window.addEventListener('storage', function(e) {
         if(e.key=='LibreDocsState') {
           console.log('LibreDocsState '+e.newValue+' received');
@@ -15,24 +18,42 @@
           } else {
             document.getElementById('spinner').style.display='none';
           }
-        } else if(e.key == 'text') {
-          displayText();
+        } else if(e.key == 'LibreDocsUserAddress') {
+          connectToOwnpad();
         }
       }, false);
-      function displayText() {
-        if(localStorage.getItem('text') != null) {
-          document.getElementById('text').value=localStorage.getItem('text');
+      // So far this will connect to the default etherpad server.
+      // This is just a test for the editor embedding
+      function connectToOwnpad() {
+        var userName;
+        var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
+        if(sessionObj.userAddress != null) {
+          userName = sessionObj.userAddress;
+          } else {
+          userName = 'Address Not Set Yet'
         }
+        $('#editorPad').pad({
+          'padId':'still-hosted-unsaved',
+          'host':'http://ownpad.nodejitsu.com',
+          'keyName':sessionObj.keyName,
+          'subdomain':sessionObj.subdomain,
+          'userName':userName,
+          'showControls':true,
+          'showLineNumbers':true,
+          //we'll hopefully send the storage data here at some point.
+        });
       }
+
     </script>
     <style>
       * { padding:0; margin:0; border:0; outline:0; }
       html { overflow-x:hidden; overflow-y:hidden; }
-      textarea { position:absolute; padding:10% 20%; font:1.5em FreeSans,Helvetica,sans-serif; color:#333; background:#eee; text-shadow:0 0 1px #666677; width:60%; height:80%; overflow-x:hidden; overflow-y:auto; resize:none; }
+      #editorPad { position:absolute; padding:10% 20%; font:1.5em FreeSans,Helvetica,sans-serif; color:#333; background:#eee; text-shadow:0 0 1px #666677; width:60%; height:80%; overflow-x:hidden; overflow-y:auto; resize:none; }
+      #epframeeditorPad { width:100%; height:100% }
     </style>
 
   </head>
-  <body onload="displayText();">
-    <textarea id="text" onkeyup="localStorage.setItem('text', this.value);" autofocus></textarea>
+  <body onload="connectToOwnpad();">
+    <div id="editorPad"></div>
   </body>
 </html>
