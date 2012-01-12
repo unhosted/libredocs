@@ -108,8 +108,11 @@
             if(sessionObj.ok) {
               //this happens if we have a UserAddress record stored (for webfingerless user addresses)
               sessionObj.state = 'pulling';
-            } else {
+            } else if(sessionObj.userAddress) {
               sessionObj.state = 'wf1';
+            } else {
+              alert('something went wrong! "'+xhr.responseText+'"['+xhr.status+']');
+              window.location='/';
             }
             localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
             checkForLogin();
