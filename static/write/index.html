@@ -25,18 +25,24 @@
       // So far this will connect to the default etherpad server.
       // This is just a test for the editor embedding
       function connectToOwnpad() {
-        var userName;
+        var userName, docName;
         var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
         if(sessionObj.userAddress != null) {
           userName = sessionObj.userAddress;
           } else {
           userName = 'Address Not Set Yet'
         }
+        if(sessionObj.docName != null) {
+          docName = sessionObj.docName;
+          } else {
+          docName = 'still-hosted-no-name'
+        }
         $('#editorPad').pad({
-          'padId':'still-hosted-unsaved',
+          'padId':docName,
           'host':'http://ownpad.nodejitsu.com',
-          'keyName':sessionObj.keyName,
-          'subdomain':sessionObj.subdomain,
+          'storageAddress':sessionObj.storageAddress,
+          'bearerToken':sessionObj.bearerTokena
+          'storageApi':sessionObj.storageApi,
           'userName':userName,
           'showControls':true,
           'showLineNumbers':true,
