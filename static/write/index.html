@@ -12,7 +12,7 @@
     </style>
 
   </head>
-  <body onload="connectToOwnpad();">
+  <body id="body">
     <div class="row show-grid">
       <div id="backArrow" class="span3">
         <a href="/loggedIn.html">
@@ -28,50 +28,6 @@
     <div id="editorPad"></div>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
     <script src="js/etherpad.js"></script>
-    <script>
-      // this is probably not working anymore
-      window.addEventListener('storage', function(e) {
-        if(e.key=='LibreDocsState') {
-          console.log('LibreDocsState '+e.newValue+' received');
-          if(e.newValue == 'exit') {
-            window.close();
-          } else if(e.newValue == 'offline') {
-            document.getElementById('spinner').style.display='block';
-          } else {
-            document.getElementById('spinner').style.display='none';
-          }
-        } else if(e.key == 'LibreDocsUserAddress') {
-          connectToOwnpad();
-        }
-      }, false);
-      // So far this will connect to the default etherpad server.
-      // This is just a test for the editor embedding
-      function connectToOwnpad() {
-        var userName, padId;
-        var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
-        if(sessionObj.userAddress != null) {
-          userName = sessionObj.userAddress;
-          } else {
-          userName = 'Address Not Set Yet'
-        }
-        if(sessionObj.currDocId != null) {
-          padId = sessionObj.currDocId;
-          } else {
-          padId = 'still-hosted-no-name'
-        }
-        $('#editorPad').pad({
-          'padId':padId,
-          'host':'http://ownpad.nodejitsu.com',
-          'storageAddress':sessionObj.storageAddress,
-          'bearerToken':sessionObj.bearerToken,
-          'storageApi':sessionObj.storageApi,
-          'userName':userName,
-          'showControls':true,
-          'showLineNumbers':true,
-          //we'll hopefully send the storage data here at some point.
-        });
-      }
-      document.getElementById('loading').style.display='none';
-    </script>
+    <script src="index.js"></script>
   </body>
 </html>
