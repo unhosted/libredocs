@@ -26,8 +26,8 @@
         <div class="page-header">
           <h1>Libre Docs</h1>
           <div id="signin">
-            <input type="submit" id="signin-button" value="" onclick="go()" />
-          	<p id="signin-loading" style="display:none;">Loading BrowserID &hellip;</p>
+            <input type="submit" id="signin-button" value="" onclick="go()" style="display:none;" />
+          	<p id="signin-loading">Loading BrowserID &hellip;</p>
           </div>
         </div>
         <div class="row">
@@ -62,6 +62,7 @@
   </body>
   <script src="http://browserid.org/include.js"></script>
   <script>
-    document.getElementById('signin-button').disabled=false;
+    document.getElementById('loading').style.display='none';
+    document.getElementById('signin-button').style.display='block';
   </script>
 </html>

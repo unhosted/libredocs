@@ -82,10 +82,6 @@
       <div class="content">
         <div class="page-header">
           <h1>Libre Docs</h1>
-          <div id="signin">
-            <input type="submit" id="signin-button" value="" onclick="go()" />
-          	<p id="signin-loading" style="display:none;">Loading BrowserID &hellip;</p>
-          </div>
         </div>
         <div class="row">
     <div id="3" style="display:none;">
@@ -93,10 +89,8 @@
       <p>I, <input id="firstName" placeholder="first name"> <input id="lastName" placeholder="last name">, agree with the Terms of Service of IrisCouch.com. <input type="submit" value="Agree" onclick="remoteStorageClient.agree();"></p>
       <p><a href="beFree/advanced.html">or choose for advanced freedom</a>.</p>
     </div>
-    <div class="row show-grid"><a id="backArrow" onclick="showList();"><strong>&larr;</strong></a></div>
     <table class="zebra-striped" id="list">
     </table>
-    <textarea style="width:100%;min-height:30em;" id="text" onkeyup="localStorage.setItem('text'+localStorage.getItem('currDoc'), this.value);" autofocus></textarea>
       </div>
 
       <footer>
@@ -105,8 +99,4 @@
      </div>
     </div> <!-- /container -->
   </body>
-  <script src="http://browserid.org/include.js"></script>
-  <script>
-    document.getElementById('signin-button').disabled=false;
-  </script>
 </html>
