@@ -11,11 +11,10 @@
       'docName'          : 'draft',
       'useMonospaceFont' : false,
       'noColors'         : false,
-      'hideQRCode'	 : false
+      'hideQRCode'	 : false,
       'storageAddress'   : '',
       'bearerToken'      : '',
-      'storageApi'       : 'CouchDB',
-      'subdomain'	 : 'sub',
+      'storageApi'       : 'CouchDB'
     };
 
     // This writes a new frame if required
