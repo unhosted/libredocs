@@ -25,20 +25,20 @@
       // So far this will connect to the default etherpad server.
       // This is just a test for the editor embedding
       function connectToOwnpad() {
-        var userName, docName;
+        var userName, padId;
         var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
         if(sessionObj.userAddress != null) {
           userName = sessionObj.userAddress;
           } else {
           userName = 'Address Not Set Yet'
         }
-        if(sessionObj.docName != null) {
-          docName = sessionObj.docName;
+        if(sessionObj.currDocId != null) {
+          padId = sessionObj.currDocId;
           } else {
-          docName = 'still-hosted-no-name'
+          padId = 'still-hosted-no-name'
         }
         $('#editorPad').pad({
-          'padId':docName,
+          'padId':padId,
           'host':'http://ownpad.nodejitsu.com',
           'storageAddress':sessionObj.storageAddress,
           'bearerToken':sessionObj.bearerToken,
@@ -60,6 +60,15 @@
 
   </head>
   <body onload="connectToOwnpad();">
+    <div class="row show-grid">
+      <div id="backArrow" class="span3">
+        <a href="/loggedIn.html">
+          <svg version="1.0" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="30px" height="30px" viewBox="0 0 99.934 100" enable-background="new 0 0 99.934 100" xml:space="preserve">
+            <polygon points="0,75.161 0,0 75.165,0 99.934,24.769 42.75,24.769 98.944,80.893 80.753,99.083 24.771,43.171 24.771,100 0,75.161"/>
+          </svg>
+        </a>
+      </div>
+    </div>
     <div id="editorPad"></div>
   </body>
 </html>

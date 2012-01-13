@@ -45,14 +45,10 @@
           +'</td><td><em>'
           +'</em></td></tr>';
         document.getElementById('list').innerHTML = str;
-        document.getElementById('text').style.display='none';
-        document.getElementById('backArrow').style.display='none';
-        document.getElementById('list').style.display='block';
       }
       function showDoc(i) {
         if(!i) {
           i = new Date().getTime();
-          localStorage.setItem('currDoc', i);
           var docs = JSON.parse(localStorage.getItem('list'));
           if(!docs) {
             docs = {};
@@ -62,43 +58,26 @@
           docs[i].timestamp = new Date().getTime();
           localStorage.setItem('list', JSON.stringify(docs));
         }
-        localStorage.setItem('currDoc', i);
-        document.getElementById('text').value=localStorage.getItem('text'+i);
-        document.getElementById('text').style.display='block';
-        document.getElementById('backArrow').style.display='block';
-        document.getElementById('list').style.display='none';
-      }
-      window.addEventListener('storage', function(e) {
-        if(e.key == 'text') {
-          displayText();
-        }
-      }, false);
-      function displayDocOrList() {
-        if(localStorage.getItem('list')) {
-          showList();
-        } else {
-          showDoc(localStorage.getItem('currDoc'));
-        }
+        var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
+        sessionObj.currDocId = i;
+        localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
+        window.location='/write/';
       }
     </script>
     <link rel="icon" type="image/svg" href="../images/document.svg" />
   </head>
-  <body onload="displayDocOrList();remoteStorageClient.checkForLogin();">
-      <h2 id="header">Libre Docs</h2>
-    <div id="3" style="display:none;"><h2>Please sign up for easy freedom</h2>I, <input id="firstName" placeholder="first name"> <input id="lastName" placeholder="last name">, agree with the Terms of Service of IrisCouch.com. <input type="submit" value="Agree" onclick="remoteStorageClient.agree();">
-    <br>
-    <br>
-    <br>
-    <a href="/beFree/advanced.html">or choose for advanced freedom</a>.</div>
-    <div class="row show-grid">
-      <div id="backArrow" class="span3" onclick="showList();">
-        <svg version="1.0" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="30px" height="30px" viewBox="0 0 99.934 100" enable-background="new 0 0 99.934 100" xml:space="preserve">
-          <polygon points="0,75.161 0,0 75.165,0 99.934,24.769 42.75,24.769 98.944,80.893 80.753,99.083 24.771,43.171 24.771,100 0,75.161"/>
-        </svg>
-      </div>
+  <body onload="showList();remoteStorageClient.checkForLogin();">
+    <h2 id="header">Libre Docs</h2>
+    <div id="3" style="display:none;">
+      <h2>Please sign up for easy freedom</h2>
+      <p>
+        I, <input id="firstName" placeholder="first name"> <input id="lastName" placeholder="last name">, agree with the Terms of Service of IrisCouch.com. <input type="submit" value="Agree" onclick="remoteStorageClient.agree();">
+      </p>
+      <p>
+        <a href="/beFree/advanced.html">or choose for advanced freedom</a>.</div>
+      </p>
     </div>
-    <table class="zebra-striped" style="display:none;" id="list">
+    <table class="zebra-striped" id="list">
     </table>
-    <textarea style="width:80%;height=80%;" id="text" onkeyup="localStorage.setItem('text'+localStorage.getItem('currDoc'), this.value);" autofocus></textarea>
   </body>
 </html>
