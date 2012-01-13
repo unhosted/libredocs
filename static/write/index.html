@@ -4,6 +4,28 @@
     <meta charset="utf-8">
     <title>Write</title>
     <link rel="icon" type="image/png" href="/icons/noun_project_817.ico"/>
+    <style>
+      * { padding:0; margin:0; border:0; outline:0; }
+      html { overflow-x:hidden; overflow-y:hidden; }
+      #editorPad { position:absolute; padding:10% 20%; font:1.5em FreeSans,Helvetica,sans-serif; color:#333; background:#eee; text-shadow:0 0 1px #666677; width:60%; height:80%; overflow-x:hidden; overflow-y:auto; resize:none; }
+      #epframeeditorPad { width:100%; height:100% }
+    </style>
+
+  </head>
+  <body onload="connectToOwnpad();">
+    <div class="row show-grid">
+      <div id="backArrow" class="span3">
+        <a href="/loggedIn.html">
+          <svg version="1.0" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="30px" height="30px" viewBox="0 0 99.934 100" enable-background="new 0 0 99.934 100" xml:space="preserve">
+            <polygon points="0,75.161 0,0 75.165,0 99.934,24.769 42.75,24.769 98.944,80.893 80.753,99.083 24.771,43.171 24.771,100 0,75.161"/>
+          </svg>
+        </a>
+      </div>
+      <div id="loading" class="span3">
+        Loading...
+      </div>
+    </div>
+    <div id="editorPad"></div>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
     <script src="js/etherpad.js"></script>
     <script>
@@ -49,26 +71,7 @@
           //we'll hopefully send the storage data here at some point.
         });
       }
-
+      document.getElementById('loading').style.display='none';
     </script>
-    <style>
-      * { padding:0; margin:0; border:0; outline:0; }
-      html { overflow-x:hidden; overflow-y:hidden; }
-      #editorPad { position:absolute; padding:10% 20%; font:1.5em FreeSans,Helvetica,sans-serif; color:#333; background:#eee; text-shadow:0 0 1px #666677; width:60%; height:80%; overflow-x:hidden; overflow-y:auto; resize:none; }
-      #epframeeditorPad { width:100%; height:100% }
-    </style>
-
-  </head>
-  <body onload="connectToOwnpad();">
-    <div class="row show-grid">
-      <div id="backArrow" class="span3">
-        <a href="/loggedIn.html">
-          <svg version="1.0" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="30px" height="30px" viewBox="0 0 99.934 100" enable-background="new 0 0 99.934 100" xml:space="preserve">
-            <polygon points="0,75.161 0,0 75.165,0 99.934,24.769 42.75,24.769 98.944,80.893 80.753,99.083 24.771,43.171 24.771,100 0,75.161"/>
-          </svg>
-        </a>
-      </div>
-    </div>
-    <div id="editorPad"></div>
   </body>
 </html>
