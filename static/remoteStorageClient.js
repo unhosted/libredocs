@@ -231,7 +231,7 @@ var remoteStorageClient = (function() {
       } else if(sessionObj.state == 'selfAccess1') {
         selfAccess1(sessionObj, function(token) {
           sessionObj.bearerToken = token;
-          sesisonObj.storageApi = 'CouchDB';
+          sessionObj.storageApi = 'CouchDB';
           sessionObj.storageAddress = 'http://'+sessionObj.proxy+'/'+sessionObj.subdomain + '.iriscouch.com/documents/';
           sessionObj.state = 'selfAccess2';
           displayLogin({
