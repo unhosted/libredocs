@@ -14,7 +14,7 @@
         document.getElementById("signin-button").style.display='none';
         document.getElementById("signin-loading").style.display='block';
         navigator.id.get(function(assertion) {
-          remoteStorageClient.signIn(assertion);
+          remoteStorageClient.signIn('http://libredocs.org', assertion);
           window.location='/loggedIn.html';
         });
       }

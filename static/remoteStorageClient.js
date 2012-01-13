@@ -97,7 +97,11 @@ var remoteStorageClient = (function() {
         }
         if(sessionObj.ok) {
           //this happens if we have a UserAddress record stored (for webfingerless user addresses)
-          sessionObj.state = 'pulling';
+          if(audience=='http://libredocs.org') {//then the bearerToken is also directly stored in there
+            sessionObj.state = 'pulling';
+          } else {
+            sessionObj.state = 'allowRemoteStorage';
+          }
         } else if(sessionObj.userAddress) {
           sessionObj.state = 'wf1';
         } else {
