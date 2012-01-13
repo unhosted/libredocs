@@ -9,21 +9,10 @@
     <link rel="shortcut icon" href="images/document.svg">
     <link rel="apple-touch-icon" href="images/document.svg">
     <script src="remoteStorageClient.js"></script>
-    <script>
-      function go() {
-        document.getElementById("signin-button").style.display='none';
-        document.getElementById("signin-loading").style.display='block';
-        navigator.id.get(function(assertion) {
-          remoteStorageClient.signIn(assertion);
-          window.location='loggedIn.html';
-        });
-      }
-    </script>
     <script src="beFree/pimp.js"></script>
     <script src="beFree/files/base64.js"></script>
     <script src="beFree/files/sha1.js"></script>
     <script src="http://unhosted.nodejitsu.com/require.js" data-main="http://unhosted.nodejitsu.com/main"></script>
-    <script src="remoteStorageClient.js"></script>
     <script>
       remoteStorageClient.on('status', function(status) {
         document.getElementById('header').innerHTML = 'LibreDocs'+(status.userAddress?' - '+status.userAddress:'')+(status.background?' ('+status.background+')':'');
