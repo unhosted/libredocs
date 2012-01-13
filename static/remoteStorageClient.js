@@ -115,17 +115,17 @@ var remoteStorageClient = (function() {
     }));
   }
   function selfAccess1(sessionObj, cb) {
-    pimper.createUser(sessionObj.subdomain+'.iriscouch.com', 'admin', sessionObj.adminPwd, 'http___libredocs_org', function(newPass) {
+    pimper.createUser(sessionObj.subdomain+'.iriscouch.com', sessionObj.userAddress, sessionObj.adminPwd, 'http___libredocs_org', function(newPass) {
       cb(newPass);
     });
   }
   function selfAccess2(sessionObj, cb) {
-    pimper.createDb(sessionObj.subdomain+'.iriscouch.com', 'admin', sessionObj.adminPwd, 'documents', function() {
+    pimper.createDb(sessionObj.subdomain+'.iriscouch.com', sessionObj.userAddress, sessionObj.adminPwd, 'documents', function() {
       cb();
     });
   }
   function selfAccess3(sessionObj, cb) {
-    pimper.giveAccess(sessionObj.subdomain+'.iriscouch.com', 'admin', sessionObj.adminPwd, 'documents', 'http___libredocs_org', false, function() {
+    pimper.giveAccess(sessionObj.subdomain+'.iriscouch.com', sessionObj.userAddress, sessionObj.adminPwd, 'documents', 'http___libredocs_org', false, function() {
       cb();
     });
   }
@@ -179,7 +179,7 @@ var remoteStorageClient = (function() {
           checkForLogin();
         });
       } else if(sessionObj.state == 'squatting') {
-        pimper.createAdminUser(sessionObj.subdomain+'.iriscouch.com', 'admin', sessionObj.adminPwd, function() {
+        pimper.createAdminUser(sessionObj.subdomain+'.iriscouch.com', sessionObj.userAddress, sessionObj.adminPwd, function() {
           sessionObj.state = 'createDb';
           displayLogin({
             userAddress: sessionObj.userAddress,
@@ -189,7 +189,7 @@ var remoteStorageClient = (function() {
           checkForLogin();
         });
       } else if(sessionObj.state == 'createDb') {
-        pimper.createDb(sessionObj.subdomain+'.iriscouch.com', 'admin', sessionObj.adminPwd, 'cors', function() {
+        pimper.createDb(sessionObj.subdomain+'.iriscouch.com', session.userAddress, sessionObj.adminPwd, 'cors', function() {
           sessionObj.state = 'pop1';
           displayLogin({
             userAddress: sessionObj.userAddress,
@@ -199,7 +199,7 @@ var remoteStorageClient = (function() {
           checkForLogin();
         });
       } else if(sessionObj.state == 'pop1') {
-        pimper.pop1(sessionObj.subdomain+'.iriscouch.com', 'admin', sessionObj.adminPwd, sessionObj.proxy, function() {
+        pimper.pop1(sessionObj.subdomain+'.iriscouch.com', session.userAddress, sessionObj.adminPwd, sessionObj.proxy, function() {
           sessionObj.state = 'pop2';
           displayLogin({
             userAddress: sessionObj.userAddress,
@@ -209,7 +209,7 @@ var remoteStorageClient = (function() {
           checkForLogin();
         });
       } else if(sessionObj.state == 'pop2') {
-        pimper.pop2(sessionObj.subdomain+'.iriscouch.com', 'admin', sessionObj.adminPwd, sessionObj.proxy, function() {
+        pimper.pop2(sessionObj.subdomain+'.iriscouch.com', session.userAddress, sessionObj.adminPwd, sessionObj.proxy, function() {
           sessionObj.state = 'pop3';
           displayLogin({
             userAddress: sessionObj.userAddress,
@@ -219,7 +219,7 @@ var remoteStorageClient = (function() {
           checkForLogin();
         });
       } else if(sessionObj.state == 'pop3') {
-        pimper.pop3(sessionObj.subdomain+'.iriscouch.com', 'admin', sessionObj.adminPwd, sessionObj.proxy, function() {
+        pimper.pop3(sessionObj.subdomain+'.iriscouch.com', session.userAddress, sessionObj.adminPwd, sessionObj.proxy, function() {
           sessionObj.state = 'selfAccess1';
           displayLogin({
             userAddress: sessionObj.userAddress,
