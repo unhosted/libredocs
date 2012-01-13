@@ -10,7 +10,7 @@ exports.config = {
     'libredocs.org': '/static'
   },
   pathHandler: {
-    'libredocs.org/users': '/Users/mich/Code/Node/libredocs/users',
+    'libredocs.org/users': './users',
     'libredocs.org/browserid-verifier': './browserid',
     'libredocs.org/provision': './provision',
     'libredocs.org/squat': './squat',
