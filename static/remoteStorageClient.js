@@ -85,7 +85,7 @@ var remoteStorageClient = (function() {
       });
     }
   }
-  function doSignIn(assertion) {
+  function doSignIn(audience, assertion) {
     var xhr=new XMLHttpRequest();
     xhr.open('POST', 'http://libredocs.org/users', true);
     xhr.onreadystatechange = function() {
@@ -110,7 +110,7 @@ var remoteStorageClient = (function() {
       }
     };
     xhr.send(JSON.stringify({
-      audience: 'http://libredocs.org',
+      audience: audience,
       assertion: assertion
     }));
   }
@@ -148,7 +148,7 @@ var remoteStorageClient = (function() {
         displayLogin({
           background: 'signing you in'
         });
-        doSignIn(sessionObj.assertion);
+        doSignIn(sessionObj.audience, sessionObj.assertion);
       } else if(sessionObj.state == 'wf1') {
         displayLogin({
           userAddress: sessionObj.userAddress,
@@ -256,7 +256,7 @@ var remoteStorageClient = (function() {
           sessionObj.state = 'storing';
           displayLogin({
             userAddress: sessionObj.userAddress,
-            background: 'pending 11/11'
+            background: 'pending 11/12'
           });
           localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
           checkForLogin();
@@ -330,10 +330,10 @@ var remoteStorageClient = (function() {
     );
     checkForLogin();
   }
-  function signIn(assertion) {
+  function signIn(audience, assertion) {
     localStorage.setItem('sessionObj', JSON.stringify({
       state: 'signIn',
-      audience: 'http://libredocs.org',
+      audience: audience,
       assertion: assertion
     }));
   }

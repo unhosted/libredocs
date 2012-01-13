@@ -107,7 +107,7 @@ exports.handler = (function() {
         console.log('err');
         var headers = {
           'Content-type': 'text/plain',
-          'Access-Control-Allow-Origin': req.headers.origin
+          'Access-Control-Allow-Origin': postData.audience
         };
         console.log(req.headers);
         console.log(headers);
@@ -141,10 +141,10 @@ exports.handler = (function() {
             });
              response.on('end', function() {
               if(response.statusCode == 404) {
-                webfingerLookup(r.email, 'http://libredocs.org', res);
+                webfingerLookup(r.email, postData.audience, res);
               } else {
                 console.log('END; writing to res: "'+resStr+'"');
-                response.headers['Access-Control-Allow-Origin'] = req.headers.Origin;
+                response.headers['Access-Control-Allow-Origin'] = postData.audience;
                 res.writeHead(response.statusCode, response.headers);
                 res.write(resStr);
                 res.end();
@@ -263,8 +263,7 @@ exports.handler = (function() {
   function serve(req, res, baseDir) {
     if(req.method=='OPTIONS') {
       res.writeHead(200, {
-        //'Access-Control-Allow-Origin': req.headers.origin,
-        'Access-Control-Allow-Origin': 'http://myfavouritesandwich.org',
+        'Access-Control-Allow-Origin': req.headers.origin,
         'Access-Control-Allow-Methods': 'POST, PUT, GET',
         'Access-Control-Allow-Headers': 'Origin, Content-Type'
 
@@ -279,11 +278,21 @@ exports.handler = (function() {
       req.on('end', function() {
         var incoming = JSON.parse(dataStr);
         console.log(incoming);
+        if(incoming.audience == 'http://libredocs.org') {
+          console.log('Welcome, LibreDocs user');
+        } else if(incoming.audience == 'http://myfavouritesandwich.org') {
+          console.log('Welcome, MyFavouriteSandwich user');
+        } else {
+          console.log('foreign audience '+incoming.audience);
+          res.writeHead(401);
+          res.end('foreign audience - come to #unhosted on freenode to register it');
+          return;
+        }
         if(incoming.action == 'set') {
           serveSet(req, res, incoming);
         } else {
           serveGet(req, res, {
-            audience: 'http://libredocs.org',
+            audience: incoming.audience,
             assertion: incoming.assertion
           });
         }
