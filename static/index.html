@@ -8,28 +8,26 @@
     <link href="css/custom.css" rel="stylesheet">
     <link rel="shortcut icon" href="images/document.svg">
     <link rel="apple-touch-icon" href="images/document.svg">
-    <script src="/remoteStorageClient.js"></script>
+    <script src="remoteStorageClient.js"></script>
     <script>
       function go() {
         document.getElementById("signin-button").style.display='none';
         document.getElementById("signin-loading").style.display='block';
         navigator.id.get(function(assertion) {
           remoteStorageClient.signIn('http://libredocs.org', assertion);
-          window.location='/loggedIn.html';
+          window.location='loggedIn.html';
         });
       }
     </script>
   </head>
   <body>
-
     <div class="container">
-
       <div class="content">
         <div class="page-header">
           <h1>Libre Docs</h1>
           <div id="signin">
-            <input type="submit" id="signin-button" value="" onclick="go()" style="display:none;" />
-          	<p id="signin-loading">Loading BrowserID &hellip;</p>
+            <input type="submit" id="signin-button" value="" onclick="go()" />
+          	<p id="signin-loading" style="display:none;">Loading BrowserID &hellip;</p>
           </div>
         </div>
         <div class="row">
@@ -64,7 +62,6 @@
   </body>
   <script src="http://browserid.org/include.js"></script>
   <script>
-    document.getElementById("signin-loading").style.display='none';
-    document.getElementById("signin-button").style.display='block';
+    document.getElementById('signin-button').disabled=false;
   </script>
 </html>
