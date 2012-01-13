@@ -13,11 +13,7 @@
         document.getElementById("signin-button").style.display='none';
         document.getElementById("signin-loading").style.display='block';
         navigator.id.get(function(assertion) {
-          localStorage.setItem('sessionObj', JSON.stringify({
-            state: 'signIn',
-            audience: 'http://libredocs.org',
-            assertion: assertion
-          }));
+          remoteStorageClient.signIn(assertion);
           window.location='/loggedIn.html';
         });
       }

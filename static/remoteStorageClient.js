@@ -83,9 +83,9 @@ var remoteStorageClient = (function() {
       });
     }
   }
-  function signIn(assertion) {
+  function doSignIn(assertion) {
     var xhr=new XMLHttpRequest();
-    xhr.open('POST', '/users', true);
+    xhr.open('POST', 'http://libredocs.org/users', true);
     xhr.onreadystatechange = function() {
       if(xhr.readyState == 4) {
         var sessionObj = {};
@@ -146,7 +146,7 @@ var remoteStorageClient = (function() {
         displayLogin({
           background: 'signing you in'
         });
-        signIn(sessionObj.assertion);
+        doSignIn(sessionObj.assertion);
       } else if(sessionObj.state == 'wf1') {
         displayLogin({
           userAddress: sessionObj.userAddress,
@@ -326,12 +326,20 @@ var remoteStorageClient = (function() {
     );
     checkForLogin();
   }
+  function signIn(assertion) {
+    localStorage.setItem('sessionObj', JSON.stringify({
+      state: 'signIn',
+      audience: 'http://libredocs.org',
+      assertion: assertion
+    }));
+  }
   function logout() {
     localStorage.clear();
     window.location = '/';
   }
   return {
     on: on,
+    signIn: signIn,
     checkForLogin: checkForLogin,
     allow: allow,
     agree: agree,
