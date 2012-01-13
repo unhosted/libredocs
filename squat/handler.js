@@ -1,8 +1,7 @@
 exports.handler = (function() {
   var url = require('url'),
     https = require('https'),
-    querystring = require('querystring'),
-    //browseridVerify = require('browserid-verifier');
+    querystring = require('querystring');
 
   function checkToken(userAddress, token, cb) {
     cb();
