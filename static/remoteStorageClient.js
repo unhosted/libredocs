@@ -77,6 +77,8 @@ var remoteStorageClient = (function() {
           } else {
             sessionObj.state = 'allowRemoteStorage';
           }
+          sessionObj.storageAddress = webfinger.resolveTemplate(attr.template, 'documents');
+          sessionObj.storageApi = attr.api;
           localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
           checkForLogin();
         });
@@ -228,7 +230,9 @@ var remoteStorageClient = (function() {
         });
       } else if(sessionObj.state == 'selfAccess1') {
         selfAccess1(sessionObj, function(token) {
-          sessionObj.token = token;
+          sessionObj.bearerToken = token;
+          sesisonObj.storageApi = 'CouchDB';
+          sessionObj.storageAddress = 'http://'+sessionObj.proxy+'/'+sessionObj.subdomain + '.iriscouch.com/documents/';
           sessionObj.state = 'selfAccess2';
           displayLogin({
             userAddress: sessionObj.userAddress,
@@ -238,8 +242,7 @@ var remoteStorageClient = (function() {
           checkForLogin();
         });
       } else if(sessionObj.state == 'selfAccess2') {
-        selfAccess2(sessionObj, function(token) {
-          sessionObj.token = token;
+        selfAccess2(sessionObj, function() {
           sessionObj.state = 'selfAccess3';
           displayLogin({
             userAddress: sessionObj.userAddress,
@@ -249,8 +252,7 @@ var remoteStorageClient = (function() {
           checkForLogin();
         });
       } else if(sessionObj.state == 'selfAccess3') {
-        selfAccess3(sessionObj, function(token) {
-          sessionObj.token = token;
+        selfAccess3(sessionObj, function() {
           sessionObj.state = 'storing';
           displayLogin({
             userAddress: sessionObj.userAddress,
@@ -281,7 +283,9 @@ var remoteStorageClient = (function() {
           localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
           checkForLogin();
         }, function(token) {
-          sessionObj.token = token;
+          sessionObj.bearerToken = token;
+          sessionObj.storageAddress = 'http://'+sessionObj.proxy+'/'+sessionObj.subdomain + '.iriscouch.com/documents/';
+          sessionObj.state = 'selfAccess2';
           sessionObj.state = 'pulling';
           localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
           checkForLogin();

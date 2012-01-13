@@ -16,6 +16,7 @@ exports.handler = (function() {
     return randStr;
   }
   function webfingerLookup(userAddress, origin, res) {
+    console.log('webfingerLookup');
     var userAddressParts = userAddress.split('@');
     var options = {
       host: userAddressParts[1],
@@ -67,13 +68,22 @@ exports.handler = (function() {
     //});
   }
   function serveGet(req, res, postData) {
+    console.log('serveGet');
     console.log(postData);
     browseridVerify(postData, function(err, r) {
       if(err) {
-        res.writeHead(500, {'Content-type': 'text/plain'});
+        console.log('err');
+        var headers = {
+          'Content-type': 'text/plain',
+          'Access-Control-Allow-Origin': req.headers.origin
+        };
+        console.log(req.headers);
+        console.log(headers);
+        res.writeHead(500, headers);
         res.write(JSON.stringify(err));
         res.end();
       } else {
+        console.log('no err');
         if(r.email) {
           console.log(r.email+' confirmed by browserid verifier');
           var authStr = userDb.usr + ':' + userDb.pwd;
@@ -93,15 +103,16 @@ exports.handler = (function() {
             console.log('HEADERS: ' + JSON.stringify(response.headers));
             response.setEncoding('utf8');
             var resStr = '';
-            response.on('data', function (chunk) {
+             response.on('data', function (chunk) {
               resStr += chunk;
               console.log('BODY: ' + chunk);
             });
-            response.on('end', function() {
+             response.on('end', function() {
               if(response.statusCode == 404) {
                 webfingerLookup(r.email, 'http://libredocs.org', res);
               } else {
                 console.log('END; writing to res: "'+resStr+'"');
+                response.headers['Access-Control-Allow-Origin'] = req.headers.Origin;
                 res.writeHead(response.statusCode, response.headers);
                 res.write(resStr);
                 res.end();
@@ -163,6 +174,7 @@ exports.handler = (function() {
   }
 
   function serveSet(req, res, params) {
+    console.log('serveSet');
     console.log(params);
     var authStr = userDb.usr + ':' + userDb.pwd;
     console.log(authStr);
@@ -217,24 +229,35 @@ exports.handler = (function() {
     request.end();
   }
   function serve(req, res, baseDir) {
-    var dataStr = '';
-    req.on('data', function(chunk) {
-      dataStr += chunk;
-    });
-    req.on('end', function() {
-      var incoming = JSON.parse(dataStr);
-      console.log(incoming);
-      if(incoming.action == 'set') {
-        serveSet(req, res, incoming);
-      } else {
-        serveGet(req, res, {
-          audience: 'http://libredocs.org',
-          assertion: incoming.assertion
-        });
-      }
-    });
-  }
+    if(req.method=='OPTIONS') {
+      res.writeHead(200, {
+        //'Access-Control-Allow-Origin': req.headers.origin,
+        'Access-Control-Allow-Origin': 'http://myfavouritesandwich.org',
+        'Access-Control-Allow-Methods': 'POST, PUT, GET',
+        'Access-Control-Allow-Headers': 'Origin, Content-Type'
 
+      });
+      res.end();
+    } else {
+      console.log('serve');
+      var dataStr = '';
+      req.on('data', function(chunk) {
+        dataStr += chunk;
+      });
+      req.on('end', function() {
+        var incoming = JSON.parse(dataStr);
+        console.log(incoming);
+        if(incoming.action == 'set') {
+          serveSet(req, res, incoming);
+        } else {
+          serveGet(req, res, {
+            audience: 'http://libredocs.org',
+            assertion: incoming.assertion
+          });
+        }
+      });
+    }
+  }
   return {
     serve: serve
   };
