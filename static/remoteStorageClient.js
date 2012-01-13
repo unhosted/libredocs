@@ -189,7 +189,7 @@ var remoteStorageClient = (function() {
           checkForLogin();
         });
       } else if(sessionObj.state == 'createDb') {
-        pimper.createDb(sessionObj.subdomain+'.iriscouch.com', session.userAddress, sessionObj.adminPwd, 'cors', function() {
+        pimper.createDb(sessionObj.subdomain+'.iriscouch.com', sessionObj.userAddress, sessionObj.adminPwd, 'cors', function() {
           sessionObj.state = 'pop1';
           displayLogin({
             userAddress: sessionObj.userAddress,
@@ -199,7 +199,7 @@ var remoteStorageClient = (function() {
           checkForLogin();
         });
       } else if(sessionObj.state == 'pop1') {
-        pimper.pop1(sessionObj.subdomain+'.iriscouch.com', session.userAddress, sessionObj.adminPwd, sessionObj.proxy, function() {
+        pimper.pop1(sessionObj.subdomain+'.iriscouch.com', sessionObj.userAddress, sessionObj.adminPwd, sessionObj.proxy, function() {
           sessionObj.state = 'pop2';
           displayLogin({
             userAddress: sessionObj.userAddress,
@@ -209,7 +209,7 @@ var remoteStorageClient = (function() {
           checkForLogin();
         });
       } else if(sessionObj.state == 'pop2') {
-        pimper.pop2(sessionObj.subdomain+'.iriscouch.com', session.userAddress, sessionObj.adminPwd, sessionObj.proxy, function() {
+        pimper.pop2(sessionObj.subdomain+'.iriscouch.com', sessionObj.userAddress, sessionObj.adminPwd, sessionObj.proxy, function() {
           sessionObj.state = 'pop3';
           displayLogin({
             userAddress: sessionObj.userAddress,
@@ -219,7 +219,7 @@ var remoteStorageClient = (function() {
           checkForLogin();
         });
       } else if(sessionObj.state == 'pop3') {
-        pimper.pop3(sessionObj.subdomain+'.iriscouch.com', session.userAddress, sessionObj.adminPwd, sessionObj.proxy, function() {
+        pimper.pop3(sessionObj.subdomain+'.iriscouch.com', sessionObj.userAddress, sessionObj.adminPwd, sessionObj.proxy, function() {
           sessionObj.state = 'selfAccess1';
           displayLogin({
             userAddress: sessionObj.userAddress,

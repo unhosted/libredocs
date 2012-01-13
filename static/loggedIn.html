@@ -15,7 +15,7 @@
     <script src="/remoteStorageClient.js"></script>
     <script>
       remoteStorageClient.on('status', function(status) {
-        document.getElementById('header').innerHTML = 'LibreDocs - '+status.userAddress+(status.background?'('+status.background+')':'');
+        document.getElementById('header').innerHTML = 'LibreDocs'+(status.userAddress?' - '+status.userAddress:'')+(status.background?' ('+status.background+')':'');
         for(i in status.buttons) {
           document.getElementById('header').innerHTML += ' <input type="submit" value="'+status.buttons[i]+'" onclick="remoteStorageClient.'+status.buttons[i]+'();">';
         }
