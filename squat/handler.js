@@ -2,7 +2,7 @@ exports.handler = (function() {
   var url = require('url'),
     https = require('https'),
     querystring = require('querystring'),
-    browseridVerify = require('browserid-verifier');
+    //browseridVerify = require('browserid-verifier');
 
   function checkToken(userAddress, token, cb) {
     cb();

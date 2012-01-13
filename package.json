@@ -10,8 +10,8 @@
   "scripts": {
     "start": "server.js"
   },
-  "dependencies": {
-    "browserid-verifier": ">= 0.0.2"
-  },
+//  "dependencies": {
+//    "browserid-verifier": ">= 0.0.2"
+//  },
   "version": "0.0.0-55"
 }

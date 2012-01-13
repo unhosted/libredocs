@@ -2,9 +2,41 @@ exports.handler = (function() {
   var url = require('url'),
     https = require('https'),
     querystring = require('querystring'),
-    browseridVerify = require('browserid-verifier'),
+    //browseridVerify = require('browserid-verifier'),
     fs = require('fs'),
     userDb = require('./config').config;
+  
+  function browseridVerify(obj, cb) {
+    var queryStr = 'audience='+obj.audience+'&assertion='+obj.assertion;
+    var options = {
+      host: 'browserid.org',
+      port: 443,
+      path: '/verify',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Length': queryStr.length
+      }
+    };
+    console.log('query string:');
+    console.log(queryStr);
+    console.log('posting:');
+    console.log(options);
+    var request = https.request(options, function(response) {
+      var dataStr='';
+      response.on('data', function(chunk) {
+        dataStr += chunk;
+      });
+      response.on('end', function() {
+        console.log('response from verify:');
+        console.log(dataStr);
+        var r = JSON.parse(dataStr);
+        cb((r.status!='okay'), r);
+      });
+    });
+    request.write(queryStr);
+    request.end();
+  }
 
   function randStr(length) {
     var buffer = new Buffer(length);
