@@ -174,16 +174,26 @@ var remoteStorageClient = (function() {
         enroll(sessionObj);
       } else if(sessionObj.state == 'pinging') {
         ping(sessionObj.subdomain, sessionObj.proxy, 0, function() {
-          sessionObj.state = 'squatting';
+          sessionObj.state = 'squatting1';
           displayLogin({
             userAddress: sessionObj.userAddress,
-            background: 'pending 3/15'
+            background: 'pending 3a/15'
           });
           localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
           checkForLogin();
         });
-      } else if(sessionObj.state == 'squatting') {
-        pimper.createAdminUser(sessionObj.subdomain+'.iriscouch.com', sessionObj.userAddress, sessionObj.adminPwd, function() {
+      } else if(sessionObj.state == 'squatting1') {
+        pimper.createAdminUser1(sessionObj.subdomain+'.iriscouch.com', sessionObj.userAddress, sessionObj.adminPwd, function() {
+          sessionObj.state = 'squatting2';
+          displayLogin({
+            userAddress: sessionObj.userAddress,
+            background: 'pending 3b/15'
+          });
+          localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
+          checkForLogin();
+        });
+      } else if(sessionObj.state == 'squatting2') {
+        pimper.createAdminUser2(sessionObj.subdomain+'.iriscouch.com', sessionObj.userAddress, sessionObj.adminPwd, function() {
           sessionObj.state = 'createDb';
           displayLogin({
             userAddress: sessionObj.userAddress,
