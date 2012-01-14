@@ -36,7 +36,7 @@ function connectToOwnpad() {
     'storageApi':sessionObj.storageApi,
     'userName':userName,
     'showControls':true,
-    'showLineNumbers':true,
+    'showLineNumbers':false,
     //we'll hopefully send the storage data here at some point.
   });
 }
