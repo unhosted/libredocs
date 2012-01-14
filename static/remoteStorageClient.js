@@ -173,19 +173,80 @@ var remoteStorageClient = (function() {
     pimper.createDb(sessionObj.subdomain+'.iriscouch.com', sessionObj.userAddress, sessionObj.adminPwd, 'cors', cb);
   }
   function pop1(cb) {
-    pimper.pop1(sessionObj.subdomain+'.iriscouch.com', sessionObj.userAddress, sessionObj.adminPwd, sessionObj.proxy, cb);
+    var couchAddress = sessionObj.subdomain+'.iriscouch.com';
+    var httpTemplate = 'http://'+sessionObj.proxy+couchAddress+'/{category}/';
+    var putHost = 'http://'+sessionObj.proxy+couchAddress;
+    var authStr = {
+      usr:sessionObj.userAddress,
+      pwd:sessionObj.adminPwd
+    };
+    pimper.createDocument(putHost, 'cors', '_design/well-known', authStr, '{'+
+      '\"_id\": \"_design/well-known\",'+
+      '\"shows\": {'+
+        '\"host-meta\":'+ 
+          '\"function\(doc, req\) { return {'+
+            ' \\"body\\": \\"'+
+            '<?xml version=\\\\\\"1.0\\\\\\" encoding=\\\\\\"UTF-8\\\\\\"?>\\\\\\n'+
+            '<XRD xmlns=\\\\\\"http://docs.oasis-open.org/ns/xri/xrd-1.0\\\\\\" xmlns:hm=\\\\\\"http://host-meta.net/xrd/1.0\\\\\\">\\\\\\n'+
+            '  <hm:Host xmlns=\\\\\\"http://host-meta.net/xrd/1.0\\\\\\">'+couchAddress+'</hm:Host>\\\\\\n'+
+            '  <Link rel=\\\\\\"lrdd\\\\\\" template=\\\\\\"http://'+couchAddress+'/cors/_design/well-known/_show/webfinger?q={uri}\\\\\\"></Link>\\\\\\n'+
+            '</XRD>\\\\\\n\\",'+
+            '\\"headers\\": {\\"Access-Control-Allow-Origin\\": \\"*\\", \\"Content-Type\\": \\"application/xml+xrd\\"}'+
+          '};}\",'+
+        '\"webfinger\":'+ 
+          '\"function\(doc, req\) { return {'+
+            ' \\"body\\": \\"'+
+            '<?xml version=\\\\\\"1.0\\\\\\" encoding=\\\\\\"UTF-8\\\\\\"?>\\\\\\n'+
+            '<XRD xmlns=\\\\\\"http://docs.oasis-open.org/ns/xri/xrd-1.0\\\\\\" xmlns:hm=\\\\\\"http://host-meta.net/xrd/1.0\\\\\\">\\\\\\n'+
+            '  <hm:Host xmlns=\\\\\\"http://host-meta.net/xrd/1.0\\\\\\">'+couchAddress+'</hm:Host>\\\\\\n'+
+            '  <Link \\\\\\n'+
+            '    rel=\\\\\\"remoteStorage\\\\\\"\\\\\\n'+
+            '    api=\\\\\\"CouchDB\\\\\\"\\\\\\n'+
+            '    auth=\\\\\\"http://'+couchAddress+'/cors/auth/modal.html\\\\\\"\\\\\\n'+
+            '    template=\\\\\\"'+httpTemplate+'\\\\\\"\\\\\\n'+
+            '  ></Link>\\\\\\n'+
+            '</XRD>\\\\\\n\\",'+
+            '\\"headers\\": {\\"Access-Control-Allow-Origin\\": \\"*\\", \\"Content-Type\\": \\"application/xml+xrd\\"}'+
+          '};}\",'+
+        '\"vep\":'+
+          '\" function\(doc, req\) { return { \\"body\\": \\"\(coming soon\)\\",'+
+          ' \\"headers\\": {\\"Access-Control-Allow-Origin\\": \\"*\\"}'+
+         '};}\"'+
+         '}}', cb);
   }
   function pop2(cb) {
-    pimper.pop2(sessionObj.subdomain+'.iriscouch.com', sessionObj.userAddress, sessionObj.adminPwd, sessionObj.proxy, cb);
+    var couchAddress = sessionObj.subdomain+'.iriscouch.com';
+    var putHost = 'http://'+sessionObj.proxy+couchAddress;
+    var authStr = {
+      usr:sessionObj.userAddress,
+      pwd:sessionObj.adminPwd
+    };
+    pimper.uploadAttachment(putHost, 'cors', 'auth', authStr, 'modal.html', 'http://libredocs.org/beFree/files/modal.html', 'text/html', cb);
   }
   function pop3(cb) {
-    pimper.pop3(sessionObj.subdomain+'.iriscouch.com', sessionObj.userAddress, sessionObj.adminPwd, sessionObj.proxy, cb);
+    var couchAddress = sessionObj.subdomain+'.iriscouch.com';
+    var putHost = 'http://'+proxy+couchAddress;
+    var authStr = {
+      usr:sessionObj.userAddress,
+      pwd:sessionObj.adminPwd
+    };
+    pimper.uploadAttachment(putHost, 'cors', 'base64', authStr, 'base64.js', 'http://libredocs.org/beFree/files/base64.js', 'application/javascript', cb);
   }
   function pop4(cb) {
-    pimper.pop4(sessionObj.subdomain+'.iriscouch.com', sessionObj.userAddress, sessionObj.adminPwd, sessionObj.proxy, cb);
+    var couchAddress = sessionObj.subdomain+'.iriscouch.com';
+    var putHost = 'http://'+proxy+couchAddress;
+    var authStr = {
+      usr:sessionObj.userAddress,
+      pwd:sessionObj.adminPwd
+    };
+    pimper.uploadAttachment(putHost, 'cors', 'sha1', authStr, 'sha1.js', 'http://libredocs.org/beFree/files/sha1.js', 'application/javascript', cb);
   }
   function pop5(cb) {
-    pimper.pop5(sessionObj.subdomain+'.iriscouch.com', sessionObj.userAddress, sessionObj.adminPwd, sessionObj.proxy, cb);
+    var couchAddress = sessionObj.subdomain+'.iriscouch.com';
+    pimper.couchPut(couchAddress, sessionObj.userAddress, sessionObj.adminPwd, '_config', 'browserid', {
+      enabled: true,
+      verify_url: 'https://browserid.org/verify'
+    }, cb);
   }
   function doSelfAccess1(cb) {
     pimper.createUser(sessionObj.subdomain+'.iriscouch.com', sessionObj.userAddress, sessionObj.adminPwd, 'http___libredocs_org', function(token) {
