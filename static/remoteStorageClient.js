@@ -1,4 +1,8 @@
 var remoteStorageClient = (function() {
+  var sessionStates = {
+    signIn: { page: '/loggedIn.html', display:'signing you in', action: doSignIn},
+    wf1: { page: '/loggedIn.html', display:'checking', action: checkWebfinger}
+  };
   var handlers = {};
   function on(event, handler) {
     handlers[event]=handler;
@@ -85,7 +89,7 @@ var remoteStorageClient = (function() {
       });
     }
   }
-  function doSignIn(audience, assertion) {
+  function doSignIn(incomingObj) {
     var xhr=new XMLHttpRequest();
     xhr.open('POST', 'http://libredocs.org/users', true);
     xhr.onreadystatechange = function() {
@@ -114,8 +118,8 @@ var remoteStorageClient = (function() {
       }
     };
     xhr.send(JSON.stringify({
-      audience: audience,
-      assertion: assertion
+      audience: incomingObj.audience,
+      assertion: incomingObj.assertion
     }));
   }
   function selfAccess1(sessionObj, cb) {
@@ -148,17 +152,17 @@ var remoteStorageClient = (function() {
   function checkForLogin() {
     var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
     if(sessionObj) {
-      if(sessionObj.state == 'signIn') {
-        displayLogin({
-          background: 'signing you in'
-        });
-        doSignIn(sessionObj.audience, sessionObj.assertion);
-      } else if(sessionObj.state == 'wf1') {
-        displayLogin({
-          userAddress: sessionObj.userAddress,
-          background: 'checking'
-        });
-        checkWebfinger(sessionObj);
+      if(sessionStates[sessionObj.state]) {
+        var fsmInfo = sessionStates[sessionObj.state];
+        if(window.location.pathname != fsmInfo.page) {
+          window.location = fsmInfo.page;
+        }
+        if(sessionObj.userAddress) {
+          displayLogin({userAddress: sessionObj.userAddress, background: fsmInfo.display});
+        } else {
+          displayLogin({background: fsmInfo.display});
+        }
+        fsmInfo.action(sessionObj);
       } else if(sessionObj.state == 'needed') {
         document.getElementById("3").style.display='block';
         displayLogin({
@@ -173,135 +177,135 @@ var remoteStorageClient = (function() {
         });
         enroll(sessionObj);
       } else if(sessionObj.state == 'pinging') {
+        displayLogin({
+          userAddress: sessionObj.userAddress,
+          background: 'pending 3a/15'
+        });
         ping(sessionObj.subdomain, sessionObj.proxy, 0, function() {
           sessionObj.state = 'squatting1';
-          displayLogin({
-            userAddress: sessionObj.userAddress,
-            background: 'pending 3a/15'
-          });
           localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
           checkForLogin();
         });
       } else if(sessionObj.state == 'squatting1') {
+        displayLogin({
+          userAddress: sessionObj.userAddress,
+          background: 'pending 3b/15'
+        });
         pimper.createAdminUser1(sessionObj.subdomain+'.iriscouch.com', sessionObj.userAddress, sessionObj.adminPwd, function() {
           sessionObj.state = 'squatting2';
-          displayLogin({
-            userAddress: sessionObj.userAddress,
-            background: 'pending 3b/15'
-          });
           localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
           checkForLogin();
         });
       } else if(sessionObj.state == 'squatting2') {
+        displayLogin({
+          userAddress: sessionObj.userAddress,
+          background: 'pending 4/15'
+        });
         pimper.createAdminUser2(sessionObj.subdomain+'.iriscouch.com', sessionObj.userAddress, sessionObj.adminPwd, function() {
           sessionObj.state = 'createDb';
-          displayLogin({
-            userAddress: sessionObj.userAddress,
-            background: 'pending 4/15'
-          });
           localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
           checkForLogin();
         });
       } else if(sessionObj.state == 'createDb') {
+        displayLogin({
+          userAddress: sessionObj.userAddress,
+          background: 'pending 5/15'
+        });
         pimper.createDb(sessionObj.subdomain+'.iriscouch.com', sessionObj.userAddress, sessionObj.adminPwd, 'cors', function() {
           sessionObj.state = 'pop1';
-          displayLogin({
-            userAddress: sessionObj.userAddress,
-            background: 'pending 5/15'
-          });
           localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
           checkForLogin();
         });
       } else if(sessionObj.state == 'pop1') {
+        displayLogin({
+          userAddress: sessionObj.userAddress,
+          background: 'pending 6/15'
+        });
         pimper.pop1(sessionObj.subdomain+'.iriscouch.com', sessionObj.userAddress, sessionObj.adminPwd, sessionObj.proxy, function() {
           sessionObj.state = 'pop2';
-          displayLogin({
-            userAddress: sessionObj.userAddress,
-            background: 'pending 6/15'
-          });
           localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
           checkForLogin();
         });
       } else if(sessionObj.state == 'pop2') {
+        displayLogin({
+          userAddress: sessionObj.userAddress,
+          background: 'pending 7/15'
+        });
         pimper.pop2(sessionObj.subdomain+'.iriscouch.com', sessionObj.userAddress, sessionObj.adminPwd, sessionObj.proxy, function() {
           sessionObj.state = 'pop3';
-          displayLogin({
-            userAddress: sessionObj.userAddress,
-            background: 'pending 7/15'
-          });
           localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
           checkForLogin();
         });
       } else if(sessionObj.state == 'pop3') {
+        displayLogin({
+          userAddress: sessionObj.userAddress,
+          background: 'pending 9/15'
+        });
         pimper.pop3(sessionObj.subdomain+'.iriscouch.com', sessionObj.userAddress, sessionObj.adminPwd, sessionObj.proxy, function() {
           sessionObj.state = 'pop4';
-          displayLogin({
-            userAddress: sessionObj.userAddress,
-            background: 'pending 9/15'
-          });
           localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
           checkForLogin();
         });
       } else if(sessionObj.state == 'pop4') {
+        displayLogin({
+          userAddress: sessionObj.userAddress,
+          background: 'pending 10/15'
+        });
         pimper.pop4(sessionObj.subdomain+'.iriscouch.com', sessionObj.userAddress, sessionObj.adminPwd, sessionObj.proxy, function() {
           sessionObj.state = 'pop5';
-          displayLogin({
-            userAddress: sessionObj.userAddress,
-            background: 'pending 10/15'
-          });
           localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
           checkForLogin();
         });
       } else if(sessionObj.state == 'pop5') {
+        displayLogin({
+          userAddress: sessionObj.userAddress,
+          background: 'pending 11/15'
+        });
         pimper.pop5(sessionObj.subdomain+'.iriscouch.com', sessionObj.userAddress, sessionObj.adminPwd, sessionObj.proxy, function() {
           sessionObj.state = 'selfAccess1';
-          displayLogin({
-            userAddress: sessionObj.userAddress,
-            background: 'pending 11/15'
-          });
           localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
           checkForLogin();
         });
       } else if(sessionObj.state == 'selfAccess1') {
+        displayLogin({
+          userAddress: sessionObj.userAddress,
+          background: 'pending 12/15'
+        });
         selfAccess1(sessionObj, function(token) {
           sessionObj.bearerToken = token;
           sessionObj.storageApi = 'CouchDB';
           sessionObj.storageAddress = 'http://'+sessionObj.proxy+'/'+sessionObj.subdomain + '.iriscouch.com/documents/';
           sessionObj.state = 'selfAccess2';
-          displayLogin({
-            userAddress: sessionObj.userAddress,
-            background: 'pending 12/15'
-          });
           localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
           checkForLogin();
         });
       } else if(sessionObj.state == 'selfAccess2') {
+        displayLogin({
+          userAddress: sessionObj.userAddress,
+          background: 'pending 13/15'
+        });
         selfAccess2(sessionObj, function() {
           sessionObj.state = 'selfAccess3';
-          displayLogin({
-            userAddress: sessionObj.userAddress,
-            background: 'pending 13/15'
-          });
           localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
           checkForLogin();
         });
       } else if(sessionObj.state == 'selfAccess3') {
+        displayLogin({
+          userAddress: sessionObj.userAddress,
+          background: 'pending 14/15'
+        });
         selfAccess3(sessionObj, function() {
           sessionObj.state = 'storing';
-          displayLogin({
-            userAddress: sessionObj.userAddress,
-            background: 'pending 14/15'
-          });
           localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
           checkForLogin();
         });
       } else if(sessionObj.state == 'storing') {
+        displayLogin({
+          userAddress: sessionObj.userAddress,
+          background: 'pending 15/15'
+        });
         store(sessionObj, function() {
           sessionObj.state = 'pulling';
-          displayLogin({
-            userAddress: sessionObj.userAddress,
-            background: 'pending 15/15'
-          });
           localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
           checkForLogin();
         });
