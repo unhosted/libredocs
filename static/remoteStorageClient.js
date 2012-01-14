@@ -1,8 +1,140 @@
 var remoteStorageClient = (function() {
   var sessionStates = {
     signIn: { page: '/loggedIn.html', display:'signing you in', action: doSignIn},
-    wf1: { page: '/loggedIn.html', display:'checking', action: checkWebfinger}
+    wf1: { page: '/loggedIn.html', display:'checking', action: checkWebfinger},
+    needed: { page: '/loggedIn.html', display:'pending 1/15', displayBlock:'3'},
+    agree: { page: '/loggedIn.html', display:'pending 2/15', displayNone:'3', action: enroll},
+    pinging: { page: '/loggedIn.html', display:'pending 3/15', action: doPing},
+    squatting1: { page: '/loggedIn.html', display:'pending 4/15', action: doSquat1},
+    squatting2: { page: '/loggedIn.html', display:'pending 5/15', action: doSquat2},
+    createDb: { page: '/loggedIn.html', display:'pending 6/15', action: createDb},
+    pop1: { page: '/loggedIn.html', display:'pending 7/15', action: pop1},
+    pop2: { page: '/loggedIn.html', display:'pending 8/15', action: pop2},
+    pop3: { page: '/loggedIn.html', display:'pending 9/15', action: pop3},
+    pop4: { page: '/loggedIn.html', display:'pending 10/15', action: pop4},
+    pop5: { page: '/loggedIn.html', display:'pending 11/15', action: pop5},
+    selfAccess1: { page: '/loggedIn.html', display:'pending 12/15', action: doSelfAccess1},
+    selfAccess2: { page: '/loggedIn.html', display:'pending 13/15', action: doSelfAccess2},
+    selfAccess3: { page: '/loggedIn.html', display:'pending 14/15', action: doSelfAccess3},
+    storing: { page: '/loggedIn.html', display:'pending 15/15', action: doStore},
+    connectingBackdoor: { page: '/loggedIn.html', display:'connecting', buttons:['logout'], action: connectBackdoor},
+    allowRemoteStorage: { page: '/loggedIn.html', buttons:['allow', 'cancel']},
+    pulling: { page: '/loggedIn.html', display:'pulling', buttons:['logout'], action: pull},
+    error: { page: '/loggedIn.html', display:'error', buttons:['logout']}
   };
+  function checkForLogin() {
+    var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
+    if(sessionObj) {
+      if(sessionStates[sessionObj.state]) {
+        var fsmInfo = sessionStates[sessionObj.state];
+        if(window.location.pathname != fsmInfo.page) {
+          window.location = fsmInfo.page;
+        }
+        if(sessionObj.userAddress) {
+          displayLogin({userAddress: sessionObj.userAddress, background: fsmInfo.display});
+        } else {
+          displayLogin({background: fsmInfo.display});
+        }
+        if(fsmInfo.displayBlock) {
+          document.getElementById(fsmInfo.displayBlock).style.display='block';
+        }
+        if(fsmInfo.displayNone) {
+          document.getElementById(fsmInfo.displayNone).style.display='none';
+        }
+        if(fsmInfo.action) {
+          fsmInfo.action(sessionObj);
+        }
+      }
+    } else {
+      window.location = '/';
+    }
+  }
+  function createDb(sessionObj) {
+    pimper.createDb(sessionObj.subdomain+'.iriscouch.com', sessionObj.userAddress, sessionObj.adminPwd, 'cors', function() {
+      sessionObj.state = 'pop1';
+      localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
+      checkForLogin();
+    });
+  }
+  function pop1(sessionObj) {
+    pimper.pop1(sessionObj.subdomain+'.iriscouch.com', sessionObj.userAddress, sessionObj.adminPwd, sessionObj.proxy, function() {
+      sessionObj.state = 'pop2';
+      localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
+      checkForLogin();
+    });
+  }
+  function pop2(sessionObj) {
+    pimper.pop2(sessionObj.subdomain+'.iriscouch.com', sessionObj.userAddress, sessionObj.adminPwd, sessionObj.proxy, function() {
+      sessionObj.state = 'pop3';
+      localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
+      checkForLogin();
+    });
+  }
+  function pop3(sessionObj) {
+    pimper.pop3(sessionObj.subdomain+'.iriscouch.com', sessionObj.userAddress, sessionObj.adminPwd, sessionObj.proxy, function() {
+      sessionObj.state = 'pop4';
+      localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
+      checkForLogin();
+    });
+  }
+  function pop4(sessionObj) {
+    pimper.pop4(sessionObj.subdomain+'.iriscouch.com', sessionObj.userAddress, sessionObj.adminPwd, sessionObj.proxy, function() {
+      sessionObj.state = 'pop5';
+      localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
+      checkForLogin();
+    });
+  }
+  function pop5(sessionObj) {
+    pimper.pop5(sessionObj.subdomain+'.iriscouch.com', sessionObj.userAddress, sessionObj.adminPwd, sessionObj.proxy, function() {
+      sessionObj.state = 'selfAccess1';
+      localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
+      checkForLogin();
+    });
+  }
+  function doSelfAccess1(sessionObj) {
+    selfAccess1(sessionObj, function(token) {
+      sessionObj.bearerToken = token;
+      sessionObj.storageApi = 'CouchDB';
+      sessionObj.storageAddress = 'http://'+sessionObj.proxy+'/'+sessionObj.subdomain + '.iriscouch.com/documents/';
+      sessionObj.state = 'selfAccess2';
+      localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
+      checkForLogin();
+    });
+  }
+  function doSelfAccess2(sessionObj) {
+    selfAccess2(sessionObj, function() {
+      sessionObj.state = 'selfAccess3';
+      localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
+      checkForLogin();
+    });
+  }
+  function doSelfAccess3(sessionObj) {
+    selfAccess3(sessionObj, function() {
+      sessionObj.state = 'storing';
+      localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
+      checkForLogin();
+    });
+  }
+  function doStore() {
+    store(sessionObj, function() {
+      sessionObj.state = 'pulling';
+      localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
+      checkForLogin();
+    });
+  }
+  function connectBackdoor(sessionObj) {
+    getTokenThroughBackdoor(sessionObj, function() {
+      sessionObj.state = 'error';
+      localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
+      checkForLogin();
+    }, function(token) {
+      sessionObj.bearerToken = token;
+      sessionObj.storageAddress = 'http://'+sessionObj.proxy+'/'+sessionObj.subdomain + '.iriscouch.com/documents/';
+      sessionObj.state = 'pulling';
+      localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
+      checkForLogin();
+    });
+  }
   var handlers = {};
   function on(event, handler) {
     handlers[event]=handler;
@@ -23,6 +155,27 @@ var remoteStorageClient = (function() {
       } else {
         alert('Error code '+result);
       }
+    });
+  }
+  function doPing(sessionObj) {
+    ping(sessionObj.subdomain, sessionObj.proxy, 0, function() {
+      sessionObj.state = 'squatting1';
+      localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
+      checkForLogin();
+    });
+  }
+  function doSquat1(sessionObj) {
+    pimper.createAdminUser1(sessionObj.subdomain+'.iriscouch.com', sessionObj.userAddress, sessionObj.adminPwd, function() {
+      sessionObj.state = 'squatting2';
+      localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
+      checkForLogin();
+    });
+  }
+  function doSquat2(sessionObj) {
+    pimper.createAdminUser2(sessionObj.subdomain+'.iriscouch.com', sessionObj.userAddress, sessionObj.adminPwd, function() {
+      sessionObj.state = 'createDb';
+      localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
+      checkForLogin();
     });
   }
   function getUserNameForIrisCouch(userAddress, userNameTry) {
@@ -148,208 +301,6 @@ var remoteStorageClient = (function() {
       }
     };
     xhr.send(JSON.stringify(sessionObj));
-  }
-  function checkForLogin() {
-    var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
-    if(sessionObj) {
-      if(sessionStates[sessionObj.state]) {
-        var fsmInfo = sessionStates[sessionObj.state];
-        if(window.location.pathname != fsmInfo.page) {
-          window.location = fsmInfo.page;
-        }
-        if(sessionObj.userAddress) {
-          displayLogin({userAddress: sessionObj.userAddress, background: fsmInfo.display});
-        } else {
-          displayLogin({background: fsmInfo.display});
-        }
-        fsmInfo.action(sessionObj);
-      } else if(sessionObj.state == 'needed') {
-        document.getElementById("3").style.display='block';
-        displayLogin({
-          userAddress: sessionObj.userAddress,
-          background: 'pending 1/15'
-        });
-      } else if(sessionObj.state == 'agree') {
-        document.getElementById("3").style.display='none';
-        displayLogin({
-          userAddress: sessionObj.userAddress,
-          background: 'pending 2/15'
-        });
-        enroll(sessionObj);
-      } else if(sessionObj.state == 'pinging') {
-        displayLogin({
-          userAddress: sessionObj.userAddress,
-          background: 'pending 3a/15'
-        });
-        ping(sessionObj.subdomain, sessionObj.proxy, 0, function() {
-          sessionObj.state = 'squatting1';
-          localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
-          checkForLogin();
-        });
-      } else if(sessionObj.state == 'squatting1') {
-        displayLogin({
-          userAddress: sessionObj.userAddress,
-          background: 'pending 3b/15'
-        });
-        pimper.createAdminUser1(sessionObj.subdomain+'.iriscouch.com', sessionObj.userAddress, sessionObj.adminPwd, function() {
-          sessionObj.state = 'squatting2';
-          localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
-          checkForLogin();
-        });
-      } else if(sessionObj.state == 'squatting2') {
-        displayLogin({
-          userAddress: sessionObj.userAddress,
-          background: 'pending 4/15'
-        });
-        pimper.createAdminUser2(sessionObj.subdomain+'.iriscouch.com', sessionObj.userAddress, sessionObj.adminPwd, function() {
-          sessionObj.state = 'createDb';
-          localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
-          checkForLogin();
-        });
-      } else if(sessionObj.state == 'createDb') {
-        displayLogin({
-          userAddress: sessionObj.userAddress,
-          background: 'pending 5/15'
-        });
-        pimper.createDb(sessionObj.subdomain+'.iriscouch.com', sessionObj.userAddress, sessionObj.adminPwd, 'cors', function() {
-          sessionObj.state = 'pop1';
-          localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
-          checkForLogin();
-        });
-      } else if(sessionObj.state == 'pop1') {
-        displayLogin({
-          userAddress: sessionObj.userAddress,
-          background: 'pending 6/15'
-        });
-        pimper.pop1(sessionObj.subdomain+'.iriscouch.com', sessionObj.userAddress, sessionObj.adminPwd, sessionObj.proxy, function() {
-          sessionObj.state = 'pop2';
-          localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
-          checkForLogin();
-        });
-      } else if(sessionObj.state == 'pop2') {
-        displayLogin({
-          userAddress: sessionObj.userAddress,
-          background: 'pending 7/15'
-        });
-        pimper.pop2(sessionObj.subdomain+'.iriscouch.com', sessionObj.userAddress, sessionObj.adminPwd, sessionObj.proxy, function() {
-          sessionObj.state = 'pop3';
-          localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
-          checkForLogin();
-        });
-      } else if(sessionObj.state == 'pop3') {
-        displayLogin({
-          userAddress: sessionObj.userAddress,
-          background: 'pending 9/15'
-        });
-        pimper.pop3(sessionObj.subdomain+'.iriscouch.com', sessionObj.userAddress, sessionObj.adminPwd, sessionObj.proxy, function() {
-          sessionObj.state = 'pop4';
-          localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
-          checkForLogin();
-        });
-      } else if(sessionObj.state == 'pop4') {
-        displayLogin({
-          userAddress: sessionObj.userAddress,
-          background: 'pending 10/15'
-        });
-        pimper.pop4(sessionObj.subdomain+'.iriscouch.com', sessionObj.userAddress, sessionObj.adminPwd, sessionObj.proxy, function() {
-          sessionObj.state = 'pop5';
-          localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
-          checkForLogin();
-        });
-      } else if(sessionObj.state == 'pop5') {
-        displayLogin({
-          userAddress: sessionObj.userAddress,
-          background: 'pending 11/15'
-        });
-        pimper.pop5(sessionObj.subdomain+'.iriscouch.com', sessionObj.userAddress, sessionObj.adminPwd, sessionObj.proxy, function() {
-          sessionObj.state = 'selfAccess1';
-          localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
-          checkForLogin();
-        });
-      } else if(sessionObj.state == 'selfAccess1') {
-        displayLogin({
-          userAddress: sessionObj.userAddress,
-          background: 'pending 12/15'
-        });
-        selfAccess1(sessionObj, function(token) {
-          sessionObj.bearerToken = token;
-          sessionObj.storageApi = 'CouchDB';
-          sessionObj.storageAddress = 'http://'+sessionObj.proxy+'/'+sessionObj.subdomain + '.iriscouch.com/documents/';
-          sessionObj.state = 'selfAccess2';
-          localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
-          checkForLogin();
-        });
-      } else if(sessionObj.state == 'selfAccess2') {
-        displayLogin({
-          userAddress: sessionObj.userAddress,
-          background: 'pending 13/15'
-        });
-        selfAccess2(sessionObj, function() {
-          sessionObj.state = 'selfAccess3';
-          localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
-          checkForLogin();
-        });
-      } else if(sessionObj.state == 'selfAccess3') {
-        displayLogin({
-          userAddress: sessionObj.userAddress,
-          background: 'pending 14/15'
-        });
-        selfAccess3(sessionObj, function() {
-          sessionObj.state = 'storing';
-          localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
-          checkForLogin();
-        });
-      } else if(sessionObj.state == 'storing') {
-        displayLogin({
-          userAddress: sessionObj.userAddress,
-          background: 'pending 15/15'
-        });
-        store(sessionObj, function() {
-          sessionObj.state = 'pulling';
-          localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
-          checkForLogin();
-        });
-      } else if(sessionObj.state == 'connectingBackdoor') {
-        displayLogin({
-          userAddress: sessionObj.userAddress,
-          background: 'connecting',
-          buttons: ['logout']
-
-        });
-        getTokenThroughBackdoor(sessionObj, function() {
-          sessionObj.state = 'error';
-          localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
-          checkForLogin();
-        }, function(token) {
-          sessionObj.bearerToken = token;
-          sessionObj.storageAddress = 'http://'+sessionObj.proxy+'/'+sessionObj.subdomain + '.iriscouch.com/documents/';
-          sessionObj.state = 'pulling';
-          localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
-          checkForLogin();
-        });
-      } else if(sessionObj.state == 'allowRemoteStorage') {
-        displayLogin({
-          userAddress: sessionObj.userAddress,
-          buttons: ['allow', 'cancel']
-        });
-      } else if(sessionObj.state == 'pulling') {
-        displayLogin({
-          userAddress: sessionObj.userAddress,
-          background: 'pulling',
-          buttons: ['logout']
-        });
-        localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
-      } else if(sessionObj.state == 'error') {
-        displayLogin({
-          userAddress: sessionObj.userAddress,
-          background: 'error',
-          buttons: ['logout']
-        });
-        localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
-      }
-    } else {
-      window.location = '/';
-    }
   }
   function allow() {
     var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
