@@ -2,7 +2,7 @@
 #signin-button { background:url('../images/browserid.png') no-repeat; min-width:79px; min-height:22px; cursor:pointer; border:none; box-shadow:none; }
 
 .page-header { background-color:#f5f5f5; padding:4em 2em 1em; margin:-20px -20px 20px; }
-h1 { font-size:4em; display:inline; }
+h1 { font-size:4em; display:inline; color:#222; }
 .page-header img { width:3em; height:3em; }
 
 /* Override some defaults */
