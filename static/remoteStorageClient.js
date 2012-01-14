@@ -163,13 +163,13 @@ var remoteStorageClient = (function() {
         document.getElementById("3").style.display='block';
         displayLogin({
           userAddress: sessionObj.userAddress,
-          background: 'pending 1/12'
+          background: 'pending 1/15'
         });
       } else if(sessionObj.state == 'agree') {
         document.getElementById("3").style.display='none';
         displayLogin({
           userAddress: sessionObj.userAddress,
-          background: 'pending 2/12'
+          background: 'pending 2/15'
         });
         enroll(sessionObj);
       } else if(sessionObj.state == 'pinging') {
@@ -177,7 +177,7 @@ var remoteStorageClient = (function() {
           sessionObj.state = 'squatting';
           displayLogin({
             userAddress: sessionObj.userAddress,
-            background: 'pending 3/12'
+            background: 'pending 3/15'
           });
           localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
           checkForLogin();
@@ -187,7 +187,7 @@ var remoteStorageClient = (function() {
           sessionObj.state = 'createDb';
           displayLogin({
             userAddress: sessionObj.userAddress,
-            background: 'pending 4/12'
+            background: 'pending 4/15'
           });
           localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
           checkForLogin();
@@ -197,7 +197,7 @@ var remoteStorageClient = (function() {
           sessionObj.state = 'pop1';
           displayLogin({
             userAddress: sessionObj.userAddress,
-            background: 'pending 5/12'
+            background: 'pending 5/15'
           });
           localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
           checkForLogin();
@@ -207,7 +207,7 @@ var remoteStorageClient = (function() {
           sessionObj.state = 'pop2';
           displayLogin({
             userAddress: sessionObj.userAddress,
-            background: 'pending 6/12'
+            background: 'pending 6/15'
           });
           localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
           checkForLogin();
@@ -217,17 +217,37 @@ var remoteStorageClient = (function() {
           sessionObj.state = 'pop3';
           displayLogin({
             userAddress: sessionObj.userAddress,
-            background: 'pending 7/12'
+            background: 'pending 7/15'
           });
           localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
           checkForLogin();
         });
       } else if(sessionObj.state == 'pop3') {
         pimper.pop3(sessionObj.subdomain+'.iriscouch.com', sessionObj.userAddress, sessionObj.adminPwd, sessionObj.proxy, function() {
+          sessionObj.state = 'pop4';
+          displayLogin({
+            userAddress: sessionObj.userAddress,
+            background: 'pending 9/15'
+          });
+          localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
+          checkForLogin();
+        });
+      } else if(sessionObj.state == 'pop4') {
+        pimper.pop4(sessionObj.subdomain+'.iriscouch.com', sessionObj.userAddress, sessionObj.adminPwd, sessionObj.proxy, function() {
+          sessionObj.state = 'pop5';
+          displayLogin({
+            userAddress: sessionObj.userAddress,
+            background: 'pending 10/15'
+          });
+          localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
+          checkForLogin();
+        });
+      } else if(sessionObj.state == 'pop5') {
+        pimper.pop5(sessionObj.subdomain+'.iriscouch.com', sessionObj.userAddress, sessionObj.adminPwd, sessionObj.proxy, function() {
           sessionObj.state = 'selfAccess1';
           displayLogin({
             userAddress: sessionObj.userAddress,
-            background: 'pending 8/12'
+            background: 'pending 11/15'
           });
           localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
           checkForLogin();
@@ -240,7 +260,7 @@ var remoteStorageClient = (function() {
           sessionObj.state = 'selfAccess2';
           displayLogin({
             userAddress: sessionObj.userAddress,
-            background: 'pending 9/12'
+            background: 'pending 12/15'
           });
           localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
           checkForLogin();
@@ -250,7 +270,7 @@ var remoteStorageClient = (function() {
           sessionObj.state = 'selfAccess3';
           displayLogin({
             userAddress: sessionObj.userAddress,
-            background: 'pending 10/12'
+            background: 'pending 13/15'
           });
           localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
           checkForLogin();
@@ -260,7 +280,7 @@ var remoteStorageClient = (function() {
           sessionObj.state = 'storing';
           displayLogin({
             userAddress: sessionObj.userAddress,
-            background: 'pending 11/12'
+            background: 'pending 14/15'
           });
           localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
           checkForLogin();
@@ -270,7 +290,7 @@ var remoteStorageClient = (function() {
           sessionObj.state = 'pulling';
           displayLogin({
             userAddress: sessionObj.userAddress,
-            background: 'pending 12/12'
+            background: 'pending 15/15'
           });
           localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
           checkForLogin();
@@ -289,7 +309,6 @@ var remoteStorageClient = (function() {
         }, function(token) {
           sessionObj.bearerToken = token;
           sessionObj.storageAddress = 'http://'+sessionObj.proxy+'/'+sessionObj.subdomain + '.iriscouch.com/documents/';
-          sessionObj.state = 'selfAccess2';
           sessionObj.state = 'pulling';
           localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
           checkForLogin();
