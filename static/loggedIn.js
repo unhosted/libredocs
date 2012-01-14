@@ -1,5 +1,5 @@
 remoteStorageClient.on('status', function(status) {
-  document.getElementsByTagName('h1')[0].innerHTML = 'Libre Docs <small>'+(status.userAddress?' - '+status.userAddress:'')+(status.background?' ('+status.background+')':'');
+  document.getElementsByTagName('h1')[0].innerHTML = 'Libre Docs <small>'+(status.userAddress?' '+status.userAddress:'')+(status.background?' ('+status.background+')':'');
   for(i in status.buttons) {
     document.getElementsByTagName('h1')[0].innerHTML += ' <input type="submit" value="'+status.buttons[i]+'" onclick="remoteStorageClient.'+status.buttons[i]+'();">';
   }
