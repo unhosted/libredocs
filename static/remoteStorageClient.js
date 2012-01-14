@@ -115,7 +115,7 @@ var remoteStorageClient = (function() {
       checkForLogin();
     });
   }
-  function doStore() {
+  function doStore(sessionObj) {
     store(sessionObj, function() {
       sessionObj.state = 'pulling';
       localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
