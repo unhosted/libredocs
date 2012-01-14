@@ -237,27 +237,32 @@ var remoteStorageClient = (function() {
   function pull() {
   }
   function allow() {
-    var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
+    if(!sessionObj) {
+      sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
+    }
     window.open(sessionObj.attr.auth+'?redirect_uri=http://libredocs.org/rcvToken.html&scope=documents');
   }
   function agree() {
-    var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
-    localStorage.setItem('sessionObj', JSON.stringify({
-        state: 'enroll',
-        firstName: document.getElementById('firstName').value,
-        lastName: document.getElementById('lastName').value,
-        adminPwd: sessionObj.adminPwd,//the admin pwd that was generated doubles as provisioning token during provisioning
-        userAddress: sessionObj.userAddress
-      })
-    );
+    if(!sessionObj) {
+      sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
+    }
+    sessionObj = {
+      state: 'enroll',
+      firstName: document.getElementById('firstName').value,
+      lastName: document.getElementById('lastName').value,
+      adminPwd: sessionObj.adminPwd,//the admin pwd that was generated doubles as provisioning token during provisioning
+      userAddress: sessionObj.userAddress
+    };
+    localStorage.setItem('sessionObj', JSON.stringify(sessionObj);
     checkForLogin();
   }
   function signIn(audience, assertion) {
-    localStorage.setItem('sessionObj', JSON.stringify({
+    sessionObj = {
       state: 'signIn',
       audience: audience,
       assertion: assertion
-    }));
+    };
+    localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
   }
   function logout() {
     localStorage.clear();
