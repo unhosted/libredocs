@@ -40,5 +40,5 @@ function connectToOwnpad() {
     //we'll hopefully send the storage data here at some point.
   });
 }
-document.getElementById('write').setAttribute('onload', 'connectToOwnpad();');
+document.getElementsByTagName('body')[0].setAttribute('onload', 'connectToOwnpad();');
 document.getElementById('loading').style.display='none';
