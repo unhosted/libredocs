@@ -380,6 +380,7 @@ var remoteStorageClient = (function() {
     checkForLogin: checkForLogin,
     allow: allow,
     agree: agree,
-    logout: logout
+    logout: logout,
+    cancel: logout
   };
 })();
