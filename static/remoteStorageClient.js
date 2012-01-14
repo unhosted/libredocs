@@ -3,6 +3,7 @@ var remoteStorageClient = (function() {
   function on(event, handler) {
     handlers[event]=handler;
   }
+  var sessionObj;
   var sessionStates = {
     signIn: { page: '/loggedIn.html', display:'signing you in', action: doSignIn, next:{found:'pulling', needsWebfinger:'wf1', needsAllow:'allowRemoteStorage'}},
     wf1: { page: '/loggedIn.html', display:'checking', action: checkWebfinger, next:{fail: 'needed', ok: 'allowRemoteStorage'}},
@@ -26,7 +27,9 @@ var remoteStorageClient = (function() {
     error: { page: '/loggedIn.html', display:'error', buttons:['logout']}
   };
   function checkForLogin() {
-    var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
+    if(!sessionObj) {
+      sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
+    }
     if(sessionObj) {
       if(sessionStates[sessionObj.state]) {
         var fsmInfo = sessionStates[sessionObj.state];
@@ -47,7 +50,7 @@ var remoteStorageClient = (function() {
           document.getElementById(fsmInfo.displayNone).style.display='none';
         }
         if(fsmInfo.action) {
-          fsmInfo.action(sessionObj, function(result) {
+          fsmInfo.action(function(result) {
             console.log('got result "'+result+'" in step "'+sessionObj.state+'".');
             if(fsmInfo.next && fsmInfo.next[result]) {
               sessionObj.state = fsmInfo.next[result];
@@ -65,14 +68,16 @@ var remoteStorageClient = (function() {
       window.location = '/';
     }
   }
-  function doSignIn(incomingObj, cb) {
+  function doSignIn(cb) {
     var xhr=new XMLHttpRequest();
     xhr.open('POST', 'http://libredocs.org/users', true);
     xhr.onreadystatechange = function() {
       if(xhr.readyState == 4) {
-        var sessionObj = {};
+        var newSessionObj = {};
         try {
-          sessionObj = JSON.parse(xhr.responseText);
+          newSessionObj = JSON.parse(xhr.responseText);
+          sessionObj = newSessionObj;
+          localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
         } catch(e) {
         }
         if(sessionObj.ok) {
@@ -83,6 +88,7 @@ var remoteStorageClient = (function() {
             cb('needsAllow');
           }
         } else if(sessionObj.userAddress) {
+          console.log('calling webfinger for '+sessionObj.userAddress);
           cb('needsWebfinger');
         } else {
           alert('something went wrong! "'+xhr.responseText+'"['+xhr.status+']');
@@ -92,30 +98,28 @@ var remoteStorageClient = (function() {
       }
     };
     xhr.send(JSON.stringify({
-      audience: incomingObj.audience,
-      assertion: incomingObj.assertion
+      audience: sessionObj.audience,
+      assertion: sessionObj.assertion
     }));
   }
-  function checkWebfinger(sessionObj, cb) {
-    if(sessionObj.state == 'wf1') {
-      require(['webfinger'], function(webfinger) {
-        webfinger.getAttributes(sessionObj.userAddress, {
-          onError: function(code, msg) {
-            if(code == 5) {
-              cb('fail');
-            }
+  function checkWebfinger(cb) {
+    require(['webfinger'], function(webfinger) {
+      webfinger.getAttributes(sessionObj.userAddress, {
+        onError: function(code, msg) {
+          if(code == 5) {
+            cb('fail');
           }
-        }, function() {}, function(attr) {
-          sessionObj.attr = attr;
-          sessionObj.storageAddress = webfinger.resolveTemplate(attr.template, 'documents');
-          sessionObj.storageApi = attr.api;
-          localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
-          cb('ok');
-        });
+        }
+      }, function() {}, function(attr) {
+        sessionObj.attr = attr;
+        sessionObj.storageAddress = webfinger.resolveTemplate(attr.template, 'documents');
+        sessionObj.storageApi = attr.api;
+        localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
+        cb('ok');
       });
-    }
+    });
   }
-  function enroll(sessionObj, cb) {
+  function enroll(cb) {
     var userName = sessionObj.userAddress.replace(/-/g, '--').replace(/@/g, '-at-').replace(/\./g, '-dot-')+(sessionObj.userNameTry?'-'+sessionObj.userNameTry:'');
     pimper.provision(userName, sessionObj.firstName, sessionObj.lastName, sessionObj.userAddress, sessionObj.adminPwd, function(result) {
       if(result=='taken') {
@@ -156,50 +160,50 @@ var remoteStorageClient = (function() {
       });
     }
   }
-  function doPing(sessionObj, cb) {
+  function doPing(cb) {
     ping(sessionObj.subdomain, sessionObj.proxy, 0, cb);
   }
-  function doSquat1(sessionObj, cb) {
+  function doSquat1(cb) {
     pimper.createAdminUser1(sessionObj.subdomain+'.iriscouch.com', sessionObj.userAddress, sessionObj.adminPwd, function() {
       cb('success');
     });
   }
-  function doSquat2(sessionObj, cb) {
+  function doSquat2(cb) {
     pimper.createAdminUser2(sessionObj.subdomain+'.iriscouch.com', sessionObj.userAddress, sessionObj.adminPwd, function() {
       cb('success');
     });
   }
-  function createDb(sessionObj, cb) {
+  function createDb(cb) {
     pimper.createDb(sessionObj.subdomain+'.iriscouch.com', sessionObj.userAddress, sessionObj.adminPwd, 'cors', function() {
       cb('success');
     });
   }
-  function pop1(sessionObj, cb) {
+  function pop1(cb) {
     pimper.pop1(sessionObj.subdomain+'.iriscouch.com', sessionObj.userAddress, sessionObj.adminPwd, sessionObj.proxy, function() {
       cb('success');
     });
   }
-  function pop2(sessionObj) {
+  function pop2(cb) {
     pimper.pop2(sessionObj.subdomain+'.iriscouch.com', sessionObj.userAddress, sessionObj.adminPwd, sessionObj.proxy, function() {
       cb('success');
     });
   }
-  function pop3(sessionObj) {
+  function pop3(cb) {
     pimper.pop3(sessionObj.subdomain+'.iriscouch.com', sessionObj.userAddress, sessionObj.adminPwd, sessionObj.proxy, function() {
       cb('success');
     });
   }
-  function pop4(sessionObj) {
+  function pop4(cb) {
     pimper.pop4(sessionObj.subdomain+'.iriscouch.com', sessionObj.userAddress, sessionObj.adminPwd, sessionObj.proxy, function() {
       cb('success');
     });
   }
-  function pop5(sessionObj) {
+  function pop5(cb) {
     pimper.pop5(sessionObj.subdomain+'.iriscouch.com', sessionObj.userAddress, sessionObj.adminPwd, sessionObj.proxy, function() {
       cb('success');
     });
   }
-  function doSelfAccess1(sessionObj) {
+  function doSelfAccess1(cb) {
     pimper.createUser(sessionObj.subdomain+'.iriscouch.com', sessionObj.userAddress, sessionObj.adminPwd, 'http___libredocs_org', function(token) {
       sessionObj.bearerToken = token;
       sessionObj.storageApi = 'CouchDB';
@@ -208,17 +212,17 @@ var remoteStorageClient = (function() {
       cb('success');
     });
   }
-  function doSelfAccess2(sessionObj) {
+  function doSelfAccess2(cb) {
     pimper.createDb(sessionObj.subdomain+'.iriscouch.com', sessionObj.userAddress, sessionObj.adminPwd, 'documents', function() {
       cb('success');
     });
   }
-  function doSelfAccess3(sessionObj) {
+  function doSelfAccess3(cb) {
     pimper.giveAccess(sessionObj.subdomain+'.iriscouch.com', sessionObj.userAddress, sessionObj.adminPwd, 'documents', 'http___libredocs_org', false, function() {
       cb('success');
     });
   }
-  function doStore(sessionObj, cb) {
+  function doStore(cb) {
     sessionObj.action='set';
     sessionObj.ok=true;
     var xhr = new XMLHttpRequest();
