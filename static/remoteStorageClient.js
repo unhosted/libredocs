@@ -1,4 +1,8 @@
 var remoteStorageClient = (function() {
+  var handlers = {};
+  function on(event, handler) {
+    handlers[event]=handler;
+  }
   var sessionStates = {
     signIn: { page: '/loggedIn.html', display:'signing you in', action: doSignIn, next:{found:'pulling', needsWebfinger:'wf1', needsAllow:'allowRemoteStorage'}},
     wf1: { page: '/loggedIn.html', display:'checking', action: checkWebfinger, next:{fail: 'needed', ok: 'allowRemoteStorage'}},
@@ -16,7 +20,7 @@ var remoteStorageClient = (function() {
     selfAccess1: { page: '/loggedIn.html', display:'pending 12/15', action: doSelfAccess1, next:{success: 'selfAccess2'}},
     selfAccess2: { page: '/loggedIn.html', display:'pending 13/15', action: doSelfAccess2, next:{success: 'selfAccess3'}},
     selfAccess3: { page: '/loggedIn.html', display:'pending 14/15', action: doSelfAccess3, next:{success: 'storing'}},
-    storing: { page: '/loggedIn.html', display:'pending 15/15', action: doStore, next:{success: 'pulling'}},
+    storing: { page: '/loggedIn.html', display:'pending 15/15', action: noStore, next:{success: 'pulling'}},
     allowRemoteStorage: { page: '/loggedIn.html', buttons:['allow', 'cancel']},
     pulling: { page: '/loggedIn.html', display:'pulling', buttons:['logout'], action: pull},
     error: { page: '/loggedIn.html', display:'error', buttons:['logout']}
@@ -29,10 +33,12 @@ var remoteStorageClient = (function() {
         if(window.location.pathname != fsmInfo.page) {
           window.location = fsmInfo.page;
         }
-        if(sessionObj.userAddress) {
-          displayLogin({userAddress: sessionObj.userAddress, background: fsmInfo.display});
-        } else {
-          displayLogin({background: fsmInfo.display});
+        if(handlers['status']) {
+          if(sessionObj.userAddress) {
+            handlers['status']({userAddress: sessionObj.userAddress, background: fsmInfo.display});
+          } else {
+            handlers['status']({background: fsmInfo.display});
+          }
         }
         if(fsmInfo.displayBlock) {
           document.getElementById(fsmInfo.displayBlock).style.display='block';
@@ -107,25 +113,25 @@ var remoteStorageClient = (function() {
       cb('success');
     });
   }
-  function doStore(sessionObj) {
-    store(sessionObj, function() {
-      cb('success');
-    });
+  function doStore(sessionObj, cb) {
+    sessionObj.action='set';
+    sessionObj.ok=true;
+    var xhr = new XMLHttpRequest();
+    xhr.open('PUT', 'http://libredocs.org/users', true);
+    xhr.onreadystatechange = function() {
+      if(xhr.readyState == 4) {
+        cb('success');
+      }
+    };
+    xhr.send(JSON.stringify(sessionObj));
   }
-  var handlers = {};
-  function on(event, handler) {
-    handlers[event]=handler;
-  }
-  function displayLogin(obj) {
-    handlers['status'](obj);
-  }
-  function ping(userName, proxy, counter, onSuccess) {
+  function ping(userName, proxy, counter, cb) {
     //for(var i=0; i<=counter; i++) {
     //  document.getElementById('status').innerHTML += '.';
     //}
     pimper.ping(userName, proxy, function(result) {
       if(result=='ok') {
-        onSuccess();
+        cb('success');
       } else if(result='no') {
         console.log('ping '+counter+'...');
         ping(userName, proxy, counter+1, onSuccess);
@@ -135,9 +141,7 @@ var remoteStorageClient = (function() {
     });
   }
   function doPing(sessionObj, cb) {
-    ping(sessionObj.subdomain, sessionObj.proxy, 0, function() {
-      cb('success');
-    });
+    ping(sessionObj.subdomain, sessionObj.proxy, 0, cb);
   }
   function doSquat1(sessionObj, cb) {
     pimper.createAdminUser1(sessionObj.subdomain+'.iriscouch.com', sessionObj.userAddress, sessionObj.adminPwd, function() {
@@ -218,18 +222,6 @@ var remoteStorageClient = (function() {
       audience: incomingObj.audience,
       assertion: incomingObj.assertion
     }));
-  }
-  function store(sessionObj, cb) {
-    sessionObj.action='set';
-    sessionObj.ok=true;
-    var xhr = new XMLHttpRequest();
-    xhr.open('PUT', 'http://libredocs.org/users', true);
-    xhr.onreadystatechange = function() {
-      if(xhr.readyState == 4) {
-        cb();
-      }
-    };
-    xhr.send(JSON.stringify(sessionObj));
   }
   function pull() {
   }
