@@ -19,16 +19,16 @@ function showList() {
     localStorage.setItem('list', JSON.stringify(docs));
     localStorage.removeItem('currDoc');
   }
+  str += '<tr onclick="showDoc();"><td><strong>+ New document</strong>'
+    +'</td><td><em>'
+    +'</em></td></tr>';
   for(i in docs) {
     str += '<tr onclick="showDoc('+i+');"><td><strong>'
       +docs[i].preview
-      +'</td><td><em>'
+      +'</strong></td><td><em>'
       +docs[i].timestamp
       +'</em></td></tr>';
   }
-  str += '<tr onclick="showDoc();"><td><strong>+(new)'
-    +'</td><td><em>'
-    +'</em></td></tr>';
   document.getElementById('list').innerHTML = str;
 }
 function showDoc(i) {
@@ -39,7 +39,7 @@ function showDoc(i) {
       docs = {};
     }
     docs[i] = {};
-    docs[i].preview = '(new doc)';
+    docs[i].preview = 'Document title';
     docs[i].timestamp = new Date().getTime();
     localStorage.setItem('list', JSON.stringify(docs));
   }
