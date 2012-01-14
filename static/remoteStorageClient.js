@@ -302,6 +302,8 @@ var remoteStorageClient = (function() {
     };
     xhr.send(JSON.stringify(sessionObj));
   }
+  function pull() {
+  }
   function allow() {
     var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
     window.open(sessionObj.attr.auth+'?redirect_uri=http://libredocs.org/rcvToken.html&scope=documents');
