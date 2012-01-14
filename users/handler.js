@@ -283,19 +283,19 @@ exports.handler = (function() {
         } else if(incoming.audience == 'http://myfavouritesandwich.org') {
           console.log('Welcome, MyFavouriteSandwich user');
         } else {
-          console.log('foreign audience '+incoming.audience);
-          res.writeHead(401);
-          res.end('foreign audience - come to #unhosted on freenode to register it');
-          return;
+          if(incoming.action == 'set') {
+            serveSet(req, res, incoming);
+          } else {
+            console.log('foreign audience '+incoming.audience);
+            res.writeHead(401);
+            res.end('foreign audience - come to #unhosted on freenode to register it');
+            return;
+          }
         }
-        if(incoming.action == 'set') {
-          serveSet(req, res, incoming);
-        } else {
-          serveGet(req, res, {
-            audience: incoming.audience,
-            assertion: incoming.assertion
-          });
-        }
+        serveGet(req, res, {
+          audience: incoming.audience,
+          assertion: incoming.assertion
+        });
       });
     }
   }
