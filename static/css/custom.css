@@ -11,6 +11,11 @@ h1 small { font-size:.3em; }
 #signin-button { background:url('../images/browserid.png') no-repeat; min-width:79px; min-height:22px; cursor:pointer; border:none; box-shadow:none; }
 
 #firstName, #lastName { width:10em; }
+table { margin:-20px; font-size:1.3em; }
+table td { cursor:pointer; padding:.7em 0; }
+table tr:hover { background:#f8f8f8; }
+table tr:first-child { padding-top:.7em; }
+table tr:last-child { padding-bottom:.7em; }
 
 #editorPad { margin:-20px; min-height:35em; height:35em; }
 #write iframe { width:100%; min-height:100%; border:none; }
