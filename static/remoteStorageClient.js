@@ -152,7 +152,7 @@ var remoteStorageClient = (function() {
           cb('success');
         } else if(result='no') {
           console.log('ping '+counter+'...');
-          ping(userName, proxy, counter+1, onSuccess);
+          ping(userName, proxy, counter+1, cb);
         } else {
           alert('Error code '+result);
           cb('error');
@@ -253,7 +253,7 @@ var remoteStorageClient = (function() {
       adminPwd: sessionObj.adminPwd,//the admin pwd that was generated doubles as provisioning token during provisioning
       userAddress: sessionObj.userAddress
     };
-    localStorage.setItem('sessionObj', JSON.stringify(sessionObj);
+    localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
     checkForLogin();
   }
   function signIn(audience, assertion) {
