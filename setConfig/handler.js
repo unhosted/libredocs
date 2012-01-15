@@ -18,7 +18,7 @@ exports.handler = (function() {
         var options = {
           host: incoming.host,
           port: 443,
-          path: '/'+incoming.dbName+'/',
+          path: '/_config/'+incoming.fieldName+'/',
           method: 'PUT',
           headers: {
             'Authorization': 'Basic ' + new Buffer(incoming.usr+':'+incoming.pwd).toString('base64')
@@ -42,7 +42,7 @@ exports.handler = (function() {
           });
         });
         console.log('ending the request');
-        request.end();
+        request.end(JSON.stringify(incoming.fieldValue));
         console.log('setting request.on(\'response\', ...)');
       });
     });

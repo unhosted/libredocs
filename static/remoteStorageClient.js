@@ -7,8 +7,8 @@ var remoteStorageClient = (function() {
   var sessionStates = {
     signIn: { page: '/loggedIn.html', display:'signing you in', action: doSignIn, next:{found:'pulling', needsWebfinger:'wf1', needsAllow:'allowRemoteStorage'}},
     wf1: { page: '/loggedIn.html', display:'checking', action: checkWebfinger, next:{fail: 'needed', ok: 'allowRemoteStorage'}},
-    needed: { page: '/loggedIn.html', display:'pending 1/15', displayBlock:'3'},
-    enroll: { page: '/loggedIn.html', display:'pending 2/15', displayNone:'3', action: enroll, next:{409: 'enroll',201:'pinging'}},
+    needed: { page: '/loggedIn.html', display:'pending 1/15', displayBlock:'easyfreedom-signup'},
+    enroll: { page: '/loggedIn.html', display:'pending 2/15', displayNone:'easyfreedom-signup', action: enroll, next:{409: 'enroll',201:'pinging'}},
     pinging: { page: '/loggedIn.html', display:'pending 3/15', action: doPing, next:{200:'squatting1'}},
     squatting1: { page: '/loggedIn.html', display:'pending 4/15', action: doSquat1, next:{201:'squatting2'}},
     squatting2: { page: '/loggedIn.html', display:'pending 5/15', action: doSquat2, next:{200:'createDb'}},
@@ -123,40 +123,28 @@ var remoteStorageClient = (function() {
   function enroll(cb) {
     var userName = sessionObj.userAddress.replace(/-/g, '--').replace(/@/g, '-at-').replace(/\./g, '-dot-')+(sessionObj.userNameTry?'-'+sessionObj.userNameTry:'');
     pimper.provision(userName, sessionObj.firstName, sessionObj.lastName, sessionObj.userAddress, sessionObj.adminPwd, function(result) {
-      if(result=='taken') {
-        console.log('Username '+userName+' is taken! :( trying a different one');
-        //sessionObj.userNameTry = (sessionObj.userNameTry?sessionObj.userNameTry:0)+1;
-        sessionObj.userNameTry = (sessionObj.userNameTry?sessionObj.userNameTry:14)+1;//skip straight to higher numbers, so debugging doesn't take that long
+      if(result==409) {
+        sessionObj.userNameTry = (sessionObj.userNameTry?sessionObj.userNameTry:23)+1;//skip straight to higher numbers, so debugging doesn't take that long
         localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
-        cb('taken');
-      } else if(result=='success') {
+      } else if(result==201) {
         sessionObj.subdomain = userName;
         sessionObj.proxy = 'yourremotestorage.net/CouchDB/proxy/';
         localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
-        cb('success');
-      } else {
-        alert('error '+result+' in provision step');
-        cb('error');
       }
+      cb(result);
     });
   }
   function ping(userName, proxy, counter, cb) {
-    //for(var i=0; i<=counter; i++) {
-    //  document.getElementById('status').innerHTML += '.';
-    //}
-    if(counter > 10) {
+    if(counter > 10) {//we could move this into the state machine as states ping1 .. ping10, but that would give so many states
       alert('your remote storage was not deployed within 10 pings. please try again.');
       cb('error');
     } else {
       pimper.ping(userName, proxy, function(result) {
-        if(result=='ok') {
-          cb('success');
-        } else if(result='no') {
+        if(result==404) {
           console.log('ping '+counter+'...');
           ping(userName, proxy, counter+1, cb);
         } else {
-          alert('Error code '+result);
-          cb('error');
+          cb(result);
         }
       });
     }
@@ -226,7 +214,7 @@ var remoteStorageClient = (function() {
   }
   function pop3(cb) {
     var couchAddress = sessionObj.subdomain+'.iriscouch.com';
-    var putHost = 'http://'+proxy+couchAddress;
+    var putHost = 'http://'+sessionObj.proxy+couchAddress;
     var authStr = {
       usr:sessionObj.userAddress,
       pwd:sessionObj.adminPwd
@@ -235,7 +223,7 @@ var remoteStorageClient = (function() {
   }
   function pop4(cb) {
     var couchAddress = sessionObj.subdomain+'.iriscouch.com';
-    var putHost = 'http://'+proxy+couchAddress;
+    var putHost = 'http://'+sessionObj.proxy+couchAddress;
     var authStr = {
       usr:sessionObj.userAddress,
       pwd:sessionObj.adminPwd
@@ -244,7 +232,7 @@ var remoteStorageClient = (function() {
   }
   function pop5(cb) {
     var couchAddress = sessionObj.subdomain+'.iriscouch.com';
-    pimper.couchPut(couchAddress, sessionObj.userAddress, sessionObj.adminPwd, '_config', 'browserid', {
+    pimper.setConfig(couchAddress, sessionObj.userAddress, sessionObj.adminPwd, 'browserid', {
       enabled: true,
       verify_url: 'https://browserid.org/verify'
     }, cb);
