@@ -12,6 +12,9 @@ h1 small { font-size:.3em; }
 
 #easyfreedom-signup { margin-bottom:3em; }
 #firstName, #lastName { width:10em; }
+#easyfreedom-loading { position:relative; white-space:nowrap; background:#e6e6e6; -webkit-border-radius:.5em; -moz-border-radius:.5em; border-radius:.5em; }
+#easyfreedom-loading div { padding:0; background: #ccc; -moz-border-radius-bottomleft:.4em; -webkit-border-bottom-left-radius:.4em; border-bottom-left-radius:.4em; -moz-border-radius-topleft:.4em; -webkit-border-top-left-radius:.4em; border-top-left-radius:.4em; }
+#easyfreedom-loadingtext { padding:.5em; }
 
 table { width:106%; margin:-20px; font-size:1.3em; }
 table td { cursor:pointer; padding:.7em 1.2em; border:none; }
