@@ -14,6 +14,7 @@ exports.config = {
     'libredocs.org/browserid-verifier': './browserid',
     'libredocs.org/provision': './provision',
     'libredocs.org/squat': './squat',
-    'libredocs.org/createDb': './createDb'
+    'libredocs.org/createDb': './createDb',
+    'libredocs.org/setConfig': './setConfig'
   }
 };
