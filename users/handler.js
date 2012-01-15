@@ -298,22 +298,23 @@ exports.handler = (function() {
         console.log('end of incoming post');
         if(incoming.audience == 'http://libredocs.org') {
           console.log('Welcome, LibreDocs user');
+          serveGet(req, res, {
+            audience: incoming.audience,
+            assertion: incoming.assertion
+          });
         } else if(incoming.audience == 'http://myfavouritesandwich.org') {
           console.log('Welcome, MyFavouriteSandwich user');
+          serveGet(req, res, {
+            audience: incoming.audience,
+            assertion: incoming.assertion
+          });
+        } else if(incoming.action == 'set') {
+          serveSet(req, res, incoming);
         } else {
-          if(incoming.action == 'set') {
-            serveSet(req, res, incoming);
-          } else {
-            console.log('foreign audience '+incoming.audience);
-            res.writeHead(401);
-            res.end('foreign audience - come to #unhosted on freenode to register it');
-            return;
-          }
+          console.log('foreign audience '+incoming.audience);
+          res.writeHead(401);
+          res.end('foreign audience - come to #unhosted on freenode to register it');
         }
-        serveGet(req, res, {
-          audience: incoming.audience,
-          assertion: incoming.assertion
-        });
       });
     }
   }
