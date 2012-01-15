@@ -1,23 +1,12 @@
-// this is probably not working anymore
-window.addEventListener('storage', function(e) {
-  if(e.key=='LibreDocsState') {
-    console.log('LibreDocsState '+e.newValue+' received');
-    if(e.newValue == 'exit') {
-      window.close();
-    } else if(e.newValue == 'offline') {
-      document.getElementById('spinner').style.display='block';
-    } else {
-      document.getElementById('spinner').style.display='none';
-    }
-  } else if(e.key == 'LibreDocsUserAddress') {
-    connectToOwnpad();
-  }
-}, false);
 // So far this will connect to the default etherpad server.
 // This is just a test for the editor embedding
 function connectToOwnpad() {
   var userName, padId;
   var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
+  document.getElementsByTagName('h1')[0].innerHTML =
+    '(new) <small>'+(sessionObj.userAddress?' '+sessionObj.userAddress:'')
+    +'<input type="submit" value="Logout" onclick="localStorage.clear();location=\'/\';">'
+    +'</small>';
   if(sessionObj.userAddress != null) {
     userName = sessionObj.userAddress;
     } else {
@@ -37,7 +26,6 @@ function connectToOwnpad() {
     'userName':userName,
     'showControls':true,
     'showLineNumbers':false,
-    //we'll hopefully send the storage data here at some point.
   });
 }
 document.getElementsByTagName('body')[0].setAttribute('onload', 'connectToOwnpad();');

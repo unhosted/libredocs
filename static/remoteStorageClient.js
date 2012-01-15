@@ -5,27 +5,27 @@ var remoteStorageClient = (function() {
   }
   var sessionObj;
   var sessionStates = {
-    signIn: { page: '/loggedIn.html', display:'signing you in', action: doSignIn, next:{found:'pulling', needsWebfinger:'wf1', needsAllow:'allowRemoteStorage'}},
-    wf1: { page: '/loggedIn.html', display:'checking', action: checkWebfinger, next:{needSignup: 'needed', ok: 'allowRemoteStorage'}},
-    needed: { page: '/loggedIn.html', display:'pending 1/15', displayBlock:'easyfreedom-signup'},
-    enroll: { page: '/loggedIn.html', display:'pending 2/15', displayNone:'easyfreedom-signup', action: enroll, next:{409: 'enroll',201:'pinging'}},
-    pinging: { page: '/loggedIn.html', display:'pending 3/15', action: doPing, next:{200:'squatting1'}},
-    squatting1: { page: '/loggedIn.html', display:'pending 4/15', action: doSquat1, next:{201:'squatting2'}},
-    squatting2: { page: '/loggedIn.html', display:'pending 5/15', action: doSquat2, next:{200:'createDb'}},
-    createDb: { page: '/loggedIn.html', display:'pending 6/15', action: createDb, next:{201:'pop1'}},
-    pop1: { page: '/loggedIn.html', display:'pending 7/15', action: pop1, next:{201: 'pop2'}},
-    pop2: { page: '/loggedIn.html', display:'pending 8/15', action: pop2, next:{201: 'pop3'}},
-    pop3: { page: '/loggedIn.html', display:'pending 9/15', action: pop3, next:{201: 'pop4'}},
-    pop4: { page: '/loggedIn.html', display:'pending 10/15', action: pop4, next:{201: 'pop5'}},
-    pop5: { page: '/loggedIn.html', display:'pending 11/15', action: pop5, next:{201: 'selfAccess1'}},
-    selfAccess1: { page: '/loggedIn.html', display:'pending 12/15', action: doSelfAccess1, next:{201: 'selfAccess2'}},
-    selfAccess2: { page: '/loggedIn.html', display:'pending 13/15', action: doSelfAccess2, next:{201: 'selfAccess3'}},
-    selfAccess3: { page: '/loggedIn.html', display:'pending 14/15', action: doSelfAccess3, next:{200: 'storing'}},
-    storing: { page: '/loggedIn.html', display:'pending 15/15', action: doStore, next:{200: 'ready'}},
-    allowRemoteStorage: { page: '/loggedIn.html', buttons:['allow', 'cancel']},
-    pulling: { page: '/loggedIn.html', display:'pulling', buttons:['logout'], action: pull},
-    ready: { page: '/loggedIn.html', displayBlock:'list', buttons:['logout']},
-    error: { page: '/loggedIn.html', display:'error', buttons:['logout']}
+    signIn: { page: '/loggedIn.html', display:'signing you in', loadingBar:10, action: doSignIn, next:{found:'pulling', needsWebfinger:'wf1', needsAllow:'allowRemoteStorage'}},
+    wf1: { page: '/loggedIn.html', display:'checking', loadingBar:20, action: checkWebfinger, next:{needSignup: 'needed', ok: 'allowRemoteStorage'}},
+    needed: { page: '/loggedIn.html', display:'pending', loadingBar:30, displayBlock:'easyfreedom-signup'},
+    enroll: { page: '/loggedIn.html', display:'pending', loadingBar:40, displayNone:'easyfreedom-signup', action: enroll, next:{409: 'enroll',201:'pinging'}},
+    pinging: { page: '/loggedIn.html', display:'pending', loadingBar:50, action: doPing, next:{200:'squatting1'}},
+    squatting1: { page: '/loggedIn.html', display:'pending', loadingBar:60, action: doSquat1, next:{201:'squatting2'}},
+    squatting2: { page: '/loggedIn.html', display:'pending', loadingBar:63, action: doSquat2, next:{200:'createDb'}},
+    createDb: { page: '/loggedIn.html', display:'pending', loadingBar:66, action: createDb, next:{201:'pop1'}},
+    pop1: { page: '/loggedIn.html', display:'pending', loadingBar:70, action: pop1, next:{201: 'pop2'}},
+    pop2: { page: '/loggedIn.html', display:'pending', loadingBar:73, action: pop2, next:{201: 'pop3'}},
+    pop3: { page: '/loggedIn.html', display:'pending', loadingBar:76, action: pop3, next:{201: 'pop4'}},
+    pop4: { page: '/loggedIn.html', display:'pending', loadingBar:80, action: pop4, next:{201: 'pop5'}},
+    pop5: { page: '/loggedIn.html', display:'pending', loadingBar:83, action: pop5, next:{201: 'selfAccess1'}},
+    selfAccess1: { page: '/loggedIn.html', display:'pending', loadingBar:86, action: doSelfAccess1, next:{201: 'selfAccess2'}},
+    selfAccess2: { page: '/loggedIn.html', display:'pending', loadingBar:90, action: doSelfAccess2, next:{201: 'selfAccess3'}},
+    selfAccess3: { page: '/loggedIn.html', display:'pending', loadingBar:93, action: doSelfAccess3, next:{200: 'storing'}},
+    storing: { page: '/loggedIn.html', display:'pending', loadingBar:96, action: doStore, next:{200: 'ready'}},
+    allowRemoteStorage: { page: '/loggedIn.html', loadingBar:60, buttons:['allow', 'cancel']},
+    pulling: { page: '/loggedIn.html', display:'pulling', loadingBar:80, buttons:['logout'], action: pull, next:{'done': 'ready'}},
+    ready: { page: '/loggedIn.html', displayBlock:'list', loadingBar:100, buttons:['logout']},
+    error: { page: '/loggedIn.html', display:'error', loadingBar:0, buttons:['logout']}
   };
   function checkForLogin() {
     if(!sessionObj) {
@@ -43,6 +43,9 @@ var remoteStorageClient = (function() {
           } else {
             handlers['status']({background: fsmInfo.display});
           }
+        }
+        if(fsmInfo.loadingBar) {
+          document.getElementById('loadingBar').style.width=fsmInfo;
         }
         if(fsmInfo.displayBlock) {
           document.getElementById(fsmInfo.displayBlock).style.display='block';
@@ -265,7 +268,8 @@ var remoteStorageClient = (function() {
     };
     xhr.send(JSON.stringify(sessionObj));
   }
-  function pull() {
+  function pull(cb) {
+    cb('done');
   }
   function allow() {
     if(!sessionObj) {
