@@ -6,7 +6,7 @@ var remoteStorageClient = (function() {
   var sessionObj;
   var sessionStates = {
     signIn: { page: '/loggedIn.html', display:'signing you in', action: doSignIn, next:{found:'pulling', needsWebfinger:'wf1', needsAllow:'allowRemoteStorage'}},
-    wf1: { page: '/loggedIn.html', display:'checking', action: checkWebfinger, next:{fail: 'needed', ok: 'allowRemoteStorage'}},
+    wf1: { page: '/loggedIn.html', display:'checking', action: checkWebfinger, next:{needSignup: 'needed', ok: 'allowRemoteStorage'}},
     needed: { page: '/loggedIn.html', display:'pending 1/15', displayBlock:'easyfreedom-signup'},
     enroll: { page: '/loggedIn.html', display:'pending 2/15', displayNone:'easyfreedom-signup', action: enroll, next:{409: 'enroll',201:'pinging'}},
     pinging: { page: '/loggedIn.html', display:'pending 3/15', action: doPing, next:{200:'squatting1'}},
@@ -108,7 +108,7 @@ var remoteStorageClient = (function() {
       webfinger.getAttributes(sessionObj.userAddress, {
         onError: function(code, msg) {
           if(code == 5) {
-            cb('fail');
+            cb('needSignup');
           }
         }
       }, function() {}, function(attr) {
