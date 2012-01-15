@@ -24,8 +24,8 @@ var remoteStorageClient = (function() {
     storing: { page: '/loggedIn.html', display:'pending', loadingBar:96, action: doStore, next:{200: 'ready'}},
     allowRemoteStorage: { page: '/loggedIn.html', loadingBar:60, buttons:['allow', 'cancel']},
     pulling: { page: '/loggedIn.html', display:'pulling', loadingBar:80, buttons:['logout'], action: pull, next:{'done': 'ready'}},
-    ready: { page: '/loggedIn.html', displayBlock:'list', loadingBar:100, buttons:['logout']},
-    error: { page: '/loggedIn.html', display:'error', loadingBar:0, buttons:['logout']}
+    ready: { page: '/loggedIn.html', displayBlock:'list', buttons:['logout']},
+    error: { page: '/loggedIn.html', display:'error', buttons:['logout']}
   };
   function checkForLogin() {
     if(!sessionObj) {
@@ -38,14 +38,26 @@ var remoteStorageClient = (function() {
           window.location = fsmInfo.page;
         }
         if(handlers['status']) {
-          if(sessionObj.userAddress) {
-            handlers['status']({userAddress: sessionObj.userAddress, background: fsmInfo.display});
-          } else {
-            handlers['status']({background: fsmInfo.display});
+          var status = {};
+          if(fsmInfo.display) {
+            status.step = fsmInfo.display;
           }
+          if(fsmInfo.buttons) {
+            status.buttons = fsmInfo.buttons;
+          }
+          if(fsmInfo.loadingBar) {
+            status.loadingBar = fsmInfo.loadingBar;
+          }
+          if(sessionObj.userAddress) {
+            status.userAddress = sessionObj.userAddress;
+          }
+          handlers['status'](status);
         }
         if(fsmInfo.loadingBar) {
-          document.getElementById('loadingBar').style.width=fsmInfo;
+          document.getElementById('easyfreedom-loading').style.display='block';
+          document.getElementById('easyfreedom-loadingbar').style.width=fsmInfo+'%';
+        } else {
+          document.getElementById('easyfreedom-loading').style.display='none';
         }
         if(fsmInfo.displayBlock) {
           document.getElementById(fsmInfo.displayBlock).style.display='block';

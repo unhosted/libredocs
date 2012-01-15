@@ -1,9 +1,16 @@
 remoteStorageClient.on('status', function(status) {
-  document.getElementsByTagName('h1')[0].innerHTML = 'Libre Docs <small>'+(status.userAddress?' '+status.userAddress:'')+(status.background?' ('+status.background+')':'');
+  document.getElementsByTagName('h1')[0].innerHTML = 'Libre Docs <small>'+(status.userAddress?' '+status.userAddress:'');
   for(i in status.buttons) {
     document.getElementsByTagName('h1')[0].innerHTML += ' <input type="submit" value="'+status.buttons[i]+'" onclick="remoteStorageClient.'+status.buttons[i]+'();">';
   }
   document.getElementsByTagName('h1')[0].innerHTML += '</small>';
+  if(status.step) {
+    document.getElementById('easyfreedom-loading').style.display = 'block';
+    document.getElementById('easyfreedom-loadingbar').style.width = status.loadingBar+'%';
+    document.getElementById('easyfreedom-loadingtext').innerHTML = status.step;
+  } else {
+    document.getElementById('easyfreedom-loading').style.display = 'none';
+  }
 });
 function showList() {
   var str = '';
