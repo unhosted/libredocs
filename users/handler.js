@@ -277,7 +277,9 @@ exports.handler = (function() {
       });
       req.on('end', function() {
         var incoming = JSON.parse(dataStr);
+        console.log('incoming post:');
         console.log(incoming);
+        console.log('end of incoming post');
         if(incoming.audience == 'http://libredocs.org') {
           console.log('Welcome, LibreDocs user');
         } else if(incoming.audience == 'http://myfavouritesandwich.org') {

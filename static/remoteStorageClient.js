@@ -74,6 +74,7 @@ var remoteStorageClient = (function() {
     xhr.onreadystatechange = function() {
       if(xhr.readyState == 4) {
         var newSessionObj = {};
+        var oldSessionObj = sessionObj;//sorry for this
         try {
           newSessionObj = JSON.parse(xhr.responseText);
           sessionObj = newSessionObj;
@@ -82,7 +83,7 @@ var remoteStorageClient = (function() {
         }
         if(sessionObj.ok) {
           //this happens if we have a UserAddress record stored (for webfingerless user addresses)
-          if(audience=='http://libredocs.org') {//then the bearerToken is also directly stored in there
+          if(oldSessionObj.audience=='http://libredocs.org') {//then the bearerToken is also directly stored in there
             cb('found');
           } else {
             cb('needsAllow');
