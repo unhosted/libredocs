@@ -21,9 +21,10 @@ var remoteStorageClient = (function() {
     selfAccess1: { page: '/loggedIn.html', display:'pending 12/15', action: doSelfAccess1, next:{201: 'selfAccess2'}},
     selfAccess2: { page: '/loggedIn.html', display:'pending 13/15', action: doSelfAccess2, next:{201: 'selfAccess3'}},
     selfAccess3: { page: '/loggedIn.html', display:'pending 14/15', action: doSelfAccess3, next:{200: 'storing'}},
-    storing: { page: '/loggedIn.html', display:'pending 15/15', action: doStore, next:{200: 'pulling'}},
+    storing: { page: '/loggedIn.html', display:'pending 15/15', action: doStore, next:{200: 'ready'}},
     allowRemoteStorage: { page: '/loggedIn.html', buttons:['allow', 'cancel']},
     pulling: { page: '/loggedIn.html', display:'pulling', buttons:['logout'], action: pull},
+    ready: { page: '/loggedIn.html', displayBlock:'list', buttons:['logout']},
     error: { page: '/loggedIn.html', display:'error', buttons:['logout']}
   };
   function checkForLogin() {
