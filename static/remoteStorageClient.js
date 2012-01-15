@@ -7,7 +7,7 @@ var remoteStorageClient = (function() {
   var sessionStates = {
     signIn: { page: '/loggedIn.html', display:'signing you in', loadingBar:10, action: doSignIn, next:{found:'pulling', needsWebfinger:'wf1', needsAllow:'allowRemoteStorage'}},
     wf1: { page: '/loggedIn.html', display:'checking', loadingBar:20, action: checkWebfinger, next:{needSignup: 'needed', ok: 'allowRemoteStorage'}},
-    needed: { page: '/loggedIn.html', display:'pending', loadingBar:30, displayBlock:'easyfreedom-signup'},
+    needed: { page: '/loggedIn.html', display:'pending', displayBlock:'easyfreedom-signup'},
     enroll: { page: '/loggedIn.html', display:'pending', loadingBar:40, displayNone:'easyfreedom-signup', action: enroll, next:{409: 'enroll',201:'pinging'}},
     pinging: { page: '/loggedIn.html', display:'pending', loadingBar:50, action: doPing, next:{200:'squatting1'}},
     squatting1: { page: '/loggedIn.html', display:'pending', loadingBar:60, action: doSquat1, next:{201:'squatting2'}},
