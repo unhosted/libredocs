@@ -179,22 +179,25 @@ exports.handler = (function() {
       }
     };
     console.log(options);
-    var request = https.request(options, function(response) {
-      console.log('STATUS: ' + response.statusCode);
-      console.log('HEADERS: ' + JSON.stringify(response.headers));
-      response.setEncoding('utf8');
+    var request = https.request(options, function(storeResponse) {
+      console.log('store STATUS: ' + storeResponse.statusCode);
+      console.log('store HEADERS: ' + JSON.stringify(storeResponse.headers));
+      storeResponse.setEncoding('utf8');
       var resStr = '';
-      response.on('data', function (chunk) { 
+      storeResponse.on('data', function (chunk) { 
         resStr += chunk;
-        console.log('BODY: ' + chunk);
+        console.log('store BODY: ' + chunk);
       });
-      response.on('end', function() { 
-        if(response.statusCode == 201) {
+      storeResponse.on('end', function() { 
+        console.log('got status code '+storeResponse.statusCode+' while storing userObj.');
+        if(storeResponse.statusCode == 201) {
+           console.log('store function calling cb');
            cb();
         } else {
-          console.log(response.statusCode)
-          console.log(response.headers);
+          console.log(storeResponse.statusCode)
+          console.log(storeResponse.headers);
           console.log('oops:'+resStr);
+          console.log('store function calling err');
           err();
         }
       });
@@ -241,16 +244,30 @@ exports.handler = (function() {
             console.log('password "'+params.adminPwd+'" accepted');
             params._rev = existingRecord._rev;
             store(params, function() {
-              res.writeHead(500, {});
+              console.log('store function called err');
+              res.writeHead(500, {
+                'Access-Control-Allow-Origin': req.headers.origin,
+                'Access-Control-Allow-Methods': 'POST, PUT, GET',
+                'Access-Control-Allow-Headers': 'Origin, Content-Type'
+              });
               res.end();
             }, function() {
-              res.writeHead(200, {});
+              console.log('store function called cb');
+              res.writeHead(200, {
+                'Access-Control-Allow-Origin': req.headers.origin,
+                'Access-Control-Allow-Methods': 'POST, PUT, GET',
+                'Access-Control-Allow-Headers': 'Origin, Content-Type'
+              });
               res.write('stored');
               res.end();
             });
           } else {
             console.log('password "'+params.adminPwd+'" rejected');
-            res.writeHead(401, {});
+            res.writeHead(401, {
+              'Access-Control-Allow-Origin': req.headers.origin,
+              'Access-Control-Allow-Methods': 'POST, PUT, GET',
+              'Access-Control-Allow-Headers': 'Origin, Content-Type'
+            });
             res.write('not the right adminPwd');
             res.end();
           }
@@ -266,7 +283,6 @@ exports.handler = (function() {
         'Access-Control-Allow-Origin': req.headers.origin,
         'Access-Control-Allow-Methods': 'POST, PUT, GET',
         'Access-Control-Allow-Headers': 'Origin, Content-Type'
-
       });
       res.end();
     } else {
