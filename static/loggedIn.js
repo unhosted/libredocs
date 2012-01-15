@@ -49,5 +49,5 @@ function showDoc(i) {
   window.location='/write/';
 }
 
-document.getElementById('body').setAttribute('onload', 'showList();remoteStorageClient.checkForLogin();');
+document.getElementById('body').setAttribute('onload', 'remoteStorageClient.checkForLogin();');
 document.getElementById('agree-button').setAttribute('onclick', 'remoteStorageClient.agree();');
