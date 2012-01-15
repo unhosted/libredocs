@@ -238,12 +238,12 @@ var remoteStorageClient = (function() {
     }, cb);
   }
   function doSelfAccess1(cb) {
-    pimper.createUser(sessionObj.subdomain+'.iriscouch.com', sessionObj.userAddress, sessionObj.adminPwd, 'http___libredocs_org', function(token) {
+    pimper.createUser(sessionObj.subdomain+'.iriscouch.com', sessionObj.userAddress, sessionObj.adminPwd, 'http___libredocs_org', function(result, token) {
       sessionObj.bearerToken = token;
       sessionObj.storageApi = 'CouchDB';
       sessionObj.storageAddress = 'http://'+sessionObj.proxy+'/'+sessionObj.subdomain + '.iriscouch.com/documents/';
       localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
-      cb('success');
+      cb(result);
     });
   }
   function doSelfAccess2(cb) {
