@@ -21,5 +21,8 @@ squat/config.js
 users/config.js
 setConfig/config.js
 
+# node modules
+node_modules
+
 # Cloud9IDE
 .settings.xml
