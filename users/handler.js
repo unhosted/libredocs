@@ -135,80 +135,25 @@ exports.handler = (function() {
     console.log('outside browseridVerify');
   }
   function store(userObj, err, cb) {
-    console.log('storing userObj:');
-    console.log(userObj);
-    var authStr = userDb.usr + ':' + userDb.pwd;
-    console.log(authStr);
-    var options = {
-      host: userDb.host,
-      port: 443,
-      path: '/'+userDb.dbName+'/'+userObj.userAddress,
-      method: 'PUT', 
-      headers: {
-        'Authorization': 'Basic ' + new Buffer(authStr).toString('base64')
-      }
-    };
-    console.log(options);
-    var request = https.request(options, function(storeResponse) {
-      console.log('store STATUS: ' + storeResponse.statusCode);
-      console.log('store HEADERS: ' + JSON.stringify(storeResponse.headers));
-      storeResponse.setEncoding('utf8');
-      var resStr = '';
-      storeResponse.on('data', function (chunk) { 
-        resStr += chunk;
-        console.log('store BODY: ' + chunk);
-      });
-      storeResponse.on('end', function() { 
-        console.log('got status code '+storeResponse.statusCode+' while storing userObj.');
-        if(storeResponse.statusCode == 201) {
-           console.log('store function calling cb');
-           cb();
-        } else {
-          console.log(storeResponse.statusCode)
-          console.log(storeResponse.headers);
-          console.log('oops:'+resStr);
-          console.log('store function calling err');
-          err();
-        }
-      });
+    initRedis(function() {
+      redisClient.set(userObj.userAddress, userObj, cb);
     });
-    console.log('sending the userObj');
-    request.write(JSON.stringify(userObj));
-    console.log('ending the request');
-    request.end();
   }
 
   function serveSet(req, res, params) {
-    console.log('serveSet');
-    console.log(params);
-    var authStr = userDb.usr + ':' + userDb.pwd;
-    console.log(authStr);
-    var options = {
-      host: userDb.host,
-      port: 443,
-      path: '/'+userDb.dbName+'/'+params.userAddress,
-      method: 'GET', 
-      headers: {
-        'Authorization': 'Basic ' + new Buffer(authStr).toString('base64')
-      }
-    };
-    console.log(options);
-    var request = https.request(options, function(response) {
-      console.log('STATUS: ' + response.statusCode);
-      console.log('HEADERS: ' + JSON.stringify(response.headers));
-      response.setEncoding('utf8');
-      var resStr = '';
-      response.on('data', function (chunk) { 
-        resStr += chunk;
-        console.log('BODY: ' + chunk);
-      });
-      response.on('end', function() { 
-        if(response.statusCode == 404) {
-          res.writeHead(response.statusCode, response.headers);
-          res.write('cannot find user "'+params.userAddress+'":'+resStr);
-          res.end();
-        } else {
-          console.log('END; got res: "'+resStr+'"');
+    initRedis(function() {
+      redisClient.get(params.userAddress, function(err, data) {
+        if(data) {
+
+
+
+
+
+
+
+
+
+
           var existingRecord = JSON.parse(resStr);
           if(params.adminPwd == existingRecord.adminPwd) {
             console.log('password "'+params.adminPwd+'" accepted');
@@ -241,6 +186,10 @@ exports.handler = (function() {
             res.write('not the right adminPwd');
             res.end();
           }
+        } else {
+          res.writeHead(response.statusCode, response.headers);
+          res.write('cannot find user "'+params.userAddress+'":'+resStr);
+          res.end();
         }
       });
     });
