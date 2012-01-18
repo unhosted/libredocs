@@ -4,8 +4,22 @@ exports.handler = (function() {
     querystring = require('querystring'),
     //browseridVerify = require('browserid-verifier'),
     fs = require('fs'),
-    userDb = require('./config').config;
+    userDb = require('./config').config,
+    redis = require('redis'),
+    redisClient;
   
+  function initRedis(cb) {
+    console.log('initing redis');
+    redisClient = redis.createClient(userDb.port, userDb.host);
+    redisClient.on("error", function (err) {
+      console.log("error event - " + redisClient.host + ":" + redisClient.port + " - " + err);
+    });
+    redisClient.auth(userDb.pwd, function() {
+       console.log('redis auth done');
+       //redisClient.stream.on('connect', cb);
+       cb();
+    });
+  }
   function browseridVerify(obj, cb) {
     var queryStr = 'audience='+obj.audience+'&assertion='+obj.assertion;
     var options = {
@@ -117,52 +131,31 @@ exports.handler = (function() {
       } else {
         console.log('no err');
         if(r.email) {
-          console.log(r.email+' confirmed by browserid verifier');
-          var authStr = userDb.usr + ':' + userDb.pwd;
-          console.log(authStr);
-          var options = {
-            host: userDb.host,
-            port: 443,
-            path: '/'+userDb.dbName+'/'+r.email,
-            method: 'GET', 
-            headers: {
-              'Authorization': 'Basic ' + new Buffer(authStr).toString('base64')
-            }
-          };
-          console.log(options);
-          var request = https.request(options, function(response) {
-            console.log('STATUS: ' + response.statusCode);
-            console.log('HEADERS: ' + JSON.stringify(response.headers));
-            response.setEncoding('utf8');
-            var resStr = '';
-             response.on('data', function (chunk) {
-              resStr += chunk;
-              console.log('BODY: ' + chunk);
-            });
-             response.on('end', function() {
-              if(response.statusCode == 404) {
-                webfingerLookup(r.email, postData.audience, res);
-              } else {
-                console.log('END; writing to res: "'+resStr+'"');
-                response.headers['Access-Control-Allow-Origin'] = postData.audience;
-                res.writeHead(response.statusCode, response.headers);
-                res.write(resStr);
+          initRedis(function() {
+            redisClient.get(r.email, function(err, data) {
+              console.log(err);
+              console.log(data);
+              if(data) {
+                headers = {'Access-Control-Allow-Origin': postData.audience};
+                res.writeHead(200, headers);
+                res.write(data);
                 res.end();
+              } else {
+                console.log('go to webfinger');
+                webfingerLookup(r.email, postData.audience, res);
               }
             });
+            console.log('outside redisClient.get');
           });
-          //console.log('writing to the request');
-
-          //var data = JSON.stringify({
-          //});
-          //console.log(data);
-          //request.write(data);
-          console.log('ending the request');
-          request.end();
-          console.log('setting request.on(\'response\', ...)');
+          console.log('outside initRedis');
+        } else {
+          console.log('we have no r.email - X');
         }
+        console.log('after r.email switch');
       }
+      console.log('end inside browseridVerify');
     });
+    console.log('outside browseridVerify');
   }
   function store(userObj, err, cb) {
     console.log('storing userObj:');
@@ -302,6 +295,7 @@ exports.handler = (function() {
             audience: incoming.audience,
             assertion: incoming.assertion
           });
+          console.log('done with serveGet');
         } else if(incoming.audience == 'http://myfavouritesandwich.org') {
           console.log('Welcome, MyFavouriteSandwich user');
           serveGet(req, res, {
@@ -315,9 +309,11 @@ exports.handler = (function() {
           res.writeHead(401);
           res.end('foreign audience - come to #unhosted on freenode to register it');
         }
+        console.log('done with req.on(end)');
       });
     }
   }
+
   return {
     serve: serve
   };
