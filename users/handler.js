@@ -70,48 +70,25 @@ exports.handler = (function() {
       path: '/.well-known/host-meta',
       method: 'GET'
     }
-    //var request = https.request(options, function(response) {
-    //  if(response.statusCode == 200) {
-    //    //parse the xml
-    //  } else {
-        var authStr = userDb.usr + ':' + userDb.pwd;
-        var options2 = {
-          host: userDb.host,
-          port: 443,
-          path: '/'+userDb.dbName+'/'+userAddress,
-          method: 'PUT',
-          headers: {
-            'Authorization': 'Basic ' + new Buffer(authStr).toString('base64')
-          }
-        };
-        console.log(options);
+    var request = https.request(options, function(response) {
+      if(response.statusCode == 200) {
+        //parse the xml
+      } else {
         var adminPwd = randStr(40);
         var data= {
           adminPwd: adminPwd,
           userAddress: userAddress
         }
-        res.writeHead(200, {
-          'Content-type': 'application/json',
-          'Access-Control-Allow-Origin': origin
-        });
-        res.write(JSON.stringify(data));
-        res.end();
-        var request2 = https.request(options2, function(response2) {
-          console.log('STATUS: ' + response2.statusCode);
-          response2.setEncoding('utf8');
-          var resStr = '';
-          response2.on('data', function (chunk) {
-            resStr += chunk;
-            console.log('BODY2: ' + chunk);
+        redisClient.set(userAddress, data, function(err, resp) {
+          res.writeHead(200, {
+            'Content-type': 'application/json',
+            'Access-Control-Allow-Origin': origin
           });
-          response2.on('end', function() {
-            console.log('END2');
-          });
+          res.write(JSON.stringify(data));
+          res.end();
         });
-        request2.write(JSON.stringify(data));
-        request2.end();
-    //  }
-    //});
+      }
+    });
   }
   function serveGet(req, res, postData) {
     console.log('serveGet');
