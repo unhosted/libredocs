@@ -1,4 +1,5 @@
 html, body { background-color:#eee; }
+footer { border:none; }
 .container > footer p { text-align:center; }
 .container { width:50em; }
 
