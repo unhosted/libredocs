@@ -12,6 +12,7 @@ remoteStorageClient.on('status', function(status) {
     document.getElementById('easyfreedom-loading').style.display = 'none';
   }
 });
+
 function showList() {
   var str = '';
   var docs = JSON.parse(localStorage.getItem('list'));
@@ -32,12 +33,21 @@ function showList() {
   for(i in docs) {
     str += '<tr onclick="showDoc('+i+');"><td><strong>'
       +docs[i].preview
-      +'</strong></td><td><em>'
-      +docs[i].timestamp
+      +'</strong></td><td>'
+      +'<em style="'+modifiedDateColor(docs[i].timestamp)+'" '
+      +'title="'+new Date(docs[i].timestamp).toLocaleString()+'">'
+      +relativeModifiedDate(docs[i].timestamp);
       +'</em></td></tr>';
   }
   document.getElementById('list').innerHTML = str;
 }
+
+
+document.getElementById('testing').innerHTML= '<p style="'
+  +modifiedDateColor(timestamp)+'" title="'
+  +new Date(timestamp).toLocaleString()+'">'
+  +relativeModifiedDate(timestamp)+'</p>';
+
 function showDoc(i) {
   if(!i) {
     i = new Date().getTime();
@@ -54,6 +64,35 @@ function showDoc(i) {
   sessionObj.currDocId = i;
   localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
   window.location='/write/';
+}
+
+function relativeModifiedDate(timestamp) {
+  var timediff = Math.round((new Date().getTime()-timestamp) / 1000);
+  var diffminutes = Math.round(timediff/60);
+  var diffhours = Math.round(diffminutes/60);
+  var diffdays = Math.round(diffhours/24);
+  var diffmonths = Math.round(diffdays/31);
+  var diffyears = Math.round(diffdays/365);
+  if(timediff < 60) { return 'seconds ago'; }
+  else if(timediff < 120) { return 'a minute ago'; }
+  else if(timediff < 3600) { return diffminutes+' minutes ago'; }
+  //else if($timediff < 7200) { return '1 hour ago'; }
+  //else if($timediff < 86400) { return $diffhours.' hours ago'; }
+  else if(timediff < 86400) { return 'today'; }
+  else if(timediff < 172800) { return 'yesterday'; }
+  else if(timediff < 2678400) { return diffdays+' days ago'; }
+  else if(timediff < 5184000) { return 'last month'; }
+  //else if($timediff < 31556926) { return $diffmonths.' months ago'; }
+  else if(timediff < 31556926) { return 'months ago'; }
+  else if(timediff < 63113852) { return 'last year'; }
+  else { return diffyears+' years ago'; }
+}
+
+function modifiedDateColor(timestamp) {
+  var lastModifiedTime = Math.round(timestamp / 1000);
+  var modifiedColor = Math.round((Math.round((new Date()).getTime() / 1000)-lastModifiedTime)/60/60/24*5);
+  if(modifiedColor>210) modifiedColor = 210;
+  return 'color:rgb('+modifiedColor+','+modifiedColor+','+modifiedColor+')';
 }
 
 document.getElementById('body').setAttribute('onload', 'showList();remoteStorageClient.checkForLogin();');
