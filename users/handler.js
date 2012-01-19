@@ -112,7 +112,6 @@ exports.handler = (function() {
             redisClient.get(r.email, function(err, data) {
               console.log(err);
               console.log(data);
-                                    data=null;
               if(data) {
                 headers = {'Access-Control-Allow-Origin': postData.audience};
                 res.writeHead(200, headers);
