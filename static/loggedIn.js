@@ -28,16 +28,15 @@ function showList() {
     localStorage.removeItem('currDoc');
   }
   str += '<tr onclick="showDoc();"><td><strong>+ New document</strong>'
-    +'</td><td><em>'
-    +'</em></td></tr>';
+    +'</td><td></td></tr>';
   for(i in docs) {
     str += '<tr onclick="showDoc('+i+');"><td><strong>'
       +docs[i].preview
       +'</strong></td><td>'
-      +'<em style="'+modifiedDateColor(docs[i].timestamp)+'" '
+      +'<p style="'+modifiedDateColor(docs[i].timestamp)+'" '
       +'title="'+new Date(docs[i].timestamp).toLocaleString()+'">'
       +relativeModifiedDate(docs[i].timestamp);
-      +'</em></td></tr>';
+      +'</p></td></tr>';
   }
   document.getElementById('list').innerHTML = str;
 }
