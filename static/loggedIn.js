@@ -42,12 +42,6 @@ function showList() {
   document.getElementById('list').innerHTML = str;
 }
 
-
-document.getElementById('testing').innerHTML= '<p style="'
-  +modifiedDateColor(timestamp)+'" title="'
-  +new Date(timestamp).toLocaleString()+'">'
-  +relativeModifiedDate(timestamp)+'</p>';
-
 function showDoc(i) {
   if(!i) {
     i = new Date().getTime();
