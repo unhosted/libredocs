@@ -64,7 +64,7 @@ exports.handler = (function() {
       } 
    
       fs.readFile(filename, 'binary', function(err, file) {
-        if(err == 'Error: EISDIR, Is a directory') {
+        if(err.code == 'EISDIR') {
           res.writeHead(301, {'Location': 'http://'+host+uripath+'/'});
           res.end('Location: http://'+host+uripath+'/\n');
         } else if(err) {
