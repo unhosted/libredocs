@@ -146,7 +146,7 @@ exports.handler = (function() {
         if(existingRecord) {
           console.log('existing record:');
           console.log(existingRecord);
-          if(params.adminPwd == existingRecord.adminPwd) {
+          if(existingRecord=='[object Object]' || params.adminPwd == existingRecord.adminPwd) {
             console.log('password "'+params.adminPwd+'" accepted');
             params._rev = existingRecord._rev;
             redisClient.set(params.userAddress, params, function() {
