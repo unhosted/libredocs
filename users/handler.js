@@ -172,8 +172,8 @@ exports.handler = (function() {
             res.end();
           }
         } else {
-          res.writeHead(response.statusCode, response.headers);
-          res.write('cannot find user "'+params.userAddress+'":'+resStr);
+          res.writeHead(404, {});
+          res.write('cannot find user "'+params.userAddress+'":'+data);
           res.end();
         }
       });
