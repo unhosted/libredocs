@@ -134,31 +134,16 @@ exports.handler = (function() {
     });
     console.log('outside browseridVerify');
   }
-  function store(userObj, err, cb) {
-    initRedis(function() {
-      redisClient.set(userObj.userAddress, userObj, cb);
-    });
-  }
 
   function serveSet(req, res, params) {
     initRedis(function() {
       redisClient.get(params.userAddress, function(err, data) {
         if(data) {
-
-
-
-
-
-
-
-
-
-
-          var existingRecord = JSON.parse(resStr);
+          var existingRecord = JSON.parse(data);
           if(params.adminPwd == existingRecord.adminPwd) {
             console.log('password "'+params.adminPwd+'" accepted');
             params._rev = existingRecord._rev;
-            store(params, function() {
+            redisClient.set(params.userAddress, params, function() {
               console.log('store function called err');
               res.writeHead(500, {
                 'Access-Control-Allow-Origin': req.headers.origin,
