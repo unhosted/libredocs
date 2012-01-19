@@ -142,9 +142,10 @@ exports.handler = (function() {
 
   function serveSet(req, res, params) {
     initRedis(function() {
-      redisClient.get(params.userAddress, function(err, data) {
-        if(data) {
-          var existingRecord = JSON.parse(data);
+      redisClient.get(params.userAddress, function(err, existingRecord) {
+        if(existingRecord) {
+          console.log('existing record:');
+          console.log(existingRecord);
           if(params.adminPwd == existingRecord.adminPwd) {
             console.log('password "'+params.adminPwd+'" accepted');
             params._rev = existingRecord._rev;
