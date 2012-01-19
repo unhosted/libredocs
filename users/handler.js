@@ -112,6 +112,7 @@ exports.handler = (function() {
             redisClient.get(r.email, function(err, data) {
               console.log(err);
               console.log(data);
+                                    data=null;
               if(data) {
                 headers = {'Access-Control-Allow-Origin': postData.audience};
                 res.writeHead(200, headers);
@@ -144,14 +145,6 @@ exports.handler = (function() {
             console.log('password "'+params.adminPwd+'" accepted');
             params._rev = existingRecord._rev;
             redisClient.set(params.userAddress, params, function() {
-              console.log('store function called err');
-              res.writeHead(500, {
-                'Access-Control-Allow-Origin': req.headers.origin,
-                'Access-Control-Allow-Methods': 'POST, PUT, GET',
-                'Access-Control-Allow-Headers': 'Origin, Content-Type'
-              });
-              res.end();
-            }, function() {
               console.log('store function called cb');
               res.writeHead(200, {
                 'Access-Control-Allow-Origin': req.headers.origin,
