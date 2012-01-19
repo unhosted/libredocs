@@ -63,17 +63,17 @@ exports.handler = (function() {
   }
   function webfingerLookup(userAddress, origin, res) {
     console.log('webfingerLookup');
-    var userAddressParts = userAddress.split('@');
-    var options = {
-      host: userAddressParts[1],
-      port: 443,
-      path: '/.well-known/host-meta',
-      method: 'GET'
-    }
-    var request = https.request(options, function(response) {
-      if(response.statusCode == 200) {
-        //parse the xml
-      } else {
+//    var userAddressParts = userAddress.split('@');
+//    var options = {
+//      host: userAddressParts[1],
+//      port: 443,
+//      path: '/.well-known/host-meta',
+//      method: 'GET'
+//    }
+//    var request = https.request(options, function(response) {
+//      if(response.statusCode == 200) {
+//        //parse the xml
+//      } else {
         var adminPwd = randStr(40);
         var data= {
           adminPwd: adminPwd,
@@ -87,8 +87,8 @@ exports.handler = (function() {
           res.write(JSON.stringify(data));
           res.end();
         });
-      }
-    });
+//      }
+//    });
   }
   function serveGet(req, res, postData) {
     console.log('serveGet');
@@ -178,8 +178,6 @@ exports.handler = (function() {
         }
       });
     });
-    console.log('ending the request');
-    request.end();
   }
   function serve(req, res, baseDir) {
     if(req.method=='OPTIONS') {
