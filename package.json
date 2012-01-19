@@ -10,5 +10,8 @@
   "scripts": {
     "start": "server.js"
   },
-  "version": "0.0.0-55"
+  "version": "0.0.0-55",
+  "dependencies": {
+    "redis": ">=0.7.1"
+  }
 }

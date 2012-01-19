@@ -115,7 +115,7 @@ exports.handler = (function() {
               if(data) {
                 headers = {'Access-Control-Allow-Origin': postData.audience};
                 res.writeHead(200, headers);
-                res.write(data);
+                res.write(JSON.stringify(data));
                 res.end();
               } else {
                 console.log('go to webfinger');
