@@ -16,12 +16,7 @@ function showList() {
   var str = '';
   var docs = JSON.parse(localStorage.getItem('list'));
   if(localStorage.getItem('currDoc')) {
-    var preview = localStorage.getItem('text'+localStorage.getItem('currDoc'));
-    if(preview) {
-      docs[localStorage.getItem('currDoc')].preview = preview.substring(0,80);
-    } else {
-      docs[localStorage.getItem('currDoc')].preview = '(empty)';
-    }
+    docs[localStorage.getItem('currDoc')].title = 'Title';
     docs[localStorage.getItem('currDoc')].timestamp = new Date().getTime();
     localStorage.setItem('list', JSON.stringify(docs));
     localStorage.removeItem('currDoc');
@@ -30,7 +25,7 @@ function showList() {
     +'</td><td></td></tr>';
   for(i in docs) {
     str += '<tr><td onclick="showDoc(\''+i+'\');"><strong>'
-      +docs[i].preview
+      +docs[i].title
       +'</strong></td><td>'
       +'<p style="'+modifiedDateColor(docs[i].timestamp)+'" '
       +'title="'+new Date(docs[i].timestamp).toLocaleString()+'">'
@@ -55,7 +50,7 @@ function showDoc(i) {
       docs = {};
     }
     docs[i] = {};
-    docs[i].preview = i;
+    docs[i].title = i;
     docs[i].timestamp = new Date().getTime();
     localStorage.setItem('list', JSON.stringify(docs));
   }
