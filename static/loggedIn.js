@@ -29,12 +29,13 @@ function showList() {
   str += '<tr onclick="showDoc();"><td><strong>+ New document</strong>'
     +'</td><td></td></tr>';
   for(i in docs) {
-    str += '<tr onclick="showDoc('+i+');"><td><strong>'
+    str += '<tr><td onclick="showDoc(\''+i+'\');"><strong>'
       +docs[i].preview
       +'</strong></td><td>'
       +'<p style="'+modifiedDateColor(docs[i].timestamp)+'" '
       +'title="'+new Date(docs[i].timestamp).toLocaleString()+'">'
-      +relativeModifiedDate(docs[i].timestamp);
+      +relativeModifiedDate(docs[i].timestamp)
+      +'<input type="submit" value="Share" onclick="share(\''+i+'\');">'
       +'</p></td></tr>';
   }
   document.getElementById('list').innerHTML = str;
@@ -42,6 +43,9 @@ function showList() {
 
 function hyphenify(userAddress) {
   return userAddress.replace(/-/g, '-dash-').replace(/@/g, '-at-').replace(/\./g, '-dot-');
+}
+function getDocAddress(userAddress, docTitle) {
+  return 'http://libredocs.org/write/#!/'+hyphenify(userAddress)+'/'+docTitle;
 }
 function showDoc(i) {
   if(!i) {
@@ -58,9 +62,12 @@ function showDoc(i) {
   var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
   sessionObj.currDocId = i;
   localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
-  window.location='/write/#!/'+hyphenify(sessionObj.userAddress)+'/'+i;
+  window.location=getDocAddress(sessionObj.userAddress, i);
 }
-
+function share(i) {
+  var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
+  alert(getDocAddress(sessionObj.userAddress, i));
+}
 function relativeModifiedDate(timestamp) {
   var timediff = Math.round((new Date().getTime()-timestamp) / 1000);
   var diffminutes = Math.round(timediff/60);
