@@ -40,6 +40,9 @@ function showList() {
   document.getElementById('list').innerHTML = str;
 }
 
+function hyphenify(userAddress) {
+  return userAddress.replace(/-/g, '-dash-').replace(/@/g, '-at-').replace(/\./g, '-dot-');
+}
 function showDoc(i) {
   if(!i) {
     i = new Date().getTime();
@@ -55,7 +58,7 @@ function showDoc(i) {
   var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
   sessionObj.currDocId = i;
   localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
-  window.location='/write/';
+  window.location='/write/#!/'+hyphenify(sessionObj.userAddress)+'/'+i;
 }
 
 function relativeModifiedDate(timestamp) {
