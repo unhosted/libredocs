@@ -4,7 +4,7 @@ function connectToOwnpad() {
   var userName, padId;
   var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
   document.getElementsByTagName('h1')[0].innerHTML =
-    sessionObj.currDocId+' <small>'+(sessionObj.userAddress?' '+sessionObj.userAddress:'')
+    '<small><span id="docTitle" onclick="changeDocTitle();"><strong>'+sessionObj.currDocId+'</strong></span>'+(sessionObj.userAddress?' '+sessionObj.userAddress:'')
     +'<input type="submit" value="Logout" onclick="localStorage.clear();location=\'/\';">'
     +'</small>';
   if(sessionObj.userAddress != null) {
@@ -27,6 +27,9 @@ function connectToOwnpad() {
     'showControls':true,
     'showLineNumbers':false,
   });
+}
+function changeDocTitle() {
+  alert('In the future we will let you change this document title');
 }
 document.getElementsByTagName('body')[0].setAttribute('onload', 'connectToOwnpad();');
 document.getElementById('loading').style.display='none';
