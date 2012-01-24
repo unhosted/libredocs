@@ -13,6 +13,9 @@ function go() {
   });
 }
 
+if(localStorage.getItem('sessionObj')) {
+  window.location = '/loggedIn.html';
+}
 document.getElementById('signin-button').onclick = go;
 document.getElementById('signin-loading').style.display='none';
 document.getElementById('signin-button').style.display='block';
