@@ -48,7 +48,7 @@ function showDoc(i) {
       docs = {};
     }
     docs[i] = {};
-    docs[i].preview = 'Document title';
+    docs[i].preview = i;
     docs[i].timestamp = new Date().getTime();
     localStorage.setItem('list', JSON.stringify(docs));
   }

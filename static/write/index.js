@@ -4,7 +4,7 @@ function connectToOwnpad() {
   var userName, padId;
   var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
   document.getElementsByTagName('h1')[0].innerHTML =
-    'Title <small>'+(sessionObj.userAddress?' '+sessionObj.userAddress:'')
+    sessionObj.currDocId+' <small>'+(sessionObj.userAddress?' '+sessionObj.userAddress:'')
     +'<input type="submit" value="Logout" onclick="localStorage.clear();location=\'/\';">'
     +'</small>';
   if(sessionObj.userAddress != null) {
