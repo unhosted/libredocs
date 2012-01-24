@@ -20,7 +20,7 @@ function connectToOwnpad() {
   $('#editorPad').pad({
     'padId':padId,
     'host':'http://ownpad.nodejitsu.com',
-    'storageAddress':sessionObj.storageAddress,
+    'storageAddress':'https://'+sessionObj.subdomain+'.iriscouch.com/documents/',
     'bearerToken':sessionObj.bearerToken,
     'storageApi':sessionObj.storageApi,
     'userName':userName,
