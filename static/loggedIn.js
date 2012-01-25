@@ -55,7 +55,6 @@ function showDoc(i) {
     localStorage.setItem('list', JSON.stringify(docs));
   }
   var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
-  sessionObj.currDocId = i;
   localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
   window.location=getDocAddress(sessionObj.userAddress, i);
 }
