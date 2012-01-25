@@ -17,7 +17,7 @@ function connectToOwnpad() {
       '<span id="docTitle">'+getCurrDocName()+'</span><small> by '+getCurrDocOwner()
       +'<input type="submit" value="Login" onclick="localStorage.clear();location=\'/\';">'
       +'</small>';
-    embedSharedPad(getCurrDocOwner(), padId);
+    embedSharedPad(getCurrDocOwner(), padId, "unknown");
     return;
   }
   
@@ -29,7 +29,7 @@ function connectToOwnpad() {
       '<span id="docTitle">'+getCurrDocName()+'</span><small>'+(sessionObj.userAddress?' '+sessionObj.userAddress:'')
       +'<input type="submit" value="Logout" onclick="localStorage.clear();location=\'/\';">'
       +'</small>';
-    embedSharedPad(getCurrDocOwner(), padId);
+    embedSharedPad(getCurrDocOwner(), padId, userName);
   }
   else
   {
@@ -56,13 +56,12 @@ function embedOwnPad(padId)
   });
 }
 
-function embedSharedPad(owner, padId)
+function embedSharedPad(owner, padId, userName)
 {
-  var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
   $('#editorPad').pad({
     'padId': owner + '$' + padId,
     'host':'http://ownpad.nodejitsu.com',
-    'userName':sessionObj.userAddress,
+    'userName':userName,
     'showControls':true,
     'showLineNumbers':false
   });
