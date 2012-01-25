@@ -11,7 +11,7 @@ function connectToOwnpad() {
   }
 
   // not logged in
-  if(sessionObj == null && sessionObj.userAddress != null) 
+  if(sessionObj == null || sessionObj.userAddress != null) 
   {
     document.getElementsByTagName('h1')[0].innerHTML =
       '<span id="docTitle">'+getCurrDocName()+'</span><small> by '+getCurrDocOwner()
