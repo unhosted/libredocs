@@ -3,26 +3,39 @@
 function connectToOwnpad() {
   var userName, padId;
   var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
-  document.getElementsByTagName('h1')[0].innerHTML =
-    '<span id="docTitle" onmouseover="changeDocTitle();">'+getCurrDocName()+'</span><small>'+(sessionObj.userAddress?' '+sessionObj.userAddress:'')
-    +'<input type="submit" value="Logout" onclick="localStorage.clear();location=\'/\';">'
-    +'</small>';
-  if(sessionObj.userAddress != null) {
-    userName = hyphenify(sessionObj.userAddress);
-    } else {
-    userName = 'Address Not Set Yet'
-  }
+
   if(getCurrDocName() != null) {
     padId = docNameToPadId(getCurrDocName());
     } else {
     padId = 'still-hosted-no-name'
   }
+
+  // not logged in
+  if(sessionObj == null && sessionObj.userAddress != null) {
+    document.getElementsByTagName('h1')[0].innerHTML =
+      '<span id="docTitle">'+getCurrDocName()+'</span><small> by '+getCurrDocOwner())
+      +'<input type="submit" value="Login" onclick="localStorage.clear();location=\'/\';">'
+      +'</small>';
+    embedSharedPad(getCurrDocOwner(), padId);
+    return;
+  }
+  
+  userName = hyphenify(sessionObj.userAddress);
+  
   if(getCurrDocOwner() != userName)
   {
+    document.getElementsByTagName('h1')[0].innerHTML =
+      '<span id="docTitle">'+getCurrDocName()+'</span><small>'+(sessionObj.userAddress?' '+sessionObj.userAddress:'')
+      +'<input type="submit" value="Logout" onclick="localStorage.clear();location=\'/\';">'
+      +'</small>';
     embedSharedPad(getCurrDocOwner(), padId);
   }
   else
   {
+    document.getElementsByTagName('h1')[0].innerHTML =
+      '<span id="docTitle" onmouseover="changeDocTitle();">'+getCurrDocName()+'</span><small>'+(sessionObj.userAddress?' '+sessionObj.userAddress:'')
+      +'<input type="submit" value="Logout" onclick="localStorage.clear();location=\'/\';">'
+      +'</small>';
     embedOwnPad(padId);
   }
 }
