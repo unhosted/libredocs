@@ -18,8 +18,10 @@ h1 small { font-size:.27em; float:right; }
 #easyfreedom-loadingtext { padding:1em; display:inline; }
 
 table { width:106%; margin:-20px; font-size:1.3em; }
-table td { cursor:pointer; width:100%; min-width:7em; padding:.7em 1.2em; border:none; }
+table td { cursor:pointer; width:100%; min-width:10em; padding:.7em 1.2em; border:none; }
+table td+td { font-size:.75em; }
 table tr:hover { background:#f8f8f8; }
+table tr:hover input { display:inline; }
 table tr:first-child { height:3em; }
 table tr:first-child td { padding-top:1.1em; border-bottom:1px solid #eee; }
 table tr:last-child { height:3em; }

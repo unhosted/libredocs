@@ -26,12 +26,12 @@ function showList() {
   for(i in docs) {
     str += '<tr><td onclick="showDoc(\''+i+'\');"><strong>'
       +docs[i].title
-      +'</strong></td><td>'
-      +'<p style="'+modifiedDateColor(docs[i].timestamp)+'" '
+      +'</strong></td>'
+      +'<td style="'+modifiedDateColor(docs[i].timestamp)+'" '
       +'title="'+new Date(docs[i].timestamp).toLocaleString()+'">'
       +relativeModifiedDate(docs[i].timestamp)
-      +'<input type="submit" value="Share" onclick="share(\''+i+'\');">'
-      +'</p></td></tr>';
+      +'<input style="display:none;" type="submit" value="Share" onclick="share(\''+i+'\');">'
+      +'</td></tr>';
   }
   document.getElementById('list').innerHTML = str;
 }
