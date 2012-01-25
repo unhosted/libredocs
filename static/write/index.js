@@ -4,7 +4,7 @@ function connectToOwnpad() {
   var userName, padId;
   var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
   document.getElementsByTagName('h1')[0].innerHTML =
-    '<span id="docTitle" onclick="changeDocTitle();"><strong>'+getCurrDocName()+'</strong></span><small>'+(sessionObj.userAddress?' '+sessionObj.userAddress:'')
+    '<span id="docTitle" onclick="changeDocTitle();">'+getCurrDocName()+'</span><small>'+(sessionObj.userAddress?' '+sessionObj.userAddress:'')
     +'<input type="submit" value="Logout" onclick="localStorage.clear();location=\'/\';">'
     +'</small>';
   if(sessionObj.userAddress != null) {
@@ -29,7 +29,14 @@ function connectToOwnpad() {
   });
 }
 function changeDocTitle() {
-  alert('In the future we will let you change this document title');
+  document.getElementById('docTitle').innerHTML = '<input id="docTitleInput" onblur="saveDocTitle();" type="text" value="'+getCurrDocName()+'" />'; 
+}
+function saveDocTitle() {
+  location.hash = '#!/'+getCurrDocOwner()+'/'+document.getElementById('docTitleInput').value;
+  document.getElementById('docTitle').innerHTML = document.getElementById('docTitleInput').value;
+}
+function getCurrDocOwner() {
+  return location.hash.split('/')[1];
 }
 function getCurrDocName() {
   return location.hash.split('/')[2];
