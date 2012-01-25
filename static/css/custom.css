@@ -26,6 +26,8 @@ table tr:first-child { height:3em; }
 table tr:first-child td { padding-top:1.1em; border-bottom:1px solid #eee; }
 table tr:last-child { height:3em; }
 
+#docTitleInput { height:1em; width:6em; font-size:1em; color:#000; font-weight:bold; }
+
 #editorPad { margin:-20px; min-height:35em; height:35em; }
 #write iframe { width:100%; min-height:100%; border:none; }
 #write .content { margin:-20px -20px -25px; }
