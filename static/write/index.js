@@ -4,7 +4,7 @@ function connectToOwnpad() {
   var userName, padId;
   var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
   document.getElementsByTagName('h1')[0].innerHTML =
-    '<small><span id="docTitle" onclick="changeDocTitle();"><strong>'+sessionObj.currDocId+'</strong></span>'+(sessionObj.userAddress?' '+sessionObj.userAddress:'')
+    '<span id="docTitle" onclick="changeDocTitle();"><strong>'+getCurrDocName()+'</strong></span><small>'+(sessionObj.userAddress?' '+sessionObj.userAddress:'')
     +'<input type="submit" value="Logout" onclick="localStorage.clear();location=\'/\';">'
     +'</small>';
   if(sessionObj.userAddress != null) {
@@ -12,8 +12,8 @@ function connectToOwnpad() {
     } else {
     userName = 'Address Not Set Yet'
   }
-  if(sessionObj.currDocId != null) {
-    padId = sessionObj.currDocId;
+  if(getCurrDocName() != null) {
+    padId = docNameToPadId(getCurrDocName());
     } else {
     padId = 'still-hosted-no-name'
   }
@@ -31,5 +31,12 @@ function connectToOwnpad() {
 function changeDocTitle() {
   alert('In the future we will let you change this document title');
 }
+function getCurrDocName() {
+  return location.hash.split('/')[2];
+}
+function docNameToPadId(docName) {
+  return docName;
+}
+
 document.getElementsByTagName('body')[0].setAttribute('onload', 'connectToOwnpad();');
 document.getElementById('loading').style.display='none';
