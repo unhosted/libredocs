@@ -17,15 +17,40 @@ function connectToOwnpad() {
     } else {
     padId = 'still-hosted-no-name'
   }
+  if(getCurrDocOwner() != userName)
+  {
+    embedSharedPad(getCurrDocOwner(), padId);
+  }
+  else
+  {
+    embedOwnPad(padId);
+  }
+}
+
+function embedOwnPad(padId)
+{
+  var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
   $('#editorPad').pad({
     'padId':padId,
     'host':'http://ownpad.nodejitsu.com',
     'storageAddress':'https://'+sessionObj.subdomain+'.iriscouch.com/documents/',
     'bearerToken':sessionObj.bearerToken,
     'storageApi':sessionObj.storageApi,
-    'userName':userName,
+    'userName':sessionObj.userAddress,
     'showControls':true,
-    'showLineNumbers':false,
+    'showLineNumbers':false
+  });
+}
+
+function embedSharedPad(owner, padId)
+{
+  var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
+  $('#editorPad').pad({
+    'padId': owner + '$' + padId,
+    'host':'http://ownpad.nodejitsu.com',
+    'userName':sessionObj.userAddress,
+    'showControls':true,
+    'showLineNumbers':false
   });
 }
 
