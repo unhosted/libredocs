@@ -7,13 +7,14 @@ function connectToOwnpad() {
   if(getCurrDocName() != null) {
     padId = docNameToPadId(getCurrDocName());
     } else {
-    padId = 'still-hosted-no-name'
+    padId = 'still-hosted-no-name';
   }
 
   // not logged in
-  if(sessionObj == null && sessionObj.userAddress != null) {
+  if(sessionObj == null && sessionObj.userAddress != null) 
+  {
     document.getElementsByTagName('h1')[0].innerHTML =
-      '<span id="docTitle">'+getCurrDocName()+'</span><small> by '+getCurrDocOwner())
+      '<span id="docTitle">'+getCurrDocName()+'</span><small> by '+getCurrDocOwner()
       +'<input type="submit" value="Login" onclick="localStorage.clear();location=\'/\';">'
       +'</small>';
     embedSharedPad(getCurrDocOwner(), padId);
