@@ -58,8 +58,7 @@ var editingDocTitle;
 function changeDocTitle() {
   if(!editingDocTitle) {
     editingDocTitle = true;
-    document.getElementById('docTitle').innerHTML = '<input id="docTitleInput" onblur="saveDocTitle();" type="text" value="'+getCurrDocName()+'" />'; 
-    document.getElementById('docTitleInput').focus();
+    document.getElementById('docTitle').innerHTML = '<input id="docTitleInput" onblur="saveDocTitle();" type="text" value="'+getCurrDocName()+'" />';
   }
 }
 function saveDocTitle() {
