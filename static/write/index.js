@@ -28,10 +28,16 @@ function connectToOwnpad() {
     'showLineNumbers':false,
   });
 }
+
+var editingDocTitle;
 function changeDocTitle() {
-  document.getElementById('docTitle').innerHTML = '<input id="docTitleInput" onblur="saveDocTitle();" type="text" value="'+getCurrDocName()+'" />'; 
+  if(!editingDocTitle) {
+    editingDocTitle = true;
+    document.getElementById('docTitle').innerHTML = '<input id="docTitleInput" onblur="saveDocTitle();" type="text" value="'+getCurrDocName()+'" />'; 
+  }
 }
 function saveDocTitle() {
+  editingDocTitle = false;
   location.hash = '#!/'+getCurrDocOwner()+'/'+document.getElementById('docTitleInput').value;
   document.getElementById('docTitle').innerHTML = document.getElementById('docTitleInput').value;
 }
