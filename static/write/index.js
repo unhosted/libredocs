@@ -8,7 +8,7 @@ function connectToOwnpad() {
     +'<input type="submit" value="Logout" onclick="localStorage.clear();location=\'/\';">'
     +'</small>';
   if(sessionObj.userAddress != null) {
-    userName = sessionObj.userAddress;
+    userName = hyphenify(sessionObj.userAddress);
     } else {
     userName = 'Address Not Set Yet'
   }
@@ -36,7 +36,7 @@ function embedOwnPad(padId)
     'storageAddress':'https://'+sessionObj.subdomain+'.iriscouch.com/documents/',
     'bearerToken':sessionObj.bearerToken,
     'storageApi':sessionObj.storageApi,
-    'userName':sessionObj.userAddress,
+    'userName':hyphenify(sessionObj.userAddress),
     'showControls':true,
     'showLineNumbers':false
   });
@@ -75,6 +75,10 @@ function getCurrDocName() {
 }
 function docNameToPadId(docName) {
   return docName;
+}
+
+function hyphenify(userAddress) {
+  return userAddress.replace(/-/g, '-dash-').replace(/@/g, '-at-').replace(/\./g, '-dot-');
 }
 
 document.getElementsByTagName('body')[0].setAttribute('onload', 'connectToOwnpad();');
