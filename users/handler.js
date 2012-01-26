@@ -79,7 +79,7 @@ exports.handler = (function() {
           adminPwd: adminPwd,
           userAddress: userAddress
         }
-        redisClient.set(userAddress, data, function(err, resp) {
+        redisClient.set(userAddress, JSON.stringify(data), function(err, resp) {
           res.writeHead(200, {
             'Content-type': 'application/json',
             'Access-Control-Allow-Origin': origin
@@ -117,6 +117,10 @@ exports.handler = (function() {
                 data = null;
                 console.log('oops');
               }
+              else
+              {
+                data = JSON.parse(data);
+              }
               if(data) {
                 headers = {'Access-Control-Allow-Origin': postData.audience};
                 res.writeHead(200, headers);
@@ -146,10 +150,11 @@ exports.handler = (function() {
         if(existingRecord) {
           console.log('existing record:');
           console.log(existingRecord);
+          existingRecord = JSON.parse(existingRecord);
           if(existingRecord=='[object Object]' || params.adminPwd == existingRecord.adminPwd) {
             console.log('password "'+params.adminPwd+'" accepted');
             params._rev = existingRecord._rev;
-            redisClient.set(params.userAddress, params, function() {
+            redisClient.set(params.userAddress, JSON.stringify(params), function() {
               console.log('store function called cb');
               res.writeHead(200, {
                 'Access-Control-Allow-Origin': req.headers.origin,
