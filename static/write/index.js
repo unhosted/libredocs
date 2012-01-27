@@ -45,10 +45,10 @@ function embedOwnPad(padId)
 {
   var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
   $('#editorPad').pad({
-    'padId':padId,
+    'padId':encodeURIComponent(padId),
     'host':'http://ownpad.nodejitsu.com',
-    'storageAddress':'https://'+sessionObj.subdomain+'.iriscouch.com/documents/',
-    'bearerToken':sessionObj.bearerToken,
+    'storageAddress':encodeURIComponent('https://'+sessionObj.subdomain+'.iriscouch.com/documents/'),
+    'bearerToken':encodeURIComponent(sessionObj.bearerToken),
     'storageApi':sessionObj.storageApi,
     'userName':hyphenify(sessionObj.userAddress),
     'showControls':true,
@@ -59,7 +59,7 @@ function embedOwnPad(padId)
 function embedSharedPad(owner, padId, userName)
 {
   $('#editorPad').pad({
-    'padId': owner + '$' + padId,
+    'padId':encodeURIComponent(owner + '$' + padId),
     'host':'http://ownpad.nodejitsu.com',
     'userName':userName,
     'showControls':true,
