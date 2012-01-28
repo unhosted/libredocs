@@ -4,10 +4,12 @@ function connectToOwnpad() {
   var userName, padId;
   var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
 
-  if(getCurrDocName() != null) {
-    padId = docNameToPadId(getCurrDocName());
-    } else {
-    padId = 'still-hosted-no-name';
+  padId = getPadId(getCurrDocOwner(), getCurrDocName());
+
+  if(padId == null)
+  {
+    alert("Document could not be found - please specify owner and title");
+    return;
   }
 
   // not logged in
@@ -17,7 +19,7 @@ function connectToOwnpad() {
       '<span id="docTitle">'+getCurrDocName()+'</span><small> by '+getCurrDocOwner()
       +'<input type="submit" value="Login" onclick="localStorage.clear();location=\'/\';">'
       +'</small>';
-    embedSharedPad(getCurrDocOwner(), padId, "unknown");
+    embedSharedPad(padId, "unknown");
     return;
   }
   
@@ -29,7 +31,7 @@ function connectToOwnpad() {
       '<span id="docTitle">'+getCurrDocName()+'</span><small>'+(sessionObj.userAddress?' '+sessionObj.userAddress:'')
       +'<input type="submit" value="Logout" onclick="localStorage.clear();location=\'/\';">'
       +'</small>';
-    embedSharedPad(getCurrDocOwner(), padId, userName);
+    embedSharedPad(padId, userName);
   }
   else
   {
@@ -56,12 +58,12 @@ function embedOwnPad(padId)
   });
 }
 
-function embedSharedPad(owner, padId, userName)
+function embedSharedPad(padId, userName)
 {
   $('#editorPad').pad({
-    'padId':encodeURIComponent(owner + '$' + padId),
+    'padId':encodeURIComponent(padId),
     'host':'http://ownpad.nodejitsu.com',
-    'userName':userName,
+    'userName':hyphenify(userName),
     'showControls':true,
     'showLineNumbers':false
   });
@@ -85,8 +87,11 @@ function getCurrDocOwner() {
 function getCurrDocName() {
   return location.hash.split('/')[2];
 }
-function docNameToPadId(docName) {
-  return docName;
+function getPadId(owner, title) {
+  if(owner != null && title != null) 
+  {
+    return owner+'$'+title;
+  }
 }
 
 function hyphenify(userAddress) {
