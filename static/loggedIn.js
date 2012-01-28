@@ -39,24 +39,36 @@ function showList() {
 function hyphenify(userAddress) {
   return userAddress.replace(/-/g, '-dash-').replace(/@/g, '-at-').replace(/\./g, '-dot-');
 }
-function getDocAddress(userAddress, docTitle) {
-  return 'http://libredocs.org/write/#!/'+hyphenify(userAddress)+'/'+docTitle;
+function getDocAddress(doc) {
+  return 'http://libredocs.org/write/#!/'+doc.owner+'/'+doc.link;
 }
 function showDoc(i) {
+  var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
   if(!i) {
-    i = new Date().getTime();
+    var time = new Date().getTime();
+    var owner = hyphenify(sessionObj.userAddress);
+    i = owner+'$'+time;
     var docs = JSON.parse(localStorage.getItem('list'));
     if(!docs) {
       docs = {};
     }
-    docs[i] = {};
-    docs[i].title = i;
+    docs[i] = {
+      id: i,
+      title: time,
+      link: time,
+      owner: owner,
+      timestamp: time
+    };
+    localStorage.setItem('list', JSON.stringify(docs));
+  }
+  else
+  {
+    var docs = JSON.parse(localStorage.getItem('list'));
     docs[i].timestamp = new Date().getTime();
     localStorage.setItem('list', JSON.stringify(docs));
   }
-  var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
   localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
-  window.location=getDocAddress(sessionObj.userAddress, i);
+  window.location=getDocAddress(docs[i]);
 }
 function share(i) {
   var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
