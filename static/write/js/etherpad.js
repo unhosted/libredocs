@@ -10,8 +10,8 @@
       'userName'	 : 'unnamed',
       'docName'          : 'draft',
       'useMonospaceFont' : false,
-      'noColors'         : false,
-      'hideQRCode'	 : false,
+      'noColors'         : true,
+      'hideQRCode'	 : true,
       'storageAddress'   : '',
       'bearerToken'      : '',
       'storageApi'       : 'CouchDB'
