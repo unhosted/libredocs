@@ -257,7 +257,7 @@ var remoteStorageClient = (function() {
     pimper.createUser(sessionObj.subdomain+'.iriscouch.com', sessionObj.userAddress, sessionObj.adminPwd, 'http___libredocs_org', function(result, token) {
       sessionObj.bearerToken = token;
       sessionObj.storageApi = 'CouchDB';
-      sessionObj.storageAddress = 'http://'+sessionObj.proxy+'/'+sessionObj.subdomain + '.iriscouch.com/documents/';
+      sessionObj.storageAddress = 'http://'+sessionObj.proxy+sessionObj.subdomain + '.iriscouch.com/documents/';
       localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
       cb(result);
     });

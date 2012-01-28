@@ -24,7 +24,7 @@ function showList() {
   str += '<tr onclick="showDoc();"><td><strong>+ New document</strong>'
     +'</td><td></td></tr>';
   for(i in docs) {
-    str += '<tr><td onclick="showDoc(\''+i+'\');"><strong>'
+    str += '<tr id="'+docs[i].id+'"><td onclick="showDoc(\''+i+'\');"><strong>'
       +docs[i].title
       +'</strong></td>'
       +'<td style="'+modifiedDateColor(docs[i].timestamp)+'" '
@@ -32,7 +32,9 @@ function showList() {
       +relativeModifiedDate(docs[i].timestamp)
       +'<input style="display:none;" type="submit" value="Share" onclick="share(\''+i+'\');">'
       +'</td></tr>';
+    getDocPreview(i);
   }
+  
   document.getElementById('list').innerHTML = str;
 }
 
@@ -42,6 +44,37 @@ function hyphenify(userAddress) {
 function getDocAddress(doc) {
   return 'http://libredocs.org/write/#!/'+doc.owner+'/'+doc.link;
 }
+function getDocPreview(id) {
+  var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
+  var url = sessionObj.storageAddress + 'pad:' + id;
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', url, true);
+  xhr.setRequestHeader('Authorization', 'Bearer ' + sessionObj.bearerToken);
+  xhr.onreadystatechange = function() {
+    if(xhr.readyState == 4) {
+      var pad = JSON.parse(xhr.responseText).value;
+      document.getElementById(id).innerHTML += '<td class="preview">'+truncate(pad.atext.text)+'</td>';
+      }
+  }
+  xhr.send();
+}
+
+function truncate(text, length)
+{
+  if(length==null)
+  {
+    length=100;
+  }
+  if(text.length > length)
+  {
+    return text.substr(0, length-3) + '...';
+  }
+  else
+  {
+    return text;
+  }
+}
+
 function showDoc(i) {
   var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
   if(!i) {
