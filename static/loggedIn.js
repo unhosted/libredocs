@@ -26,11 +26,11 @@ function showList() {
   sortedByTimestamp(docs, function(doc) {
     str += '<tr id="'+doc.id+'"><td onclick="showDoc(\''+doc.id+'\');"><strong>'
       +doc.title
-      +'</strong></td>'
+      +'</strong><span id="'+doc.id+'-preview"></span></td>'
       +'<td style="'+modifiedDateColor(doc.timestamp)+'" '
       +'title="'+new Date(doc.timestamp).toLocaleString()+'">'
       +relativeModifiedDate(doc.timestamp)
-      +'<input style="display:none;" type="submit" value="Share" onclick="share(\''+doc.id+'\');">'
+      +'<br/><input type="submit" value="Share" onclick="share(\''+doc.id+'\');">'
       +'</td></tr>';
     getDocPreview(doc.id);
   });
@@ -54,8 +54,16 @@ function sortedByTimestamp(docs, cb) {
 function hyphenify(userAddress) {
   return userAddress.replace(/-/g, '-dash-').replace(/@/g, '-at-').replace(/\./g, '-dot-');
 }
-function getDocAddress(doc) {
-  return 'http://libredocs.org/write/#!/'+doc.owner+'/'+doc.link;
+function getDocAddress(doc, beautiful) {
+  // the more beautiful links so far only work for ourselves
+  if(beautiful)
+  {
+    return 'http://libredocs.org/write/#!/'+doc.owner+'/'+doc.link;
+  }
+  else
+  {
+    return 'http://libredocs.org/write/#!/'+doc.id.replace('$','/');
+  }
 }
 // TODO: so far this only works for our own docs
 function getDocPreview(id) {
@@ -67,7 +75,7 @@ function getDocPreview(id) {
   xhr.onreadystatechange = function() {
     if(xhr.readyState == 4) {
       var pad = JSON.parse(xhr.responseText).value;
-      document.getElementById(id).innerHTML += '<td class="preview">'+truncate(pad.atext.text)+'</td>';
+      document.getElementById(id+'-preview').innerHTML = truncate(pad.atext.text);
       }
   }
   xhr.send();
@@ -115,11 +123,11 @@ function showDoc(i) {
     localStorage.setItem('list', JSON.stringify(docs));
   }
   localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
-  window.location=getDocAddress(docs[i]);
+  window.location=getDocAddress(docs[i], true);
 }
 function share(i) {
   var docs = JSON.parse(localStorage.getItem('list'));
-  alert(getDocAddress(docs[i]));
+  alert(getDocAddress(docs[i], false));
 }
 function relativeModifiedDate(timestamp) {
   var timediff = Math.round((new Date().getTime()-timestamp) / 1000);

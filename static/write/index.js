@@ -7,15 +7,19 @@ function connectToOwnpad() {
 
   if(pad == null)
   {
-    alert("Document could not be found - please specify owner and title");
-    return;
+    pad = {
+      owner: getCurrDocOwner(),
+      id: getCurrDocOwner()+'$'+getCurrDocLink(),
+      title: getCurrDocLink(),
+    };
   }
 
   // not logged in
   if(sessionObj == null || sessionObj.userAddress == null) 
   {
     document.getElementsByTagName('h1')[0].innerHTML =
-      '<span id="docTitle">'+pad.title+'</span><small> by '+getCurrDocOwner()
+      '<span id="docTitle">'+pad.title+'</span>'
+      +'<small>';
       +'<input type="submit" value="Login" onclick="localStorage.clear();location=\'/\';">'
       +'</small>';
     embedSharedPad(pad.id, "unknown");
