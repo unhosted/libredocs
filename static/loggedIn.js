@@ -1,7 +1,7 @@
 remoteStorageClient.on('status', function(status) {
-  document.getElementsByTagName('h1')[0].getElementsByTagName('small')[0].innerHTML = (status.userAddress?' '+status.userAddress:'');
+  document.getElementsByTagName('small')[0].innerHTML = (status.userAddress?' '+status.userAddress:'');
   for(i in status.buttons) {
-    document.getElementsByTagName('h1')[0].getElementsByTagName('small')[0].innerHTML += ' <input type="submit" value="'+status.buttons[i]+'" onclick="remoteStorageClient.'+status.buttons[i]+'();">';
+    document.getElementsByTagName('small')[0].innerHTML += ' <input type="submit" value="'+status.buttons[i]+'" onclick="remoteStorageClient.'+status.buttons[i]+'();">';
   }
   if(status.step) {
     document.getElementById('easyfreedom-loading').style.display = 'block';

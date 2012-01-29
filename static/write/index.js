@@ -26,20 +26,17 @@ function connectToOwnpad() {
   
   if(pad.owner != userName)
   {
-    document.getElementsByTagName('h1')[0].innerHTML =
-      '<span id="docTitle">'+pad.title+'</span><small>'+(sessionObj.userAddress?' '+sessionObj.userAddress:'')
-      +'<input type="submit" value="Logout" onclick="localStorage.clear();location=\'/\';">'
-      +'</small>';
+    document.getElementsByTagName('h1')[0].innerHTML = '<span id="docTitle">'+pad.title+'</span>';
     embedSharedPad(pad.id, userName);
   }
   else
   {
-    document.getElementsByTagName('h1')[0].innerHTML =
-      '<span id="docTitle" onmouseover="changeDocTitle();">'+pad.title+'</span><small>'+(sessionObj.userAddress?' '+sessionObj.userAddress:'')
-      +'<input type="submit" value="Logout" onclick="localStorage.clear();location=\'/\';">'
-      +'</small>';
+    document.getElementsByTagName('h1')[0].innerHTML = '<span id="docTitle" onmouseover="changeDocTitle();">'+pad.title+'</span>';
     embedOwnPad(pad.id);
   }
+  document.getElementsByTagName('small')[0].innerHTML =
+    (sessionObj.userAddress?' '+sessionObj.userAddress:'')
+    +' <input type="submit" value="Log out" onclick="localStorage.clear();location=\'/\';">';
 }
 
 function embedOwnPad(padId)
