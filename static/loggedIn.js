@@ -30,7 +30,7 @@ function showList() {
       +'<td style="'+modifiedDateColor(doc.timestamp)+'" '
       +'title="'+new Date(doc.timestamp).toLocaleString()+'">'
       +relativeModifiedDate(doc.timestamp)
-      +'<br/><input type="submit" value="Share" onclick="share(\''+doc.id+'\');">'
+      +'<input type="submit" value="Share" onclick="share(\''+doc.id+'\');">'
       +'</td></tr>';
     getDocPreview(doc.id);
   });
