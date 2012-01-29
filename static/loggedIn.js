@@ -23,19 +23,32 @@ function showList() {
   }
   str += '<tr onclick="showDoc();"><td><strong>+ New document</strong>'
     +'</td><td></td></tr>';
-  for(i in docs) {
-    str += '<tr id="'+docs[i].id+'"><td onclick="showDoc(\''+i+'\');"><strong>'
-      +docs[i].title
+  sortedByTimestamp(docs, function(doc) {
+    str += '<tr id="'+doc.id+'"><td onclick="showDoc(\''+doc.id+'\');"><strong>'
+      +doc.title
       +'</strong></td>'
-      +'<td style="'+modifiedDateColor(docs[i].timestamp)+'" '
-      +'title="'+new Date(docs[i].timestamp).toLocaleString()+'">'
-      +relativeModifiedDate(docs[i].timestamp)
-      +'<input style="display:none;" type="submit" value="Share" onclick="share(\''+i+'\');">'
+      +'<td style="'+modifiedDateColor(doc.timestamp)+'" '
+      +'title="'+new Date(doc.timestamp).toLocaleString()+'">'
+      +relativeModifiedDate(doc.timestamp)
+      +'<input style="display:none;" type="submit" value="Share" onclick="share(\''+doc.id+'\');">'
       +'</td></tr>';
-    getDocPreview(i);
-  }
+    getDocPreview(doc.id);
+  });
   
   document.getElementById('list').innerHTML = str;
+}
+
+function sortedByTimestamp(docs, cb) {
+  var tuples = [];
+  for(var id in docs) tuples.push([id, docs[id]]);
+
+  tuples.sort(function(a,b) {
+    return b[1].timestamp - a[1].timestamp;
+  });
+
+  for(var i = 0; i < tuples.length; i++) {
+    cb(tuples[i][1]);
+  }
 }
 
 function hyphenify(userAddress) {
@@ -44,6 +57,7 @@ function hyphenify(userAddress) {
 function getDocAddress(doc) {
   return 'http://libredocs.org/write/#!/'+doc.owner+'/'+doc.link;
 }
+// TODO: so far this only works for our own docs
 function getDocPreview(id) {
   var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
   var url = sessionObj.storageAddress + 'pad:' + id;
@@ -104,8 +118,8 @@ function showDoc(i) {
   window.location=getDocAddress(docs[i]);
 }
 function share(i) {
-  var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
-  alert(getDocAddress(sessionObj.userAddress, i));
+  var docs = JSON.parse(localStorage.getItem('list'));
+  alert(getDocAddress(docs[i]));
 }
 function relativeModifiedDate(timestamp) {
   var timediff = Math.round((new Date().getTime()-timestamp) / 1000);
