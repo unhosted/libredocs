@@ -101,7 +101,7 @@ function showDoc(i) {
     }
     docs[i] = {
       id: i,
-      title: time,
+      title: 'New document',
       link: time,
       owner: owner,
       timestamp: time
