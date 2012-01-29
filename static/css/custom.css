@@ -18,7 +18,7 @@ small { float:right; }
 #easyfreedom-loadingtext { padding:1em; display:inline; }
 
 table { width:106%; margin:-20px; font-size:1.3em; }
-table td { cursor:pointer; width:100%; min-width:10em; padding:.7em 1.2em; border:none; }
+table td { cursor:pointer; width:100%; min-width:13em; padding:.7em 1.2em; border:none; }
 table td+td { font-size:.75em; }
 table tr:hover { background:#f8f8f8; }
 table tr:hover input { display:inline; }
