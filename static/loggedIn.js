@@ -26,7 +26,7 @@ function showList() {
   sortedByTimestamp(docs, function(doc) {
     str += '<tr id="'+doc.id+'"><td onclick="showDoc(\''+doc.id+'\');"><strong>'
       +doc.title
-      +'</strong><span id="'+doc.id+'-preview"></span></td>'
+      +'</strong> <span id="'+doc.id+'-preview"></span></td>'
       +'<td style="'+modifiedDateColor(doc.timestamp)+'" '
       +'title="'+new Date(doc.timestamp).toLocaleString()+'">'
       +relativeModifiedDate(doc.timestamp)
