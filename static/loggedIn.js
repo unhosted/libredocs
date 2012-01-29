@@ -75,8 +75,10 @@ function getDocPreview(id) {
   xhr.onreadystatechange = function() {
     if(xhr.readyState == 4) {
       var pad = JSON.parse(xhr.responseText).value;
-      document.getElementById(id+'-preview').innerHTML = truncate(pad.atext.text);
+      if(pad!=null){
+        document.getElementById(id+'-preview').innerHTML = truncate(pad.atext.text);
       }
+    }
   }
   xhr.send();
 }
