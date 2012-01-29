@@ -53,7 +53,8 @@ function embedOwnPad(padId)
     'storageApi':sessionObj.storageApi,
     'userName':hyphenify(sessionObj.userAddress),
     'showControls':true,
-    'showLineNumbers':false
+    'showLineNumbers':false,
+    'noColors':true
   });
 }
 
