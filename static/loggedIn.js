@@ -12,7 +12,9 @@ remoteStorageClient.on('status', function(status) {
   }
 });
 
-function showList() {
+function showList(page) {
+  page = page || 1;
+  per_page = 5; // TODO: this should be a constant somewhere
   var str = '';
   var docs = JSON.parse(localStorage.getItem('list'));
   if(localStorage.getItem('currDoc')) {
@@ -23,7 +25,7 @@ function showList() {
   }
   str += '<tr onclick="showDoc();"><td><strong>+ New document</strong>'
     +'</td><td></td></tr>';
-  sortedByTimestamp(docs, function(doc) {
+  sortedByTimestamp(docs, page, per_page, function(doc) {
     str += '<tr id="'+doc.id+'"><td onclick="showDoc(\''+doc.id+'\');"><strong>'
       +doc.title
       +'</strong> <span id="'+doc.id+'-preview"></span></td>'
@@ -34,11 +36,24 @@ function showList() {
       +'</td></tr>';
     getDocPreview(doc.id);
   });
-  
+
+  if(lengthOf(docs) > per_page)
+  {
+    str += '<tr><td colspan=2>\n';
+    if(page != 1)
+    {
+      str += '<span onclick="showList('+(page-1)+');" style="float:left;">newer documents</span>\n';
+    }
+    if(page*per_page < lengthOf(docs))
+    {
+      str += '<span onclick="showList('+(page+1)+');" style="float:right;">older documents</span>\n';
+    }
+    str += '</td></tr>\n'
+  }
   document.getElementById('list').innerHTML = str;
 }
 
-function sortedByTimestamp(docs, cb) {
+function sortedByTimestamp(docs, page, count, cb) {
   var tuples = [];
   for(var id in docs) tuples.push([id, docs[id]]);
 
@@ -46,7 +61,9 @@ function sortedByTimestamp(docs, cb) {
     return b[1].timestamp - a[1].timestamp;
   });
 
-  for(var i = 0; i < tuples.length; i++) {
+  var first = (page-1)*count
+  var last = Math.min(first+count, tuples.length);
+  for(var i = first; i < last; i++) {
     cb(tuples[i][1]);
   }
 }
@@ -158,6 +175,15 @@ function modifiedDateColor(timestamp) {
   var modifiedColor = Math.round((Math.round((new Date()).getTime() / 1000)-lastModifiedTime)/60/60/24*5);
   if(modifiedColor>210) modifiedColor = 210;
   return 'color:rgb('+modifiedColor+','+modifiedColor+','+modifiedColor+')';
+}
+
+function lengthOf(obj)
+{
+  var length = 0, key;
+  for (key in obj) {
+    if (obj.hasOwnProperty(key)) length++;
+  }
+  return length;
 }
 
 document.getElementById('body').setAttribute('onload', 'showList();remoteStorageClient.checkForLogin();');
