@@ -46,7 +46,7 @@ function documentRow(doc)
 
 function paginationRow(page, per_page, total)
 {
-  if(total < per_page) return;
+  if(total < per_page) return '';
   var str = '<tr><td colspan=2>\n';
   if(page != 1)
   {
