@@ -17,40 +17,47 @@ function showList(page) {
   per_page = 5; // TODO: this should be a constant somewhere
   var str = '';
   var docs = JSON.parse(localStorage.getItem('list'));
-  if(localStorage.getItem('currDoc')) {
-    docs[localStorage.getItem('currDoc')].title = 'Title';
-    docs[localStorage.getItem('currDoc')].timestamp = new Date().getTime();
-    localStorage.setItem('list', JSON.stringify(docs));
-    localStorage.removeItem('currDoc');
-  }
-  str += '<tr onclick="showDoc();"><td><strong>+ New document</strong>'
-    +'</td><td></td></tr>';
+  str += newDocumentRow();
   sortedByTimestamp(docs, page, per_page, function(doc) {
-    str += '<tr id="'+doc.id+'"><td onclick="showDoc(\''+doc.id+'\');"><strong>'
-      +doc.title
-      +'</strong> <span id="'+doc.id+'-preview"></span></td>'
-      +'<td style="'+modifiedDateColor(doc.timestamp)+'" '
-      +'title="'+new Date(doc.timestamp).toLocaleString()+'">'
-      +relativeModifiedDate(doc.timestamp)
-      +'<input type="submit" value="Share" onclick="share(\''+doc.id+'\');">'
-      +'</td></tr>';
+    str += documentRow(doc);
     getDocPreview(doc.id);
   });
-
-  if(lengthOf(docs) > per_page)
-  {
-    str += '<tr><td colspan=2>\n';
-    if(page != 1)
-    {
-      str += '<span onclick="showList('+(page-1)+');" style="float:left;">newer documents</span>\n';
-    }
-    if(page*per_page < lengthOf(docs))
-    {
-      str += '<span onclick="showList('+(page+1)+');" style="float:right;">older documents</span>\n';
-    }
-    str += '</td></tr>\n'
-  }
+  str += paginationRow(page, per_page, lengthOf(docs));
   document.getElementById('list').innerHTML = str;
+}
+
+function newDocumentRow()
+{
+  return '<tr onclick="showDoc();"><td><strong>+ New document</strong>'
+    +'</td><td></td></tr>';
+}
+
+function documentRow(doc)
+{
+  return '<tr id="'+doc.id+'"><td onclick="showDoc(\''+doc.id+'\');"><strong>'
+    + doc.title
+    + '</strong> <span id="'+doc.id+'-preview"></span></td>'
+    + '<td style="'+modifiedDateColor(doc.timestamp)+'" '
+    + 'title="'+new Date(doc.timestamp).toLocaleString()+'">'
+    + relativeModifiedDate(doc.timestamp)
+    + '<input type="submit" value="Share" onclick="share(\''+doc.id+'\');">'
+    + '</td></tr>';
+}
+
+function paginationRow(page, per_page, total)
+{
+  if(total < per_page) return;
+  var str = '<tr><td colspan=2>\n';
+  if(page != 1)
+  {
+    str += '<span onclick="showList('+(page-1)+');" style="float:left;">newer documents</span>\n';
+  }
+  if(page*per_page < total)
+  {
+    str += '<span onclick="showList('+(page+1)+');" style="float:right;">older documents</span>\n';
+  }
+  str += '</td></tr>\n';
+  return str;
 }
 
 function sortedByTimestamp(docs, page, count, cb) {
@@ -68,9 +75,6 @@ function sortedByTimestamp(docs, page, count, cb) {
   }
 }
 
-function hyphenify(userAddress) {
-  return userAddress.replace(/-/g, '-dash-').replace(/@/g, '-at-').replace(/\./g, '-dot-');
-}
 function getDocAddress(doc, beautiful) {
   // the more beautiful links so far only work for ourselves
   if(beautiful)
@@ -82,6 +86,7 @@ function getDocAddress(doc, beautiful) {
     return 'http://libredocs.org/write/#!/'+doc.id.replace('$','/');
   }
 }
+
 // TODO: so far this only works for our own docs
 function getDocPreview(id) {
   var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
@@ -98,22 +103,6 @@ function getDocPreview(id) {
     }
   }
   xhr.send();
-}
-
-function truncate(text, length)
-{
-  if(length==null)
-  {
-    length=100;
-  }
-  if(text.length > length)
-  {
-    return text.substr(0, length-3) + '...';
-  }
-  else
-  {
-    return text;
-  }
 }
 
 function showDoc(i) {
@@ -148,6 +137,24 @@ function share(i) {
   var docs = JSON.parse(localStorage.getItem('list'));
   alert(getDocAddress(docs[i], false));
 }
+
+document.getElementById('body').setAttribute('onload', 'showList();remoteStorageClient.checkForLogin();');
+document.getElementById('agree-button').setAttribute('onclick', 'remoteStorageClient.agree();');
+
+// Helpers - these should probably go into a general purpose place:
+
+function hyphenify(userAddress) {
+  return userAddress.replace(/-/g, '-dash-').replace(/@/g, '-at-').replace(/\./g, '-dot-');
+}
+
+function truncate(text, length)
+{
+  length = length || 100;
+  return (text.length > length) ?
+    text.substr(0, length-3) + '...' :
+    text ;
+}
+
 function relativeModifiedDate(timestamp) {
   var timediff = Math.round((new Date().getTime()-timestamp) / 1000);
   var diffminutes = Math.round(timediff/60);
@@ -185,6 +192,3 @@ function lengthOf(obj)
   }
   return length;
 }
-
-document.getElementById('body').setAttribute('onload', 'showList();remoteStorageClient.checkForLogin();');
-document.getElementById('agree-button').setAttribute('onclick', 'remoteStorageClient.agree();');
