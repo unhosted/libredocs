@@ -36,7 +36,7 @@ function documentRow(doc)
   return '<li id="'+doc.id+'" onclick="showDoc(\''+doc.id+'\');">'
     + '<strong>'+doc.title+'</strong>'
     + ' <span class="preview" id="'+doc.id+'-preview"></span>'
-    + '<span class="date" style="'+modifiedDateColor(doc.timestamp)+'" title="'+new Date(doc.timestamp).toLocaleString()+'">'+relativeModifiedDate(doc.timestamp)+'</span
+    + '<span class="date" style="'+modifiedDateColor(doc.timestamp)+'" title="'+new Date(doc.timestamp).toLocaleString()+'">'+relativeModifiedDate(doc.timestamp)+'</span>'
     + '<input type="submit" value="Share" onclick="share(\''+doc.id+'\');">'
     + '</li>';
 }
