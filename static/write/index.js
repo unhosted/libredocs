@@ -40,7 +40,7 @@ function connectToOwnpad() {
   }
   document.getElementsByTagName('small')[0].innerHTML =
     (sessionObj.userAddress?' '+sessionObj.userAddress:'')
-    +' <input type="submit" value="Log out" onclick="localStorage.clear();location=\'/\';">';
+    +'<a class="btn btn-danger" href="#" onclick="localStorage.clear();location=\'/\';"><i class="icon-remove icon-white"></i> Log out</a>';
 }
 
 function embedOwnPad(padId)

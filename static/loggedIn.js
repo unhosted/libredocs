@@ -1,7 +1,7 @@
 remoteStorageClient.on('status', function(status) {
   document.getElementsByTagName('small')[0].innerHTML = (status.userAddress?' '+status.userAddress:'');
   for(i in status.buttons) {
-    document.getElementsByTagName('small')[0].innerHTML += ' <input type="submit" value="'+status.buttons[i]+'" onclick="remoteStorageClient.'+status.buttons[i]+'();">';
+    document.getElementsByTagName('small')[0].innerHTML += '<a class="btn btn-danger" href="#" onclick="remoteStorageClient.'+status.buttons[i]+'();"><i class="icon-remove icon-white"></i> '+status.buttons[i]+'</a>';
   }
   if(status.step) {
     document.getElementById('easyfreedom-loading').style.display = 'block';
@@ -37,7 +37,7 @@ function documentRow(doc)
     + '<strong>'+doc.title+'</strong>'
     + ' <span class="preview" id="'+doc.id+'-preview"></span>'
     + '<span class="date" style="'+modifiedDateColor(doc.timestamp)+'" title="'+new Date(doc.timestamp).toLocaleString()+'">'+relativeModifiedDate(doc.timestamp)+'</span>'
-    + '<input type="submit" value="Share" onclick="share(\''+doc.id+'\');">'
+    + '<a class="btn btn-primary" href="#" onclick="share(\''+doc.id+'\');"><i class="icon-share-alt icon-white"></i> Share</a>'
     + '</li>';
 }
 
