@@ -146,7 +146,7 @@ function hyphenify(userAddress) {
 
 function truncate(text, length)
 {
-  length = length || 100;
+  length = length || 70;
   return (text.length > length) ?
     text.substr(0, length-3) + '...' :
     text ;

@@ -18,12 +18,13 @@ small { float:right; }
 #easyfreedom-loadingtext { padding:1em; display:inline; }
 
 ul { margin:-20px; font-size:1.3em; list-style:none; }
-ul li { cursor:pointer; padding:.7em 1.2em; border:none; }
-ul li span { font-size:.75em; }
+ul li { cursor:pointer; padding:.7em 1.2em; border:none; white-space:nowrap; }
+ul strong { color:#000; }
+ul span { font-size:.75em; }
 ul li:hover { background:#f8f8f8; }
 ul li:hover input { display:inline; }
-ul li:first-child { padding-top:1em; border-bottom:1px solid #eee; }
-ul li:last-child { height:3em; }
+ul li:first-child { padding-top:1em; color:#666; border-bottom:1px solid #eee; }
+ul li:last-child { height:1.5em; }
 ul li input { float:right; display:none; line-height:14px; }
 
 #docTitleInput { height:1.2em; width:6em; font-size:1em; margin:-.5em -.05em; padding:0; color:#000; font-weight:bold; }
