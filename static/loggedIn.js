@@ -28,20 +28,17 @@ function showList(page) {
 
 function newDocumentRow()
 {
-  return '<tr onclick="showDoc();"><td><strong>+ New document</strong>'
-    +'</td><td></td></tr>';
+  return '<li onclick="showDoc();"><strong>+ New document</strong></li>';
 }
 
 function documentRow(doc)
 {
-  return '<tr id="'+doc.id+'"><td onclick="showDoc(\''+doc.id+'\');"><strong>'
-    + doc.title
-    + '</strong> <span id="'+doc.id+'-preview"></span></td>'
-    + '<td style="'+modifiedDateColor(doc.timestamp)+'" '
-    + 'title="'+new Date(doc.timestamp).toLocaleString()+'">'
-    + relativeModifiedDate(doc.timestamp)
+  return '<li id="'+doc.id+'" onclick="showDoc(\''+doc.id+'\');">'
+    + '<strong>'+doc.title+'</strong>'
+    + ' <span class="preview" id="'+doc.id+'-preview"></span>'
+    + '<span class="date" style="'+modifiedDateColor(doc.timestamp)+'" title="'+new Date(doc.timestamp).toLocaleString()+'">'+relativeModifiedDate(doc.timestamp)+'</span
     + '<input type="submit" value="Share" onclick="share(\''+doc.id+'\');">'
-    + '</td></tr>';
+    + '</li>';
 }
 
 function paginationRow(page, per_page, total)

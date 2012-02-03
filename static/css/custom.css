@@ -17,15 +17,14 @@ small { float:right; }
 #easyfreedom-loadingbar { padding:1em; background: #ccc; -moz-border-radius-bottomleft:.4em; -webkit-border-bottom-left-radius:.4em; border-bottom-left-radius:.4em; -moz-border-radius-topleft:.4em; -webkit-border-top-left-radius:.4em; border-top-left-radius:.4em; }
 #easyfreedom-loadingtext { padding:1em; display:inline; }
 
-table { width:106%; margin:-20px; font-size:1.3em; }
-table td { cursor:pointer; width:100%; min-width:13em; padding:.7em 1.2em; border:none; }
-table td+td { font-size:.75em; }
-table tr:hover { background:#f8f8f8; }
-table tr:hover input { display:inline; }
-table tr:first-child { height:3em; }
-table tr:first-child td { padding-top:1.1em; border-bottom:1px solid #eee; }
-table tr:last-child { height:3em; }
-table tr input { float:right; display:none; line-height:14px; }
+ul { width:106%; margin:-20px; font-size:1.3em; list-style:none; }
+ul li { cursor:pointer; width:100%; min-width:13em; padding:.7em 1.2em; border:none; }
+ul li+li { font-size:.75em; }
+ul li:hover { background:#f8f8f8; }
+ul li:hover input { display:inline; }
+ul li:first-child { height:3em; padding-top:1.1em; border-bottom:1px solid #eee; }
+ul li:last-child { height:3em; }
+ul li input { float:right; display:none; line-height:14px; }
 
 #docTitleInput { height:1.2em; width:6em; font-size:1em; margin:-.5em -.05em; padding:0; color:#000; font-weight:bold; }
 
