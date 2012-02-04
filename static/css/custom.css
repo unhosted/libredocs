@@ -6,9 +6,9 @@ footer { border:none; margin:1em; }
 .page-header { background-color:#f5f5f5; padding:4em 2em 1em; margin:-20px -20px 20px; }
 .page-header img { width:3em; height:3em; }
 h1 { font-size:4em; display:inline; color:#000; }
-small { float:right; position:relative; top:1em; right:-.5em; }
+small { float:right; position:relative; top:1.5em; right:-.5em; }
 small a.btn { display:none; }
-small:hover a.btn { display:inline; position:absolute; right:0; top:-.5em; }
+small:hover a.btn { display:inline; position:absolute; right:0; top:-.4em; }
 
 #signin { position:relative; float:right; top:1em; }
 #signin-button { background:url('../images/browserid.png') no-repeat; min-width:79px; min-height:22px; cursor:pointer; border:none; box-shadow:none; }
@@ -24,9 +24,9 @@ ul li:first-child { padding-top:1em; border-bottom:1px solid #eee; cursor:pointe
 ul li:first-child strong { color:#666; padding-left:1em; }
 ul li:last-child { height:1.5em; }
 ul li .doclink { cursor:pointer; text-decoration:none; }
-ul strong { color:#000; padding:.7em 0 .7em 2em; }
+ul strong { color:#000; padding:.7em 0 .7em 1.8em; }
 ul span { font-size:.75em; }
-ul .preview { position:absolute; top:0; padding:.7em 2em .7em .5em; overflow:hidden; white-space:nowrap; color:#555; }
+ul .preview { position:absolute; top:0; padding:1em 2em 1em .5em; overflow:hidden; white-space:nowrap; color:#555; }
 ul .date { position:absolute; right:1.2em; }
 ul li a.btn { display:none; }
 ul li:hover .preview { color:#000; }
