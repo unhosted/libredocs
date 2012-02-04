@@ -33,9 +33,9 @@ function newDocumentRow()
 
 function documentRow(doc)
 {
-  return '<li id="'+doc.id+'" onclick="showDoc(\''+doc.id+'\');">'
-    + '<strong>'+doc.title+'</strong>'
-    + ' <span class="preview" id="'+doc.id+'-preview"></span>'
+  return '<li id="'+doc.id+'">'
+    + '<a class="doclink" onclick="showDoc(\''+doc.id+'\');"><strong>'+doc.title+'</strong>'
+    + ' <span class="preview" id="'+doc.id+'-preview" onclick="showDoc(\''+doc.id+'\');"></span></a>'
     + '<span class="date" style="'+modifiedDateColor(doc.timestamp)+'" title="'+new Date(doc.timestamp).toLocaleString()+'">'+relativeModifiedDate(doc.timestamp)+'</span>'
     + '<a class="btn share" href="#" rel="popover" title="Share this link" data-content="share(\''+doc.id+'\');"><i class="icon-share-alt"></i> Share</a>'
     + '</li>';
