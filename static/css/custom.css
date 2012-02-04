@@ -1,6 +1,7 @@
 html, body { background-color:#eee; }
 .container > footer p { text-align:center; }
 .container { width:50em; }
+h3 { margin-top:1em; }
 footer { border:none; margin:1em; }
 #write footer { margin:3em; }
 
@@ -55,5 +56,3 @@ margin:0 -20px; /* negative indent the amount of the padding to maintain the gri
    -moz-box-shadow:0 1px 2px rgba(0,0,0,.15);
         box-shadow:0 1px 2px rgba(0,0,0,.15);
 }
-/* Give a quick and non-cross-browser friendly divider */
-.content .span4 { margin-left:0; padding-left:19px; border-left:1px solid #eee; }
