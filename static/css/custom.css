@@ -20,12 +20,13 @@ small:hover a.btn { display:inline; position:absolute; right:0; top:-.5em; }
 ul { margin:-20px; font-size:1.3em; list-style:none; }
 ul li { padding:.7em 1.2em; border:none; white-space:nowrap; position:relative; }
 ul li:hover { background:#f8f8f8; }
-ul li:first-child { padding-top:1em; color:#666; border-bottom:1px solid #eee; cursor:pointer; }
+ul li:first-child { padding-top:1em; border-bottom:1px solid #eee; cursor:pointer; }
+ul li:first-child strong { color:#666; }
 ul li:last-child { height:1.5em; }
-ul li .doclink { cursor:pointer; padding:1em; min-width:20em; }
+ul li .doclink { cursor:pointer; text-decoration:none; padding:1em; min-width:20em; }
 ul strong { color:#000; }
 ul span { font-size:.75em; }
-ul .preview { position:absolute; margin:.1em 0 0 .5em; overflow:hidden; white-space:nowrap; }
+ul .preview { position:absolute; margin:.1em 0 0 .5em; overflow:hidden; white-space:nowrap; color:#ddd; }
 ul .date { position:absolute; right:1.2em; }
 ul li a.btn { display:none; }
 ul li:hover .preview { color:#000; }
