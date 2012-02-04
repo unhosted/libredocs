@@ -190,7 +190,7 @@ function lengthOf(obj)
   return length;
 }
 
-!function ($) {
+function ($) {
   $(function(){
     $('.share').popover();
     $("a[rel=popover]").popover().click(function(e) { e.preventDefault(); });
