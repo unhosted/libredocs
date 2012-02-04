@@ -24,7 +24,7 @@ function showList(page) {
   });
   str += paginationRow(page, per_page, lengthOf(docs));
   document.getElementById('doclist').innerHTML = str;
-  $('.share').popover();
+  $('.share').popover(delay: { show:0, hide:5000 });
   $("a[rel=popover]").popover().click(function(e) { e.preventDefault(); });
 }
 
@@ -39,7 +39,7 @@ function documentRow(doc)
     + '<a class="doclink" onclick="showDoc(\''+doc.id+'\');"><strong>'+doc.title+'</strong>'
     + ' <span class="preview" id="'+doc.id+'-preview" onclick="showDoc(\''+doc.id+'\');"></span></a>'
     + '<span class="date" style="'+modifiedDateColor(doc.timestamp)+'" title="'+new Date(doc.timestamp).toLocaleString()+'">'+relativeModifiedDate(doc.timestamp)+'</span>'
-    + '<a class="btn share" href="#" rel="popover" title="Share this link" data-content="share(\''+doc.id+'\');"><i class="icon-share-alt"></i> Share</a>'
+    + '<a class="btn share" href="#" rel="popover" title="Share this link" data-content="'+share(doc.id)+'"><i class="icon-share-alt"></i> Share</a>'
     + '</li>';
 }
 
