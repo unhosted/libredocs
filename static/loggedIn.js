@@ -37,7 +37,7 @@ function documentRow(doc)
     + '<strong>'+doc.title+'</strong>'
     + ' <span class="preview" id="'+doc.id+'-preview"></span>'
     + '<span class="date" style="'+modifiedDateColor(doc.timestamp)+'" title="'+new Date(doc.timestamp).toLocaleString()+'">'+relativeModifiedDate(doc.timestamp)+'</span>'
-    + '<a class="btn btn-primary" href="#" onclick="share(\''+doc.id+'\');"><i class="icon-share-alt icon-white"></i> Share</a>'
+    + '<a class="btn" href="#" onclick="share(\''+doc.id+'\');"><i class="icon-share-alt"></i> Share</a>'
     + '</li>';
 }
 
