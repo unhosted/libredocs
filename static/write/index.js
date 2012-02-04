@@ -14,13 +14,13 @@ function connectToOwnpad() {
     };
   }
 
-  // not logged in
+  // not signed in
   if(sessionObj == null || sessionObj.userAddress == null) 
   {
     document.getElementsByTagName('h1')[0].innerHTML =
       '<span id="docTitle">'+pad.title+'</span>'
       +'<small>';
-      +'<input type="submit" value="Login" onclick="localStorage.clear();location=\'/\';">'
+      +'<input type="submit" value="Sign in" onclick="localStorage.clear();location=\'/\';">'
       +'</small>';
     embedSharedPad(pad.id, "unknown");
     return;
@@ -40,7 +40,7 @@ function connectToOwnpad() {
   }
   document.getElementsByTagName('small')[0].innerHTML =
     (sessionObj.userAddress?' '+sessionObj.userAddress:'')
-    +'<a class="btn btn-danger" href="#" onclick="localStorage.clear();location=\'/\';"><i class="icon-remove icon-white"></i> Log out</a>';
+    +'<a class="btn btn-danger" href="#" onclick="localStorage.clear();location=\'/\';"><i class="icon-remove icon-white"></i> Sign out</a>';
 }
 
 function embedOwnPad(padId)
