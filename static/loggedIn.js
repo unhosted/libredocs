@@ -24,6 +24,8 @@ function showList(page) {
   });
   str += paginationRow(page, per_page, lengthOf(docs));
   document.getElementById('doclist').innerHTML = str;
+  $('.share').popover();
+  $("a[rel=popover]").popover().click(function(e) { e.preventDefault(); });
 }
 
 function newDocumentRow()
@@ -188,11 +190,4 @@ function lengthOf(obj)
     if (obj.hasOwnProperty(key)) length++;
   }
   return length;
-}
-
-!function ($) {
-  $(function(){
-    $('.share').popover();
-    $("a[rel=popover]").popover().click(function(e) { e.preventDefault(); });
-  })
 }
