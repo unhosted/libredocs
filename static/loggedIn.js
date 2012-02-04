@@ -24,8 +24,8 @@ function showList(page) {
   });
   str += paginationRow(page, per_page, lengthOf(docs));
   document.getElementById('doclist').innerHTML = str;
-  $('.share').popover({ delay:{show:0,hide:5000} });
-  $("a[rel=popover]").popover().click(function(e) { e.preventDefault(); });
+  $('.share').onclick(popover('toggle'));
+  $('a[rel=popover]').popover().click(function(e) { e.preventDefault(); });
 }
 
 function newDocumentRow()
