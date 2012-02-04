@@ -37,7 +37,7 @@ function documentRow(doc)
     + '<strong>'+doc.title+'</strong>'
     + ' <span class="preview" id="'+doc.id+'-preview"></span>'
     + '<span class="date" style="'+modifiedDateColor(doc.timestamp)+'" title="'+new Date(doc.timestamp).toLocaleString()+'">'+relativeModifiedDate(doc.timestamp)+'</span>'
-    + '<a class="btn" href="#" onclick="share(\''+doc.id+'\');"><i class="icon-share-alt"></i> Share</a>'
+    + '<a class="btn share" href="#" rel="popover" title="Share this link" data-content="share(\''+doc.id+'\');"><i class="icon-share-alt"></i> Share</a>'
     + '</li>';
 }
 
@@ -132,7 +132,7 @@ function showDoc(i) {
 }
 function share(i) {
   var docs = JSON.parse(localStorage.getItem('list'));
-  alert(getDocAddress(docs[i], false));
+  return getDocAddress(docs[i], false);
 }
 
 document.getElementById('body').setAttribute('onload', 'showList();remoteStorageClient.checkForLogin();');
@@ -188,4 +188,11 @@ function lengthOf(obj)
     if (obj.hasOwnProperty(key)) length++;
   }
   return length;
+}
+
+!function ($) {
+  $(function(){
+    $('.share').popover()
+    $("a[rel=popover]").popover().click(function(e) { e.preventDefault() })
+  }
 }
