@@ -24,10 +24,12 @@ ul li:first-child { padding-top:1em; color:#666; border-bottom:1px solid #eee; }
 ul li:last-child { height:1.5em; }
 ul strong { color:#000; }
 ul span { font-size:.75em; }
-ul .preview { position:absolute; margin:.1em 0 0 .5em; overflow:hidden; white-space:nowrap; width:30em; }
-ul .date { position:absolute; right:6em; }
+ul .preview { position:absolute; margin:.1em 0 0 .5em; overflow:hidden; white-space:nowrap; }
+ul .date { position:absolute; right:1.2em; }
 ul li a.btn { display:none; }
-ul li:hover a.btn { position:absolute; display:inline; right:1em; }
+ul li:hover .preview { color:#000; }
+ul li:hover .date { display:none; }
+ul li:hover a.btn { position:absolute; display:inline; right:1em; top:.5em; }
 
 #docTitleInput { height:1.2em; width:6em; font-size:1em; margin:-.5em -.05em; padding:0; color:#000; font-weight:bold; }
 
