@@ -17,21 +17,21 @@ small:hover a.btn { display:inline; position:absolute; right:0; top:-.4em; }
 #firstName, #lastName { width:10em; }
 #easyfreedom-loadingtext { padding:1em; display:inline; }
 
-ul { margin:-20px; font-size:1.3em; list-style:none; }
-ul li { padding:.7em 0; border:none; white-space:nowrap; position:relative; }
-ul li:hover { background:#f8f8f8; }
-ul li:first-child { padding-top:1em; border-bottom:1px solid #eee; cursor:pointer; }
-ul li:first-child strong { color:#666; padding-left:1em; }
-ul li:last-child { height:1.5em; }
-ul li .doclink { cursor:pointer; text-decoration:none; }
-ul strong { color:#000; padding:.7em 0 .7em 1.8em; }
-ul span { font-size:.75em; }
-ul .preview { position:absolute; top:0; padding:1em 2em 1em .5em; overflow:hidden; white-space:nowrap; color:#555; }
-ul .date { position:absolute; right:1.2em; }
-ul li a.btn { display:none; }
-ul li:hover .preview { color:#000; }
-ul li:hover .date { display:none; }
-ul li:hover a.btn { position:absolute; display:inline; right:1em; top:.5em; }
+ul#doclist { margin:-20px; font-size:1.3em; list-style:none; }
+ul#doclist li { padding:.7em 0; border:none; white-space:nowrap; position:relative; }
+ul#doclist li:hover { background:#f8f8f8; }
+ul#doclist li:first-child { padding-top:1em; border-bottom:1px solid #eee; cursor:pointer; }
+ul#doclist li:first-child strong { color:#666; padding-left:1em; }
+ul#doclist li:last-child { height:1.5em; }
+ul#doclist li .doclink { cursor:pointer; text-decoration:none; }
+ul#doclist strong { color:#000; padding:.7em 0 .7em 1.8em; }
+ul#doclist span { font-size:.75em; }
+ul#doclist .preview { position:absolute; top:0; padding:1em 2em 1em .5em; overflow:hidden; white-space:nowrap; color:#555; }
+ul#doclist .date { position:absolute; right:1.2em; }
+ul#doclist li a.btn { display:none; }
+ul#doclist li:hover .preview { color:#000; }
+ul#doclist li:hover .date { display:none; }
+ul#doclist li:hover a.btn { position:absolute; display:inline; right:1em; top:.5em; }
 
 #docTitleInput { height:1.2em; width:6em; font-size:1em; margin:-.5em -.05em; padding:0; color:#000; font-weight:bold; }
 

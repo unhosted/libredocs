@@ -23,7 +23,7 @@ function showList(page) {
     getDocPreview(doc.id);
   });
   str += paginationRow(page, per_page, lengthOf(docs));
-  document.getElementById('list').innerHTML = str;
+  document.getElementById('doclist').innerHTML = str;
 }
 
 function newDocumentRow()
