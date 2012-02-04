@@ -192,7 +192,7 @@ function lengthOf(obj)
 
 !function ($) {
   $(function(){
-    $('.share').popover()
-    $("a[rel=popover]").popover().click(function(e) { e.preventDefault() })
+    $('.share').popover();
+    $("a[rel=popover]").popover().click(function(e) { e.preventDefault(); });
   }
 }
