@@ -17,7 +17,7 @@ function showList(page) {
   str += newDocumentRow();
   sortedByTimestamp(docs, page, per_page, function(doc) {
     str += documentRow(doc);
-    getDocPreview(doc.id);
+    updateDocPreview(doc.id);
   });
   str += paginationRow(page, per_page, lengthOf(docs));
   document.getElementById('doclist').innerHTML = str;
@@ -35,7 +35,8 @@ function documentRow(doc)
 {
   return '<li id="'+doc.id+'">'
     + '<a class="doclink" onclick="showDoc(\''+doc.id+'\');"><strong>'+doc.title+'</strong>'
-    + ' <span class="preview" id="'+doc.id+'-preview" onclick="showDoc(\''+doc.id+'\');"></span></a>'
+    + ' <span class="preview" id="'+doc.id+'-preview" onclick="showDoc(\''+doc.id+'\');">'
+    + truncate(doc.text)+'</span></a>'
     + '<span class="date" style="'+modifiedDateColor(doc.timestamp)+'" title="'+new Date(doc.timestamp).toLocaleString()+'">'+relativeModifiedDate(doc.timestamp)+'</span>'
     + '<a class="btn share" href="#" rel="popover" title="Share this link" data-content="<a href=\''+share(doc.id)+'\'>'+share(doc.id)+'</a>"><i class="icon-share-alt"></i> Share</a>'
     + '</li>';
@@ -85,7 +86,7 @@ function getDocAddress(doc, beautiful) {
 }
 
 // TODO: so far this only works for our own docs
-function getDocPreview(id) {
+function updateDocPreview(id) {
   var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
   var url = sessionObj.storageAddress + 'pad:' + id;
   var xhr = new XMLHttpRequest();
@@ -95,7 +96,10 @@ function getDocPreview(id) {
     if(xhr.readyState == 4) {
       var pad = JSON.parse(xhr.responseText).value;
       if(pad!=null){
+        var docs = JSON.parse(localStorage.getItem('list'));
+        docs[id].text = pad.atext.text;
         document.getElementById(id+'-preview').innerHTML = truncate(pad.atext.text);
+        localStorage.setItem('list', JSON.stringify(docs));
       }
     }
   }
@@ -145,10 +149,11 @@ function hyphenify(userAddress) {
 
 function truncate(text, length)
 {
+  text = text || '';
   length = length || 70;
   return (text.length > length) ?
     text.substr(0, length-3) + '...' :
-    text ;
+    text;
 }
 
 function relativeModifiedDate(timestamp) {
@@ -191,6 +196,7 @@ function lengthOf(obj)
 
 function signOut()
 {
-  localStorage.clear();
+  // once we have sync we can just clear this one.
+  localStorage.removeItem("sessionObj");
   window.location = '/';
 }
