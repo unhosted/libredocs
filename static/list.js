@@ -135,7 +135,7 @@ function share(i) {
   return getDocAddress(docs[i], false);
 }
 
-document.getElementById('body').setAttribute('onload', 'checkLogin();showList();') 
+document.getElementById('list').setAttribute('onload', 'checkLogin();showList();') 
 
 // Helpers - these should probably go into a general purpose place:
 
