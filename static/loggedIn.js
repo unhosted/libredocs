@@ -40,7 +40,7 @@ function documentRow(doc)
     + '<a class="doclink" onclick="showDoc(\''+doc.id+'\');"><strong>'+doc.title+'</strong>'
     + ' <span class="preview" id="'+doc.id+'-preview" onclick="showDoc(\''+doc.id+'\');"></span></a>'
     + '<span class="date" style="'+modifiedDateColor(doc.timestamp)+'" title="'+new Date(doc.timestamp).toLocaleString()+'">'+relativeModifiedDate(doc.timestamp)+'</span>'
-    + '<a class="btn share" href="#" rel="popover" title="Share this link" data-content="<a href=\"'+share(doc.id)+'\">'+share(doc.id)+'</a>"><i class="icon-share-alt"></i> Share</a>'
+    + '<a class="btn share" href="#" rel="popover" title="Share this link" data-content="<a href=\''+share(doc.id)+'\'>'+share(doc.id)+'</a>"><i class="icon-share-alt"></i> Share</a>'
     + '</li>';
 }
 
