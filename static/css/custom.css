@@ -12,8 +12,8 @@ small { float:right; position:relative; top:1.5em; right:-.5em; }
 small a.btn { display:none; }
 small:hover a.btn { display:inline; position:absolute; right:0; top:-.4em; }
 
-#signin { position:relative; float:right; top:1em; }
-#signin-button { background:url('../images/browserid.png') no-repeat; min-width:79px; min-height:22px; cursor:pointer; border:none; box-shadow:none; }
+#browserid { position:relative; float:right; top:1em; }
+#browserid-button { background:url('../images/browserid.png') no-repeat; min-width:79px; min-height:22px; cursor:pointer; border:none; box-shadow:none; }
 
 #easyfreedom-signup { margin-bottom:3em; }
 #firstName, #lastName { width:10em; }

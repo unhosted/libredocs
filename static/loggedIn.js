@@ -12,5 +12,5 @@ remoteStorageClient.on('status', function(status) {
   }
 });
 
-document.getElementById('signin').setAttribute('onload', 'remoteStorageClient.checkForLogin();');
+document.getElementById('signup').setAttribute('onload', 'remoteStorageClient.checkForLogin();');
 document.getElementById('agree-button').setAttribute('onclick', 'remoteStorageClient.agree();');
