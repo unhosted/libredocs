@@ -17,8 +17,8 @@ small:hover a.btn { display:inline; position:absolute; right:0; top:-.4em; }
 
 #easyfreedom-signup { margin-bottom:3em; }
 #firstName, #lastName { width:10em; }
-#easyfreedom-loading { display:block; height:3em; margin:0; }
-#easyfreedom-loadingbar { height:3.5em; }
+.progress { display:block; height:3em; margin:0; }
+.progress .bar { height:3.5em; }
 #easyfreedom-loadingtext { padding:.7em; display:inline; position:absolute; }
 
 ul#doclist { margin:-20px; font-size:1.3em; list-style:none; }

@@ -14,4 +14,3 @@ remoteStorageClient.on('status', function(status) {
 
 document.getElementById('body').setAttribute('onload', 'remoteStorageClient.checkForLogin();');
 document.getElementById('agree-button').setAttribute('onclick', 'remoteStorageClient.agree();');
-
