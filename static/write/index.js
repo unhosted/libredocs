@@ -13,6 +13,11 @@ function connectToOwnpad() {
       title: getCurrDocLink(),
     };
   }
+  else
+    // preview
+  {
+    $('#previewPad').html(pad.text)
+  }
 
   // not signed in
   if(sessionObj == null || sessionObj.userAddress == null) 
