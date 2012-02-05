@@ -5,7 +5,7 @@ var remoteStorageClient = (function() {
   }
   var sessionObj;
   var sessionStates = {
-    signIn: { page: '/loggedIn.html', display:'signing you in', loadingBar:10, action: doSignIn, next:{found:'pulling', needsWebfinger:'wf1', needsAllow:'allowRemoteStorage'}},
+    signIn: { page: '/loggedIn.html', display:'signing you in', loadingBar:10, action: doSignIn, next:{found:'ready', needsWebfinger:'wf1', needsAllow:'allowRemoteStorage'}},
     wf1: { page: '/loggedIn.html', display:'checking', loadingBar:20, action: checkWebfinger, next:{needSignup: 'needed', ok: 'allowRemoteStorage'}},
     needed: { page: '/loggedIn.html', display:'pending', displayBlock:'easyfreedom-signup'},
     enroll: { page: '/loggedIn.html', display:'pending', loadingBar:40, displayNone:'easyfreedom-signup', action: enroll, next:{409: 'enroll',201:'pinging'}},
@@ -23,8 +23,7 @@ var remoteStorageClient = (function() {
     selfAccess3: { page: '/loggedIn.html', display:'pending', loadingBar:93, action: doSelfAccess3, next:{200: 'storing'}},
     storing: { page: '/loggedIn.html', display:'pending', loadingBar:96, action: doStore, next:{200: 'ready'}},
     allowRemoteStorage: { page: '/loggedIn.html', loadingBar:60, buttons:['Allow', 'Cancel']},
-    pulling: { page: '/loggedIn.html', display:'pulling', loadingBar:80, buttons:['Sign out'], action: pull, next:{'done': 'ready'}},
-    ready: { page: '/loggedIn.html', displayBlock:'doclist', buttons:['Sign out']},
+    ready: { page: '/list.html' },
     error: { page: '/loggedIn.html', display:'error', buttons:['Sign out']}
   };
   function checkForLogin() {
@@ -311,7 +310,7 @@ var remoteStorageClient = (function() {
     };
     localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
   }
-  function logout() {
+  function signOut() {
     localStorage.clear();
     window.location = '/';
   }
@@ -321,7 +320,7 @@ var remoteStorageClient = (function() {
     checkForLogin: checkForLogin,
     allow: allow,
     agree: agree,
-    logout: logout,
-    cancel: logout
+    signOut: signOut,
+    cancel: signOut
   };
 })();
