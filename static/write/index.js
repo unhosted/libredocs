@@ -55,6 +55,10 @@ function connectToOwnpad() {
 function embedOwnPad(padId)
 {
   var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
+  //deal with legacy accounts:
+  if(!sessionObj.couchHost) {
+    sessionObj.couchHost = sessionObj.subdomain+'.iriscouch.com';
+  }
   $('#editorPad').pad({
     'padId':encodeURIComponent(padId),
     'host':'http://ownpad.nodejitsu.com',
