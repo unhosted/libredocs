@@ -126,7 +126,7 @@ var remoteStorageClient = (function() {
             cb('needSignup');
           }
         }
-      }, function() {}, function(attr) {
+      }, function(attr) {
         sessionObj.attr = attr;
         sessionObj.storageAddress = webfinger.resolveTemplate(attr.template, 'documents');
         sessionObj.storageApi = attr.api;
