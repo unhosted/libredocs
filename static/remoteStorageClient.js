@@ -154,7 +154,7 @@ var remoteStorageClient = (function() {
       alert('your remote storage was not deployed within 10 pings. please try again.');
       cb('error');
     } else {
-      pimper.ping(userName, proxy, function(result) {
+      pimper.ping(couchHost, proxy, function(result) {
         if(result==404) {
           console.log('ping '+counter+'...');
           ping(couchHost, proxy, counter+1, cb);
