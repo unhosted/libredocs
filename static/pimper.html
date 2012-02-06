@@ -1,2 +1,42 @@
-<h2>Coming soon</h2>
-Come to our <a href="http://webchat.freenode.net/?channels=unhosted" target="_blank">chat room</a> for more info.
+<!DOCTYPE html>
+  <head>
+    <title>Pimper</title>
+    <meta charset="utf-8">
+    <script src="http://browserid.org/include.js"></script>
+    <script>
+      function prepareSessionObj(audience, assertion, cb) {
+        var xhr=new XMLHttpRequest();
+        xhr.open('POST', 'http://libredocs.org/users', true);
+        xhr.onreadystatechange = function() {
+          if(xhr.readyState == 4) {
+            cb(JSON.parse(xhr.responseText));
+          }
+        };
+        xhr.send(JSON.stringify({
+          audience: audience,
+          assertion: assertion
+        }));
+      }
+      function pimpIt() {
+        console.log('wait...');
+        navigator.id.get(function(assertion) {
+          console.log('and wait some more...');
+          prepareSessionObj('http://libredocs.org', assertion, function(sessionObj) {
+            sessionObj.state = 'pinging';
+            sessionObj.subdomain = document.getElementById('sd').value;
+            sessionObj.proxy = 'yourremotestorage.net/CouchDB/proxy/';
+            localStorage.sessionObj=JSON.stringify(sessionObj);
+            location='/loggedIn.html';
+          });
+        });
+      }
+    </script>
+  </head>
+  <body>
+    <h2>WARNING: doesn't work yet</h2>
+    Come to our <a href="http://webchat.freenode.net/?channels=unhosted" target="_blank">chat room</a> for more info.
+    <p>iris couch subdomain:<input id="sd" value="michieltest">
+    </p>
+    <input type="submit" value='Pimp my couch!' onclick="pimpIt();">
+  </body>
+</html>
