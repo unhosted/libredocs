@@ -16,7 +16,11 @@ function connectToOwnpad() {
   else
     // preview
   {
-    $('#previewPad').html(pad.text)
+    $('#previewPad').text(pad.text);
+    window.onblur = function()
+    {
+      $('#previewPad').hide();
+    };
   }
 
   // not signed in
