@@ -58,6 +58,7 @@ function embedOwnPad(padId)
   //deal with legacy accounts:
   if(!sessionObj.couchHost) {
     sessionObj.couchHost = sessionObj.subdomain+'.iriscouch.com';
+    localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
   }
   $('#editorPad').pad({
     'padId':encodeURIComponent(padId),
