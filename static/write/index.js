@@ -54,7 +54,7 @@ function embedOwnPad(padId)
   $('#editorPad').pad({
     'padId':encodeURIComponent(padId),
     'host':'http://ownpad.nodejitsu.com',
-    'storageAddress':encodeURIComponent('https://'+sessionObj.subdomain+'.iriscouch.com/documents/'),
+    'storageAddress':encodeURIComponent('https://'+sessionObj.couchHost+'/documents/'),
     'bearerToken':encodeURIComponent(sessionObj.bearerToken),
     'storageApi':sessionObj.storageApi,
     'userName':hyphenify(sessionObj.userAddress),

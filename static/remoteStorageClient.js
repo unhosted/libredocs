@@ -142,14 +142,14 @@ var remoteStorageClient = (function() {
         sessionObj.userNameTry = (sessionObj.userNameTry?sessionObj.userNameTry:23)+1;//skip straight to higher numbers, so debugging doesn't take that long
         localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
       } else if(result==201) {
-        sessionObj.subdomain = userName;
+        sessionObj.couchHost = userName+'.iriscouch.com';
         sessionObj.proxy = 'yourremotestorage.net/CouchDB/proxy/';
         localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
       }
       cb(result);
     });
   }
-  function ping(userName, proxy, counter, cb) {
+  function ping(couchHost, proxy, counter, cb) {
     if(counter > 10) {//we could move this into the state machine as states ping1 .. ping10, but that would give so many states
       alert('your remote storage was not deployed within 10 pings. please try again.');
       cb('error');
@@ -157,7 +157,7 @@ var remoteStorageClient = (function() {
       pimper.ping(userName, proxy, function(result) {
         if(result==404) {
           console.log('ping '+counter+'...');
-          ping(userName, proxy, counter+1, cb);
+          ping(couchHost, proxy, counter+1, cb);
         } else {
           cb(result);
         }
@@ -165,19 +165,19 @@ var remoteStorageClient = (function() {
     }
   }
   function doPing(cb) {
-    ping(sessionObj.subdomain, sessionObj.proxy, 0, cb);
+    ping(sessionObj.couchHost, sessionObj.proxy, 0, cb);
   }
   function doSquat1(cb) {
-    pimper.createAdminUser1(sessionObj.subdomain+'.iriscouch.com', sessionObj.userAddress, sessionObj.adminPwd, cb);
+    pimper.createAdminUser1(sessionObj.couchHost, sessionObj.userAddress, sessionObj.adminPwd, cb);
   }
   function doSquat2(cb) {
-    pimper.createAdminUser2(sessionObj.subdomain+'.iriscouch.com', sessionObj.userAddress, sessionObj.adminPwd, cb);
+    pimper.createAdminUser2(sessionObj.couchHost, sessionObj.userAddress, sessionObj.adminPwd, cb);
   }
   function createDb(cb) {
-    pimper.createDb(sessionObj.subdomain+'.iriscouch.com', sessionObj.userAddress, sessionObj.adminPwd, 'cors', cb);
+    pimper.createDb(sessionObj.couchHost, sessionObj.userAddress, sessionObj.adminPwd, 'cors', cb);
   }
   function pop1(cb) {
-    var couchAddress = sessionObj.subdomain+'.iriscouch.com';
+    var couchAddress = sessionObj.couchHost;
     var httpTemplate = 'http://'+sessionObj.proxy+couchAddress+'/{category}/';
     var putHost = 'http://'+sessionObj.proxy+couchAddress;
     var authStr = {
@@ -219,7 +219,7 @@ var remoteStorageClient = (function() {
          '}}', cb);
   }
   function pop2(cb) {
-    var couchAddress = sessionObj.subdomain+'.iriscouch.com';
+    var couchAddress = sessionObj.couchHost;
     var putHost = 'http://'+sessionObj.proxy+couchAddress;
     var authStr = {
       usr:sessionObj.userAddress,
@@ -228,7 +228,7 @@ var remoteStorageClient = (function() {
     pimper.uploadAttachment(putHost, 'cors', 'auth', authStr, 'modal.html', 'http://libredocs.org/beFree/files/modal.html', 'text/html', cb);
   }
   function pop3(cb) {
-    var couchAddress = sessionObj.subdomain+'.iriscouch.com';
+    var couchAddress = sessionObj.couchHost;
     var putHost = 'http://'+sessionObj.proxy+couchAddress;
     var authStr = {
       usr:sessionObj.userAddress,
@@ -237,7 +237,7 @@ var remoteStorageClient = (function() {
     pimper.uploadAttachment(putHost, 'cors', 'base64', authStr, 'base64.js', 'http://libredocs.org/beFree/files/base64.js', 'application/javascript', cb);
   }
   function pop4(cb) {
-    var couchAddress = sessionObj.subdomain+'.iriscouch.com';
+    var couchAddress = sessionObj.couchHost;
     var putHost = 'http://'+sessionObj.proxy+couchAddress;
     var authStr = {
       usr:sessionObj.userAddress,
@@ -246,26 +246,26 @@ var remoteStorageClient = (function() {
     pimper.uploadAttachment(putHost, 'cors', 'sha1', authStr, 'sha1.js', 'http://libredocs.org/beFree/files/sha1.js', 'application/javascript', cb);
   }
   function pop5(cb) {
-    var couchAddress = sessionObj.subdomain+'.iriscouch.com';
+    var couchAddress = sessionObj.couchHost;
     pimper.setConfig(couchAddress, sessionObj.userAddress, sessionObj.adminPwd, 'browserid', {
       enabled: true,
       verify_url: 'https://browserid.org/verify'
     }, cb);
   }
   function doSelfAccess1(cb) {
-    pimper.createUser(sessionObj.subdomain+'.iriscouch.com', sessionObj.userAddress, sessionObj.adminPwd, 'http___libredocs_org', function(result, token) {
+    pimper.createUser(sessionObj.couchHost, sessionObj.userAddress, sessionObj.adminPwd, 'http___libredocs_org', function(result, token) {
       sessionObj.bearerToken = token;
       sessionObj.storageApi = 'CouchDB';
-      sessionObj.storageAddress = 'http://'+sessionObj.proxy+sessionObj.subdomain + '.iriscouch.com/documents/';
+      sessionObj.storageAddress = 'http://'+sessionObj.proxy+sessionObj.couchHost + '/documents/';
       localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
       cb(result);
     });
   }
   function doSelfAccess2(cb) {
-    pimper.createDb(sessionObj.subdomain+'.iriscouch.com', sessionObj.userAddress, sessionObj.adminPwd, 'documents', cb);
+    pimper.createDb(sessionObj.couchHost, sessionObj.userAddress, sessionObj.adminPwd, 'documents', cb);
   }
   function doSelfAccess3(cb) {
-    pimper.giveAccess(sessionObj.subdomain+'.iriscouch.com', sessionObj.userAddress, sessionObj.adminPwd, 'documents', 'http___libredocs_org', false, cb);
+    pimper.giveAccess(sessionObj.couchHost, sessionObj.userAddress, sessionObj.adminPwd, 'documents', 'http___libredocs_org', false, cb);
   }
   function doStore(cb) {
     sessionObj.action='set';

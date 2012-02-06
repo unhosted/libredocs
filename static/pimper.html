@@ -23,7 +23,7 @@
           console.log('and wait some more...');
           prepareSessionObj('http://libredocs.org', assertion, function(sessionObj) {
             sessionObj.state = 'pinging';
-            sessionObj.subdomain = document.getElementById('sd').value;
+            sessionObj.couchHost = document.getElementById('couchHost').value;
             sessionObj.proxy = 'yourremotestorage.net/CouchDB/proxy/';
             localStorage.sessionObj=JSON.stringify(sessionObj);
             location='/loggedIn.html';
@@ -35,7 +35,7 @@
   <body>
     <h2>WARNING: doesn't work yet</h2>
     Come to our <a href="http://webchat.freenode.net/?channels=unhosted" target="_blank">chat room</a> for more info.
-    <p>iris couch subdomain:<input id="sd" value="michieltest">
+    <p>iris couch subdomain:<input id="couchHost" value="subdomain.iriscouch.com">
     </p>
     <input type="submit" value='Pimp my couch!' onclick="pimpIt();">
   </body>
