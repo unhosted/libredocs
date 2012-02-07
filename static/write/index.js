@@ -3,8 +3,8 @@ function fetchPadId(cb) {
     remoteStorage.getStorageInfo(getCurrDocOwner(), function(err, docOwnerStorageInfo) {
       var client = remoteStorage.createClient(docOwnerStorageInfo, 'public');
       client.get('padId:'+getCurrDocLink(), function(err2, data) {
-        if(err2) {//by default, docName == padId
-          cb(getCurrDocLink());
+        if(err2) {//the callback should use getPad which will deal with a null
+          cb(null);
         } else {
           cb(data);
         }
@@ -35,59 +35,51 @@ function pushList(cb) {
 // So far this will connect to the default etherpad server.
 // This is just a test for the editor embedding
 function connectToOwnpad(padId) {
-  var userName;
-  var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
   var pad = getPad(padId);
 
-  if(pad == null)
+  // 
+  if(isOwnPad(pad))
   {
-    pad = {
-      owner: getCurrDocOwner(),
-      id: getCurrDocOwner()+'$'+getCurrDocLink(),
-      title: getCurrDocLink(),
-    };
-  }
-  else
-    // preview
-  {
-    $('#previewPad').text(pad.text);
-    window.onblur = function()
-    {
-      $('#previewPad').hide();
-    };
+    showPreview(pad.text);
+    ensureStorageInfo();
   }
 
-  // not signed in
-  if(sessionObj == null || sessionObj.userAddress == null) 
-  {
-    document.getElementsByTagName('h1')[0].innerHTML =
-      '<span id="docTitle">'+pad.title+'</span>'
-      +'<small>';
-      +'<input type="submit" value="Sign in" onclick="localStorage.clear();location=\'/\';">'
-      +'</small>';
-    embedSharedPad(pad.id, "unknown");
-    return;
-  }
-  
-  userName = hyphenify(sessionObj.userAddress);
-  
-  if(pad.owner != userName)
-  {
-    document.getElementsByTagName('h1')[0].innerHTML = '<span id="docTitle">'+pad.title+'</span>';
-    embedSharedPad(pad.id, userName);
-  }
-  else
-  {
-    document.getElementsByTagName('h1')[0].innerHTML = '<span id="docTitle" onmouseover="changeDocTitle();">'+pad.title+'</span>';
-    embedOwnPad(pad.id);
-  }
-  document.getElementsByTagName('small')[0].innerHTML =
-    (sessionObj.userAddress?' '+sessionObj.userAddress:'')
-    +'<a class="btn btn-danger" href="#" onclick="localStorage.clear();location=\'/\';"><i class="icon-remove icon-white"></i> Sign out</a>';
+  document.getElementsByTagName('h1')[0].innerHTML = docTitleSpan(pad) + signupStatus();
+  embedPad(pad);
 }
-
-function embedOwnPad(padId)
-{
+function showPreview(text) {
+  if(!text || text == '') return;
+  $('#previewPad').text(text);
+  window.onblur = function()
+  {
+    $('#previewPad').hide();
+  };
+}
+function docTitleSpan(pad) {
+  if(isOwnPad(pad))
+  {
+    return '<span id="docTitle" onmouseover="changeDocTitle();">'+pad.title+'</span>';
+  }
+  else
+  {
+    return '<span id="docTitle">'+pad.title+'</span>';
+  }
+}
+function signupStatus() {
+  var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
+  // not signed in
+  if(sessionObj == null || !sessionObj.userAddress) 
+  {
+    return '<small><input type="submit" value="Sign in" onclick="location=\'/\';"></small>';
+  }
+  else
+  {
+    return '<small> '+sessionObj.userAddress
+    +'<a class="btn btn-danger" href="#" onclick="localStorage.clear();location=\'/\';"><i class="icon-remove icon-white"></i> Sign out</a>'
+    +'</small>'
+  }
+}
+function ensureStorageInfo() {
   var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
   //deal with legacy accounts:
   if(!sessionObj.storageInfo) {
@@ -99,29 +91,19 @@ function embedOwnPad(padId)
     sessionObj.ownPadBackDoor = 'https://'+sessionObj.subdomain+'.iriscouch.com/documents';
     localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
   }
+}
+function embedPad(pad) {
   $('#editorPad').pad({
-    'padId':encodeURIComponent(padId),
-    'host':'http://ownpad.nodejitsu.com',
-    'storageAddress':encodeURIComponent(sessionObj.ownPadBackDoor),
-    'storageTemplate':sessionObj.storageInfo.template,//to be used when there is no BackDoor available
-    'bearerToken':encodeURIComponent(sessionObj.bearerToken),
-    'storageApi':sessionObj.storageInfo.api,
-    'userName':hyphenify(sessionObj.userAddress),
-    'showControls':true,
-    'showLineNumbers':false,
-    'noColors':true
+    'padId':encodeURIComponent(pad.id),
+    'userName':hyphenify(getUserName()),
   });
 }
-
-function embedSharedPad(padId, userName)
-{
-  $('#editorPad').pad({
-    'padId':encodeURIComponent(padId),
-    'host':'http://ownpad.nodejitsu.com',
-    'userName':hyphenify(userName),
-    'showControls':true,
-    'showLineNumbers':false
-  });
+function getUserName() {
+  var sessionObj = JSON.parse(localStorage.getItem('sessionObj')) || {};
+  return sessionObj.userAddress || 'unknown';
+}
+function isOwnPad(pad) {
+  pad.owner == hyphenify(getUserName());
 }
 
 var editingDocTitle;
@@ -154,7 +136,7 @@ function getCurrDocLink() {
 }
 function getPad(padId) {
   var sessionObj = JSON.parse(localStorage.sessionObj);
-  if(getCurrDocOwner() == sessionObj.userAddress) {
+  if(getCurrDocOwner() == hyphenify(sessionObj.userAddress)) {
     var list = JSON.parse(localStorage.getItem('list'));
     for(i in list)
     {
@@ -163,11 +145,13 @@ function getPad(padId) {
         return list[i];
       }
     }
-  } else {
-    return {
-      id: padId
-    };
   }
+  // haven't found the pad in our documents list - use url params
+  return {
+    owner: getCurrDocOwner(),
+    id: padId || getCurrDocOwner()+'$'+getCurrDocLink(),
+    title: getCurrDocLink(),
+  };
 }
 
 // TODO: make sure this is unique
