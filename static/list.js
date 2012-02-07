@@ -1,6 +1,24 @@
-if(localStorage.michTest) {
-  require(['0.2.0/remoteStorage'], function (remoteStorage) {
-    alert('hi');
+function fetchList(cb) {
+  var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
+  require(['0.2.0/remoteStorage'], function(remoteStorage) {
+    var client = remoteStorage.createClient(sessionObj.storageAddress, 'CouchDB', sessionObj.bearerToken);
+    client.get('list', function(err, data) {
+      console.log('fetched list - '+err+':"'+data+'"');
+      if((!err) && data) {
+        localStorage.list = data;
+      }
+      cb();
+    });
+  });
+}
+function pushList(cb) {
+  var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
+  require(['0.2.0/remoteStorage'], function(remoteStorage) {
+    var client = remoteStorage.createClient(sessionObj.storageAddress, 'CouchDB', sessionObj.bearerToken);
+    client.put('list', localStorage.list, function(err, data) {
+      console.log('pushed list - '+err+':"'+data+'"');
+      cb();
+    });
   });
 }
 function checkLogin() {
@@ -106,6 +124,7 @@ function updateDocPreview(id) {
           docs[id].text = pad.atext.text;
           document.getElementById(id+'-preview').innerHTML = truncate(pad.atext.text);
           localStorage.setItem('list', JSON.stringify(docs));
+          pushList();
         }
       }
     });
@@ -137,15 +156,17 @@ function showDoc(i) {
     docs[i].timestamp = new Date().getTime();
     localStorage.setItem('list', JSON.stringify(docs));
   }
-  localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
-  window.location=getDocAddress(docs[i], true);
+  pushList(function() {
+    localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
+    window.location=getDocAddress(docs[i], true);
+  });
 }
 function share(i) {
   var docs = JSON.parse(localStorage.getItem('list'));
   return getDocAddress(docs[i], false);
 }
 
-document.getElementById('list').setAttribute('onload', 'checkLogin();showList();') 
+document.getElementById('list').setAttribute('onload', 'checkLogin();fetchList(showList);') 
 
 // Helpers - these should probably go into a general purpose place:
 
