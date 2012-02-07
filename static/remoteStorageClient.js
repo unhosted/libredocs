@@ -119,19 +119,17 @@ var remoteStorageClient = (function() {
     }));
   }
   function checkWebfinger(cb) {
-    require(['webfinger'], function(webfinger) {
-      webfinger.getAttributes(sessionObj.userAddress, {
-        onError: function(code, msg) {
-          if(code == 5) {
-            cb('needSignup');
-          }
+    require(['0.2.0/remoteStorage'], function(remoteStorage) {
+      remoteStorage.getInfo(sessionObj.userAddress, ['documents'], 'http://libredocs.org/rcvToken.html' function(err, storageAddresses, storageApi, oauthAddress) {
+        if(err) {
+          cb('needSignup');
+        } else {
+          sessionObj.storageAddress = storageAddresses[0];
+          sessionObj.storageApi = storageApi;
+          sessionObj.storageAuth = oauthAddress;
+          localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
+          cb('ok');
         }
-      }, function(attr) {
-        sessionObj.attr = attr;
-        sessionObj.storageAddress = webfinger.resolveTemplate(attr.template, 'documents');
-        sessionObj.storageApi = attr.api;
-        localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
-        cb('ok');
       });
     });
   }
@@ -286,7 +284,7 @@ var remoteStorageClient = (function() {
     if(!sessionObj) {
       sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
     }
-    window.open(sessionObj.attr.auth+'?redirect_uri=http://libredocs.org/rcvToken.html&scope=documents');
+    window.open(sessionObj.storageAuth);
   }
   function agree() {
     if(!sessionObj) {
