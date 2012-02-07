@@ -120,7 +120,7 @@ var remoteStorageClient = (function() {
   }
   function checkWebfinger(cb) {
     require(['0.2.0/remoteStorage'], function(remoteStorage) {
-      remoteStorage.getInfo(sessionObj.userAddress, ['documents'], 'http://libredocs.org/rcvToken.html' function(err, storageAddresses, storageApi, oauthAddress) {
+      remoteStorage.getInfo(sessionObj.userAddress, ['documents'], 'http://libredocs.org/rcvToken.html', function(err, storageAddresses, storageApi, oauthAddress) {
         if(err) {
           cb('needSignup');
         } else {
