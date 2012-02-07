@@ -6,7 +6,7 @@ function fetchPadId(cb) {
       } else {
         cb(data);
       }
-    }
+    });
   });
 }
 function pushPadId(docName, padId, cb) {
@@ -14,7 +14,7 @@ function pushPadId(docName, padId, cb) {
   require(['0.2.0/remoteStorage'], function(remoteStorage) {
     var client = remoteStorage.createClient(sessionObj.publicStorageAddress, 'CouchDB', sessionObj.bearerToken);
     client.put('padId:'+docName, padId, function(err, data) {
-      console.log('pushed padId '+padId+' for docName "'+docName='" - '+err+':"'+data+'"');
+      console.log('pushed padId '+padId+' for docName "'+docName+'" - '+err+':"'+data+'"');
       cb();
     });
   });
@@ -40,8 +40,8 @@ function connectToOwnpad(padId) {
   {
     pad = {
       owner: getCurrDocOwner(),
-      id: getCurrDocOwner()+'$'+getCurrDocLink(),
-      title: getCurrDocLink(),
+      id: getCurrDocOwner()+'$'+getCurrDocName(),
+      title: getCurrDocName(),
     };
   }
   else
@@ -127,7 +127,7 @@ function saveDocTitle() {
   var pad = getPad();
   pad.title = document.getElementById('docTitleInput').value;
   pad.link = getLinkFromTitle(pad.title);
-  var list = JSON.parse(localStorage.getItem('list');
+  var list = JSON.parse(localStorage.getItem('list'));
   list[pad.id] = pad;
   localStorage.setItem('list',JSON.stringify(list));
   pushPadId(pad.title, pad.id, function() {
@@ -138,9 +138,9 @@ function saveDocTitle() {
   });
 }
 function getCurrDocOwner() {
-  return location.hash.split('/')[1];
+  return unhyphenify(location.hash.split('/')[1]);
 }
-function getCurrDocLink() {
+function getCurrDocName() {
   return location.hash.split('/')[2];
 }
 function getPad(padId) {
@@ -149,7 +149,7 @@ function getPad(padId) {
     var list = JSON.parse(localStorage.getItem('list'));
     for(i in list)
     {
-      if (list[i].link == getCurrDocLink() && list[i].owner == getCurrDocOwner())
+      if (list[i].link == getCurrDocName() && list[i].owner == getCurrDocOwner())
       {
         return list[i];
       }
@@ -171,5 +171,9 @@ function hyphenify(userAddress) {
   return userAddress.replace(/-/g, '-dash-').replace(/@/g, '-at-').replace(/\./g, '-dot-');
 }
 
-document.getElementsByTagName('body')[0].setAttribute('onload', 'fetchList(connectToOwnpad);');
+function unhyphenify(userAddress) {
+  return userAddress.replace(/-dot-/g, '.').replace(/-at-/g, '@').replace(/-dash-/g, '-');
+}
+
+document.getElementsByTagName('body')[0].setAttribute('onload', 'fetchPadId(connectToOwnpad);');
 document.getElementById('loading').style.display='none';
