@@ -19,31 +19,38 @@
           <img alt="" src="images/document.svg" />
           <img alt="" src="images/cheerleader.svg" />
           <h1>Libre Docs</h1>
-          <div id="signin">
-            <input type="submit" id="signin-button" value="" style="display:none;" />
-          	<p id="signin-loading">Loading BrowserID &hellip;</p>
-          </div>
         </div>
 
         <h2>Liberate your ideas</h2>
         <p>Libre Docs runs only the application. We neither store your data nor track you, everything runs in your browser. For this to work, we support the open <a href="http://www.w3.org/community/unhosted/wiki/RemoteStorage">remoteStorage protocol</a> so you can have your data where you want.</p>
-        <p>For the applications, we use existing open web technologies like <a href="http://etherpad.org">Etherpad</a>, <a href="http://webodf.org">WebODF</a>, <a href="http://code.google.com/p/svg-edit/">SVG-edit</a> and more.</p>
 
-        <h3>Your own remote storage</h3>
-        <p>On sign up you will get your own CouchDB database at <a href="http://iriscouch.com">Iris Couch</a>. This is only one of the options but we recommend Iris Couch because they are nice people who care about the open web and decentralization. You can always start with this option and switch to another later:</p>
-        <ul>
-          <li><a href="http://couchdb.apache.org">CouchDB</a>: Install your own and run <a href="pimper.html">Couch Pimper</a> against it.</li>
-          <li><a href="http://owncloud.org">ownCloud</a>: <a href="http://owncloud.org/install/">Install</a> it on your own server (pay special attention to point 4, as well as to the last paragraph).</li>
-          <li>Develop your own software or make existing software compatible with the <a href="http://www.w3.org/community/unhosted/wiki/RemoteStorage">remoteStorage</a> protocol.</li>
-          <li>You can also connect your remote storage to <a href="https://github.com/unhosted/experiments/tree/master/wp-plugin">WordPress</a> and <a href=" https://github.com/friendica/friendica-addons/tree/master/uhremotestorage">Friendica</a> with the plugins.</li>
-        </ul>
+        <div class="row">
+          <div class="span3">
+            <div class="step" id="signin">
+              <input type="submit" id="signin-button" value="" style="display:none;" />
+          	  <p id="signin-loading">Loading BrowserID &hellip;</p>
+            </div>
+        	<h3>1. sign in with BrowserID</h3>
+        	<p>We use <a href="http://browserid.org">BrowserID</a>, a great new technology to ease sign in, driven by our friends at <a href="http://mozilla.org">Mozilla</a>. <a href="http://support.mozilla.com/en-US/kb/what-browserid-and-how-does-it-work">Find out more</a>.</p>
+          </div>
 
-        <h3>Sign in easily</h3>
-        <p>We use <a href="http://browserid.org">BrowserID</a>, a great new technology to ease sign in, driven by our friends at <a href="http://mozilla.org">Mozilla</a>. <a href="http://support.mozilla.com/en-US/kb/what-browserid-and-how-does-it-work">Find out more</a>.</p>
+          <div class="span3">
+            <img class="step remotestorage" alt="" src="images/iriscouch.png" />
+            <h3>2. get remoteStorage</h3>
+            <p>You&apos;ll get your own &raquo;<em>home folder for the web</em>&laquo;, a CouchDB database at <a href="http://iriscouch.com">Iris Couch</a>. We work on making other <a href="https://github.com/unhosted/website/wiki/remoteStorage-providers">storage providers</a> compatible.</p>
+          </div>
+
+          <div class="span3">
+            <img class="step write" alt="" src="images/cheerleader.svg" />
+        	<h3>3. write freely!</h3>
+        	<p>Apps are existing open web technologies. Starting out with <a href="http://etherpad.org">Etherpad</a>, soon adding <a href="http://webodf.org">WebODF</a>, <a href="http://code.google.com/p/svg-edit/">SVG-edit</a> and more.</p>
+          </div>
+        </div>
+
       </div>
 
       <footer>
-        <p><a href="http://libredocs.org">Libre Docs</a> is a project by <a href="http://unhosted.org">Unhosted</a> for a more open web.</p>
+        <p><a href="http://libredocs.org">Libre Docs</a> is a <a href="https://github.com/unhosted/libredocs">free software</a> app by <a href="http://unhosted.org">Unhosted</a> for a more open web.</p>
       </footer>
     </div> <!-- /container -->
     <script src="http://browserid.org/include.js"></script>
