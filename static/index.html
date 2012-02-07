@@ -25,8 +25,8 @@
         <p>Libre Docs runs only the application. We neither store your data nor track you, everything runs in your browser. For this to work, we support the open <a href="http://www.w3.org/community/unhosted/wiki/RemoteStorage">remoteStorage protocol</a> so you can have your data where you want.</p>
 
         <div class="row">
-          <div class="span3">
-            <div class="step" id="signin">
+          <div class="span3 step signin active">
+            <div id="signin">
               <input type="submit" id="signin-button" value="" style="display:none;" />
           	  <p id="signin-loading">Loading BrowserID &hellip;</p>
             </div>
@@ -34,14 +34,14 @@
         	<p>We use <a href="http://browserid.org">BrowserID</a>, a great new technology to ease sign in, driven by our friends at <a href="http://mozilla.org">Mozilla</a>. <a href="http://support.mozilla.com/en-US/kb/what-browserid-and-how-does-it-work">Find out more</a>.</p>
           </div>
 
-          <div class="span3">
-            <img class="step remotestorage" alt="" src="images/iriscouch.png" />
+          <div class="span3 step remotestorage">
+            <img alt="" src="images/iriscouch.png" />
             <h3>2. get remoteStorage</h3>
             <p>You&apos;ll get your own &raquo;<em>home folder for the web</em>&laquo;, a CouchDB database at <a href="http://iriscouch.com">Iris Couch</a>. We work on making other <a href="https://github.com/unhosted/website/wiki/remoteStorage-providers">storage providers</a> compatible.</p>
           </div>
 
-          <div class="span3">
-            <img class="step write" alt="" src="images/cheerleader.svg" />
+          <div class="span3 step write">
+            <img alt="" src="images/cheerleader.svg" />
         	<h3>3. write freely!</h3>
         	<p>Apps are existing open web technologies. Starting out with <a href="http://etherpad.org">Etherpad</a>, soon adding <a href="http://webodf.org">WebODF</a>, <a href="http://code.google.com/p/svg-edit/">SVG-edit</a> and more.</p>
           </div>
