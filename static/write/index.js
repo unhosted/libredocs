@@ -1,8 +1,8 @@
 function fetchPadId(cb) {
   require(['0.2.0/remoteStorage'], function(remoteStorage) {
-    remoteStorage.getPublic(getCurrDocOwner(), 'padId:'+getCurrDocName(), function(err, data) {
+    remoteStorage.getPublic(getCurrDocOwner(), 'padId:'+getCurrDocLink(), function(err, data) {
       if(err) {//by default, docName == padId
-        cb(getCurrDocName());
+        cb(getCurrDocLink());
       } else {
         cb(data);
       }
@@ -40,8 +40,8 @@ function connectToOwnpad(padId) {
   {
     pad = {
       owner: getCurrDocOwner(),
-      id: getCurrDocOwner()+'$'+getCurrDocName(),
-      title: getCurrDocName(),
+      id: getCurrDocOwner()+'$'+getCurrDocLink(),
+      title: getCurrDocLink(),
     };
   }
   else
@@ -140,7 +140,7 @@ function saveDocTitle() {
 function getCurrDocOwner() {
   return unhyphenify(location.hash.split('/')[1]);
 }
-function getCurrDocName() {
+function getCurrDocLink() {
   return location.hash.split('/')[2];
 }
 function getPad(padId) {
@@ -149,7 +149,7 @@ function getPad(padId) {
     var list = JSON.parse(localStorage.getItem('list'));
     for(i in list)
     {
-      if (list[i].link == getCurrDocName() && list[i].owner == getCurrDocOwner())
+      if (list[i].link == getCurrDocLink() && list[i].owner == getCurrDocOwner())
       {
         return list[i];
       }
