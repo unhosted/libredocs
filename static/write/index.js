@@ -1,9 +1,40 @@
+function fetchPadId(cb) {
+  require(['0.2.0/remoteStorage'], function(remoteStorage) {
+    remoteStorage.getPublic(getCurrDocOwner(), 'padId:'+getCurrDocName(), function(err, data) {
+      if(err) {//by default, docName == padId
+        cb(getCurrDocName());
+      } else {
+        cb(data);
+      }
+    }
+  });
+}
+function pushPadId(docName, padId, cb) {
+  var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
+  require(['0.2.0/remoteStorage'], function(remoteStorage) {
+    var client = remoteStorage.createClient(sessionObj.publicStorageAddress, 'CouchDB', sessionObj.bearerToken);
+    client.put('padId:'+docName, padId, function(err, data) {
+      console.log('pushed padId '+padId+' for docName "'+docName='" - '+err+':"'+data+'"');
+      cb();
+    });
+  });
+}
+function pushList(cb) {
+  var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
+  require(['0.2.0/remoteStorage'], function(remoteStorage) {
+    var client = remoteStorage.createClient(sessionObj.storageAddress, 'CouchDB', sessionObj.bearerToken);
+    client.put('list', localStorage.list, function(err, data) {
+      console.log('pushed list - '+err+':"'+data+'"');
+      cb();
+    });
+  });
+}
 // So far this will connect to the default etherpad server.
 // This is just a test for the editor embedding
-function connectToOwnpad() {
+function connectToOwnpad(padId) {
   var userName;
   var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
-  var pad = getPad();
+  var pad = getPad(padId);
 
   if(pad == null)
   {
@@ -96,11 +127,15 @@ function saveDocTitle() {
   var pad = getPad();
   pad.title = document.getElementById('docTitleInput').value;
   pad.link = getLinkFromTitle(pad.title);
-  var list = JSON.parse(localStorage.getItem('list'));
+  var list = JSON.parse(localStorage.getItem('list');
   list[pad.id] = pad;
   localStorage.setItem('list',JSON.stringify(list));
-  location.hash = '#!/'+getCurrDocOwner()+'/'+pad.link;
-  document.getElementById('docTitle').innerHTML = pad.title;
+  pushPadId(pad.title, pad.id, function() {
+    pushList(function() {
+      location.hash = '#!/'+getCurrDocOwner()+'/'+pad.link;
+      document.getElementById('docTitle').innerHTML = pad.title;
+    });
+  });
 }
 function getCurrDocOwner() {
   return location.hash.split('/')[1];
@@ -108,14 +143,21 @@ function getCurrDocOwner() {
 function getCurrDocLink() {
   return location.hash.split('/')[2];
 }
-function getPad() {
-  var list = JSON.parse(localStorage.getItem('list'));
-  for(i in list)
-  {
-    if (list[i].link == getCurrDocLink() && list[i].owner == getCurrDocOwner())
+function getPad(padId) {
+  var sessionObj = JSON.parse(localStorage.sessionObj);
+  if(getCurrDocOwner() == sessionObj.userAddress) {
+    var list = JSON.parse(localStorage.getItem('list'));
+    for(i in list)
     {
-      return list[i];
+      if (list[i].link == getCurrDocLink() && list[i].owner == getCurrDocOwner())
+      {
+        return list[i];
+      }
     }
+  } else {
+    return {
+      id: padId
+    };
   }
 }
 
@@ -129,5 +171,5 @@ function hyphenify(userAddress) {
   return userAddress.replace(/-/g, '-dash-').replace(/@/g, '-at-').replace(/\./g, '-dot-');
 }
 
-document.getElementsByTagName('body')[0].setAttribute('onload', 'connectToOwnpad();');
+document.getElementsByTagName('body')[0].setAttribute('onload', 'fetchList(connectToOwnpad);');
 document.getElementById('loading').style.display='none';
