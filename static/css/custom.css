@@ -15,8 +15,8 @@ small:hover a.btn { display:inline; position:absolute; right:0; top:-.4em; }
 #signin { margin:5.5em 0 3em; }
 #write #signin { position:relative; float:right; top:1em; margin:0; }
 #signin-button { background:url('../images/browserid.png') no-repeat; min-width:79px; min-height:22px; cursor:pointer; border:none; box-shadow:none; }
-.step, .step h3 { color:#777; }
-.step.active, .step.active h3, .step:hover, .step:hover h3 { color:#000; }
+.step { opacity:.5; }
+.step.active, .step:hover { opacity:1; }
 .step img, .step>div { position:relative; left:28%; }
 .step.remotestorage img { margin:3em 0 .5em; }
 .step.write img { margin-top:1em; }
