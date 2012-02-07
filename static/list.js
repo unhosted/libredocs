@@ -1,3 +1,8 @@
+if(localStorage.michTest) {
+  require(['0.2.0/remoteStorage'], function (remoteStorage) {
+    alert('hi');
+  });
+}
 function checkLogin() {
   var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
   if(!sessionObj || sessionObj.state != 'ready')
@@ -89,22 +94,22 @@ function getDocAddress(doc, beautiful) {
 // TODO: so far this only works for our own docs
 function updateDocPreview(id) {
   var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
-  var url = sessionObj.storageAddress + 'pad:' + id;
-  var xhr = new XMLHttpRequest();
-  xhr.open('GET', url, true);
-  xhr.setRequestHeader('Authorization', 'Bearer ' + sessionObj.bearerToken);
-  xhr.onreadystatechange = function() {
-    if(xhr.readyState == 4) {
-      var pad = JSON.parse(xhr.responseText).value;
-      if(pad!=null){
-        var docs = JSON.parse(localStorage.getItem('list'));
-        docs[id].text = pad.atext.text;
-        document.getElementById(id+'-preview').innerHTML = truncate(pad.atext.text);
-        localStorage.setItem('list', JSON.stringify(docs));
+  require(['0.2.0/remoteStorage'], function(remoteStorage) {
+    var client = remoteStorage.createClient(sessionObj.storageAddress, 'CouchDB', sessionObj.bearerToken);
+    client.get('pad:'+id, function(err, data) {
+      if(err) {
+        console.log('remoteStorage error '+err+': "'+data+'"');
+      } else {
+        var pad = JSON.parse(data).value;
+        if(pad!=null){
+          var docs = JSON.parse(localStorage.getItem('list'));
+          docs[id].text = pad.atext.text;
+          document.getElementById(id+'-preview').innerHTML = truncate(pad.atext.text);
+          localStorage.setItem('list', JSON.stringify(docs));
+        }
       }
-    }
-  }
-  xhr.send();
+    });
+  });
 }
 
 function showDoc(i) {
