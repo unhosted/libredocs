@@ -17,7 +17,7 @@ small:hover a.btn { display:inline; position:absolute; right:0; top:-.4em; }
 #signin-button { background:url('../images/browserid.png') no-repeat; min-width:79px; min-height:22px; cursor:pointer; border:none; box-shadow:none; }
 .step { opacity:.5; }
 .step.active, .step:hover { opacity:1; }
-.step img, .step>div { position:relative; left:28%; }
+.step.signin input, .step.signin p, .step.remotestorage, .step.write { position:relative; left:28%; }
 .step.remotestorage img { margin:3em 0 .5em; }
 .step.write img { margin-top:1em; }
 
