@@ -3,11 +3,12 @@ function fetchPadId(cb) {
     remoteStorage.getStorageInfo(getCurrDocOwner(), function(err, docOwnerStorageInfo) {
       var client = remoteStorage.createClient(docOwnerStorageInfo, 'public');
       client.get('padId:'+getCurrDocLink(), function(err2, data) {
-      if(err2) {//by default, docName == padId
-        cb(getCurrDocLink());
-      } else {
-        cb(data);
-      }
+        if(err2) {//by default, docName == padId
+          cb(getCurrDocLink());
+        } else {
+          cb(data);
+        }
+      });
     });
   });
 }
