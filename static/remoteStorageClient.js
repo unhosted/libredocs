@@ -119,14 +119,12 @@ var remoteStorageClient = (function() {
     }));
   }
   function checkWebfinger(cb) {
-    require(['0.2.0/remoteStorage'], function(remoteStorage) {
-      remoteStorage.getInfo(sessionObj.userAddress, ['documents'], 'http://libredocs.org/rcvToken.html', function(err, storageAddresses, storageApi, oauthAddress) {
+    require(['0.3.0/remoteStorage'], function(remoteStorage) {
+      remoteStorage.getStorageInfo(sessionObj.userAddress, function(err, storageInfo) {
         if(err) {
           cb('needSignup');
         } else {
-          sessionObj.storageAddress = storageAddresses[0];
-          sessionObj.storageApi = storageApi;
-          sessionObj.storageAuth = oauthAddress;
+          sessionObj.storageInfo = storageInfo;
           localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
           cb('ok');
         }

@@ -2,19 +2,16 @@
 
   $.fn.pad = function( options ) {
     var settings = {
-      'host'		 : 'http://beta.etherpad.org',
+      'host'		 : 'http://ownpad.nodejitsu.com',
       'baseUrl'		 : '/p/',
-      'showControls'     : false,
+      'showControls'     : true,
       'showChat'	 : false,
       'showLineNumbers'  : false,
       'userName'	 : 'unnamed',
       'docName'          : 'draft',
       'useMonospaceFont' : false,
       'noColors'         : true,
-      'hideQRCode'	 : true,
-      'storageAddress'   : '',
-      'bearerToken'      : '',
-      'storageApi'       : 'CouchDB'
+      'hideQRCode'	 : true
     };
 
     // This writes a new frame if required

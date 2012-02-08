@@ -1,7 +1,7 @@
 function fetchList(cb) {
   var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
-  require(['0.2.0/remoteStorage'], function(remoteStorage) {
-    var client = remoteStorage.createClient(sessionObj.storageAddress, 'CouchDB', sessionObj.bearerToken);
+  require(['0.3.0/remoteStorage'], function(remoteStorage) {
+    var client = remoteStorage.createClient(sessionObj.storageInfo, 'documents', sessionObj.bearerToken);
     client.get('list', function(err, data) {
       console.log('fetched list - '+err+':"'+data+'"');
       if((!err) && data) {
@@ -13,8 +13,8 @@ function fetchList(cb) {
 }
 function pushList(cb) {
   var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
-  require(['0.2.0/remoteStorage'], function(remoteStorage) {
-    var client = remoteStorage.createClient(sessionObj.storageAddress, 'CouchDB', sessionObj.bearerToken);
+  require(['0.3.0/remoteStorage'], function(remoteStorage) {
+    var client = remoteStorage.createClient(sessionObj.storageInfo, 'documents', sessionObj.bearerToken);
     client.put('list', localStorage.list, function(err, data) {
       console.log('pushed list - '+err+':"'+data+'"');
       cb();
@@ -112,8 +112,8 @@ function getDocAddress(doc, beautiful) {
 // TODO: so far this only works for our own docs
 function updateDocPreview(id) {
   var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
-  require(['0.2.0/remoteStorage'], function(remoteStorage) {
-    var client = remoteStorage.createClient(sessionObj.storageAddress, 'CouchDB', sessionObj.bearerToken);
+  require(['0.3.0/remoteStorage'], function(remoteStorage) {
+    var client = remoteStorage.createClient(sessionObj.storageInfo, 'documents', sessionObj.bearerToken);
     client.get('pad:'+id, function(err, data) {
       if(err) {
         console.log('remoteStorage error '+err+': "'+data+'"');
@@ -157,7 +157,6 @@ function showDoc(i) {
     localStorage.setItem('list', JSON.stringify(docs));
   }
   pushList(function() {
-    localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
     window.location=getDocAddress(docs[i], true);
   });
 }
