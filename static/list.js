@@ -15,7 +15,7 @@
 
 function fetchList(cb) {
   var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
-  require(['remoteStorage-0.3.2'], function(remoteStorage) {
+  require(['http://unhosted.org/remoteStorage-0.4.2.js'], function(remoteStorage) {
     var client = remoteStorage.createClient(sessionObj.storageInfo, 'documents', sessionObj.bearerToken);
     client.get('list', function(err, data) {
       console.log('fetched list - '+err+':"'+data+'"');
@@ -28,7 +28,7 @@ function fetchList(cb) {
 }
 function pushList(cb) {
   var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
-  require(['remoteStorage-0.3.2'], function(remoteStorage) {
+  require(['http://unhosted.org/remoteStorage-0.4.2.js'], function(remoteStorage) {
     var client = remoteStorage.createClient(sessionObj.storageInfo, 'documents', sessionObj.bearerToken);
     client.put('list', localStorage.list, function(err, data) {
       console.log('pushed list - '+err+':"'+data+'"');
@@ -127,7 +127,7 @@ function getDocAddress(doc, beautiful) {
 // TODO: so far this only works for our own docs
 function updateDocPreview(id) {
   var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
-  require(['remoteStorage-0.3.2'], function(remoteStorage) {
+  require(['http://unhosted.org/remoteStorage-0.4.2.js'], function(remoteStorage) {
     var client = remoteStorage.createClient(sessionObj.storageInfo, 'documents', sessionObj.bearerToken);
     client.get('pad:'+id, function(err, data) {
       if(err) {
