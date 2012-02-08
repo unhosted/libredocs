@@ -89,16 +89,22 @@ function embedOwnPad(padId)
 {
   var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
   //deal with legacy accounts:
-  if(!sessionObj.couchHost) {
-    sessionObj.couchHost = sessionObj.subdomain+'.iriscouch.com';
+  if(!sessionObj.storageInfo) {
+    sessionObj.storageInfo = {
+      api: 'CouchDB',
+      template: 'http://'+sessionObj.proxy+sessionObj.subdomain+'.iriscouch.com/{category}/',
+      auth: 'http://'+sessionObj.subdomain+'.iriscouch.com/cors/auth/modal.html'
+    };
+    sessionObj.ownPadBackDoor = 'https://'+sessionObj.subdomain+'.iriscouch.com/documents';
     localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
   }
   $('#editorPad').pad({
     'padId':encodeURIComponent(padId),
     'host':'http://ownpad.nodejitsu.com',
-    'storageAddress':encodeURIComponent('https://'+sessionObj.couchHost+'/documents/'),
+    'storageAddress':encodeURIComponent(sessionObj.ownPadBackDoor),
+    'storageTemplate':sessionObj.storageInfo.template,//to be used when there is no BackDoor available
     'bearerToken':encodeURIComponent(sessionObj.bearerToken),
-    'storageApi':sessionObj.storageApi,
+    'storageApi':sessionObj.storageInfo.api,
     'userName':hyphenify(sessionObj.userAddress),
     'showControls':true,
     'showLineNumbers':false,
