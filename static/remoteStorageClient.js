@@ -251,8 +251,11 @@ var remoteStorageClient = (function() {
   function doSelfAccess1(cb) {
     pimper.createUser(sessionObj.couchHost, sessionObj.userAddress, sessionObj.adminPwd, 'http___libredocs_org', function(result, token) {
       sessionObj.bearerToken = token;
-      sessionObj.storageApi = 'CouchDB';
-      sessionObj.storageAddress = 'http://'+sessionObj.proxy+sessionObj.couchHost + '/documents/';
+      sessionObj.storageInfo = {
+        api: 'CouchDB',
+        template: 'http://'+sessionObj.proxy+sessionObj.couchHost + '/{category}/',
+        auth: 'http://'+sessionObj.couchHost + '/cors/auth/modal.html'
+      };
       localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
       cb(result);
     });
@@ -282,7 +285,7 @@ var remoteStorageClient = (function() {
     if(!sessionObj) {
       sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
     }
-    window.open(sessionObj.storageAuth);
+    window.open(sessionObj.storageInfo.auth);
   }
   function agree() {
     if(!sessionObj) {
