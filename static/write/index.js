@@ -13,8 +13,8 @@ function fetchPadId(cb) {
 }
 function pushPadId(docName, padId, cb) {
   var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
-  require(['0.2.0/remoteStorage'], function(remoteStorage) {
-    var client = remoteStorage.createClient(sessionObj.publicStorageAddress, 'CouchDB', sessionObj.bearerToken);
+  require(['0.3.0/remoteStorage'], function(remoteStorage) {
+    var client = remoteStorage.createClient(sessionObj.storageInfo, 'public', sessionObj.bearerToken);
     client.put('padId:'+docName, padId, function(err, data) {
       console.log('pushed padId '+padId+' for docName "'+docName+'" - '+err+':"'+data+'"');
       cb();
@@ -23,8 +23,8 @@ function pushPadId(docName, padId, cb) {
 }
 function pushList(cb) {
   var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
-  require(['0.2.0/remoteStorage'], function(remoteStorage) {
-    var client = remoteStorage.createClient(sessionObj.storageAddress, 'CouchDB', sessionObj.bearerToken);
+  require(['0.3.0/remoteStorage'], function(remoteStorage) {
+    var client = remoteStorage.createClient(sessionObj.storageInfo, 'documents', sessionObj.bearerToken);
     client.put('list', localStorage.list, function(err, data) {
       console.log('pushed list - '+err+':"'+data+'"');
       cb();
