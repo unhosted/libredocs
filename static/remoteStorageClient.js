@@ -119,7 +119,7 @@ var remoteStorageClient = (function() {
     }));
   }
   function checkWebfinger(cb) {
-    require(['0.3.0/remoteStorage'], function(remoteStorage) {
+    require(['remoteStorage-0.3.1'], function(remoteStorage) {
       remoteStorage.getStorageInfo(sessionObj.userAddress, function(err, storageInfo) {
         if(err) {
           cb('needSignup');

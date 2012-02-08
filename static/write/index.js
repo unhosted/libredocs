@@ -1,5 +1,5 @@
 function fetchPadId(cb) {
-  require(['0.3.0/remoteStorage'], function(remoteStorage) {
+  require(['remoteStorage-0.3.1'], function(remoteStorage) {
     remoteStorage.getStorageInfo(getCurrDocOwner(), function(err, docOwnerStorageInfo) {
       var client = remoteStorage.createClient(docOwnerStorageInfo, 'public');
       client.get('padId:'+getCurrDocLink(), function(err2, data) {
@@ -13,7 +13,7 @@ function fetchPadId(cb) {
 }
 function pushPadId(docName, padId, cb) {
   var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
-  require(['0.3.0/remoteStorage'], function(remoteStorage) {
+  require(['remoteStorage-0.3.1'], function(remoteStorage) {
     var client = remoteStorage.createClient(sessionObj.storageInfo, 'public', sessionObj.bearerToken);
     client.put('padId:'+docName, padId, function(err, data) {
       console.log('pushed padId '+padId+' for docName "'+docName+'" - '+err+':"'+data+'"');
@@ -23,7 +23,7 @@ function pushPadId(docName, padId, cb) {
 }
 function pushList(cb) {
   var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
-  require(['0.3.0/remoteStorage'], function(remoteStorage) {
+  require(['remoteStorage-0.3.1'], function(remoteStorage) {
     var client = remoteStorage.createClient(sessionObj.storageInfo, 'documents', sessionObj.bearerToken);
     client.put('list', localStorage.list, function(err, data) {
       console.log('pushed list - '+err+':"'+data+'"');
