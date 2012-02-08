@@ -1,3 +1,18 @@
+//deal with legacy accounts:
+(function() {
+  var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
+  if(!sessionObj.storageInfo) {
+    sessionObj.storageInfo = {
+      api: 'CouchDB',
+      template: 'http://'+sessionObj.proxy+sessionObj.subdomain+'.iriscouch.com/{category}/',
+      auth: 'http://'+sessionObj.subdomain+'.iriscouch.com/cors/auth/modal.html'
+    };
+    sessionObj.ownPadBackDoor = 'https://'+sessionObj.subdomain+'.iriscouch.com/documents';
+    localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
+  }
+})();
+
+
 function fetchList(cb) {
   var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
   require(['0.3.0/remoteStorage'], function(remoteStorage) {
