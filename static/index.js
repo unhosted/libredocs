@@ -19,3 +19,10 @@ if(localStorage.getItem('sessionObj')) {
 document.getElementById('signin-button').onclick = go;
 document.getElementById('signin-loading').style.display='none';
 document.getElementById('signin-button').style.display='block';
+
+(function($) {
+  $(document).ready(function() {
+    $('#signin').tooltip();
+    $('.signin').onmouseover=$('#signin').tooltip('show');
+  });
+})(jQuery);
