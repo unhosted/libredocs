@@ -1,9 +1,9 @@
 function fetchPadId(cb) {
   require(['0.3.0/remoteStorage'], function(remoteStorage) {
-    remoteStorage.getStorageInfo(getCurrDocOwner(), function(docOwnerStorageInfo) {
+    remoteStorage.getStorageInfo(getCurrDocOwner(), function(err, docOwnerStorageInfo) {
       var client = remoteStorage.createClient(docOwnerStorageInfo, 'public');
-      client.get('padId:'+getCurrDocLink(), function(err, data) {
-      if(err) {//by default, docName == padId
+      client.get('padId:'+getCurrDocLink(), function(err2, data) {
+      if(err2) {//by default, docName == padId
         cb(getCurrDocLink());
       } else {
         cb(data);
