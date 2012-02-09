@@ -55,7 +55,9 @@ function showList(page) {
   str += newDocumentRow();
   sortedByTimestamp(docs, page, per_page, function(doc) {
     str += documentRow(doc);
-    syncPadData(doc.id);
+    fetchPadData(doc.id, function() {
+      document.getElementById(doc.id+'-preview').innerHTML = previewText(doc);
+    });
   });
   str += paginationRow(page, per_page, lengthOf(docs));
   document.getElementById('doclist').innerHTML = str;
@@ -133,7 +135,7 @@ function getDocAddress(doc, beautiful) {
 }
 
 // TODO: so far this only works for our own docs
-function syncPadData(id) {
+function fetchPadData(id, cb) {
   var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
   require(['http://unhosted.org/remoteStorage-0.4.2.js'], function(remoteStorage) {
     var client = remoteStorage.createClient(sessionObj.storageInfo, 'documents', sessionObj.bearerToken);
@@ -143,7 +145,6 @@ function syncPadData(id) {
       } else {
         var pad = data;
         if(pad!=null){
-          document.getElementById(id+'-preview').innerHTML = truncate(pad.atext.text);
           localStorage.setItem('pad:'+id, JSON.stringify(data));
         }
       }
