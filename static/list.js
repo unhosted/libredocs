@@ -32,7 +32,7 @@ function pushList(cb) {
     var client = remoteStorage.createClient(sessionObj.storageInfo, 'documents', sessionObj.bearerToken);
     client.put('list', localStorage.list, function(err, data) {
       console.log('pushed list - '+err+':"'+data+'"');
-      cb();
+      if(cb) cb();
     });
   });
 }
@@ -133,7 +133,7 @@ function updateDocPreview(id) {
       if(err) {
         console.log('remoteStorage error '+err+': "'+data+'"');
       } else {
-        var pad = JSON.parse(data).value;
+        var pad = data;
         if(pad!=null){
           var docs = JSON.parse(localStorage.getItem('list'));
           docs[id].text = pad.atext.text;
