@@ -1,52 +1,27 @@
-function fetchPadId(cb) {
-  require(['http://unhosted.org/remoteStorage-0.4.2.js'], function(remoteStorage) {
-    remoteStorage.getStorageInfo(getCurrDocOwner(), function(err, docOwnerStorageInfo) {
-      var client = remoteStorage.createClient(docOwnerStorageInfo, 'public');
-      client.get('padId:'+getCurrDocLink(), function(err2, data) {
-        if(err2) {//the callback should use getPad which will deal with a null
-          cb(null);
-        } else {
-          cb(data);
-        }
-      });
-    });
+function getPadId(cb) {
+  var link = getCurrDocOwner()+'$'+getCurrDocLink();
+  var links2Id = JSON.parse(localStorage.getItem('links2id') || '{}')
+  if(links2Id[link])
+  {
+    cb(links2Id[link]);
+    return;
+  }
+  fetchPadId(getCurrDocOwner(), getCurrDocLink(), function(id)
+  {
+    links2Id[link] = id;
+    localStorage.setItem('links2id', JSON.stringify(links2Id));
+    cb(id);
   });
 }
-function pushPadId(docName, padId, cb) {
-  var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
-  require(['http://unhosted.org/remoteStorage-0.4.2.js'], function(remoteStorage) {
-    var client = remoteStorage.createClient(sessionObj.storageInfo, 'public', sessionObj.bearerToken);
-    client.put('padId:'+docName, padId, function(err, data) {
-      console.log('pushed padId '+padId+' for docName "'+docName+'" - '+err+':"'+data+'"');
-      cb();
-    });
-  });
-}
-function pushList(cb) {
-  var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
-  require(['http://unhosted.org/remoteStorage-0.4.2.js'], function(remoteStorage) {
-    var client = remoteStorage.createClient(sessionObj.storageInfo, 'documents', sessionObj.bearerToken);
-    client.put('list', localStorage.list, function(err, data) {
-      console.log('pushed list - '+err+':"'+data+'"');
-      cb();
-    });
-  });
-}
-// So far this will connect to the default etherpad server.
-// This is just a test for the editor embedding
+
 function connectToOwnpad(padId) {
   var pad = getPad(padId);
-
-  // 
-  if(isOwnPad(pad))
-  {
-    showPreview(pad.text);
-    ensureStorageInfo();
-  }
 
   document.getElementsByTagName('h1')[0].innerHTML = docTitleSpan(pad) + signupStatus();
   embedPad(pad);
 }
+
+// disabled for now... too slow and ugly
 function showPreview(text) {
   if(!text || text == '') return;
   $('#previewPad').text(text);
@@ -55,6 +30,7 @@ function showPreview(text) {
     $('#previewPad').hide();
   };
 }
+
 function docTitleSpan(pad) {
   if(isOwnPad(pad))
   {
@@ -65,6 +41,7 @@ function docTitleSpan(pad) {
     return '<span id="docTitle">'+pad.title+'</span>';
   }
 }
+
 function signupStatus() {
   var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
   // not signed in
@@ -79,31 +56,16 @@ function signupStatus() {
     +'</small>'
   }
 }
-function ensureStorageInfo() {
-  var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
-  //deal with legacy accounts:
-  if(!sessionObj.storageInfo) {
-    sessionObj.storageInfo = {
-      api: 'CouchDB',
-      template: 'http://'+sessionObj.proxy+sessionObj.subdomain+'.iriscouch.com/{category}/',
-      auth: 'http://'+sessionObj.subdomain+'.iriscouch.com/cors/auth/modal.html'
-    };
-    sessionObj.ownPadBackDoor = 'https://'+sessionObj.subdomain+'.iriscouch.com/documents';
-    localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
-  }
-}
+
 function embedPad(pad) {
   $('#editorPad').pad({
     'padId':encodeURIComponent(pad.id),
-    'userName':hyphenify(getUserName()),
+    'userName':hyphenify(currentUser() || 'unknown'),
   });
 }
-function getUserName() {
-  var sessionObj = JSON.parse(localStorage.getItem('sessionObj')) || {};
-  return sessionObj.userAddress || 'unknown';
-}
+
 function isOwnPad(pad) {
-  pad.owner == hyphenify(getUserName());
+  return (pad.owner == currentUser());
 }
 
 var editingDocTitle;
@@ -118,11 +80,10 @@ function saveDocTitle() {
   var pad = getPad();
   pad.title = document.getElementById('docTitleInput').value;
   pad.link = getLinkFromTitle(pad.title);
-  var list = JSON.parse(localStorage.getItem('list'));
-  list[pad.id] = pad;
-  localStorage.setItem('list',JSON.stringify(list));
-  pushPadId(pad.title, pad.id, function() {
-    pushList(function() {
+  var docs = JSON.parse(localStorage.getItem('documents'));
+  docs[pad.id] = pad;
+  pushPadId(pad.link, pad.id, function() {
+    saveDocuments(docs, function() {
       location.hash = '#!/'+getCurrDocOwner()+'/'+pad.link;
       document.getElementById('docTitle').innerHTML = pad.title;
     });
@@ -134,22 +95,21 @@ function getCurrDocOwner() {
 function getCurrDocLink() {
   return location.hash.split('/')[2];
 }
-function getPad(padId) {
-  var sessionObj = JSON.parse(localStorage.sessionObj);
-  if(getCurrDocOwner() == hyphenify(sessionObj.userAddress)) {
-    var list = JSON.parse(localStorage.getItem('list'));
-    for(i in list)
-    {
-      if (list[i].link == getCurrDocLink() && list[i].owner == getCurrDocOwner())
-      {
-        return list[i];
-      }
-    }
+function getPad(linkOrId) {
+  var docs = JSON.parse(localStorage.getItem('documents')||'{}');
+  if(docs[linkOrId])
+  {
+    return docs[linkOrId];
+  }
+  links2id = JSON.parse(localStorage.getItem('links2id')||'{}');
+  if(links2id[linkOrId] && docs[links2id[linkOrId]])
+  {
+    return docs[links2id[linkOrId]];
   }
   // haven't found the pad in our documents list - use url params
   return {
     owner: getCurrDocOwner(),
-    id: padId || getCurrDocOwner()+'$'+getCurrDocLink(),
+    id: linkOrId || getCurrDocOwner()+'$'+getCurrDocLink(),
     title: getCurrDocLink(),
   };
 }
@@ -168,5 +128,5 @@ function unhyphenify(userAddress) {
   return userAddress.replace(/-dot-/g, '.').replace(/-at-/g, '@').replace(/-dash-/g, '-');
 }
 
-document.getElementsByTagName('body')[0].setAttribute('onload', 'fetchPadId(connectToOwnpad);');
+document.getElementsByTagName('body')[0].setAttribute('onload', 'getPadId(connectToOwnpad);');
 document.getElementById('loading').style.display='none';
