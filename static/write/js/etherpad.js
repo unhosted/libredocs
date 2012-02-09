@@ -22,7 +22,7 @@
         $.extend( settings, options );
       }
       var epframe = this.attr('id');
-      var iFrameLink = '<iframe id="epframe'+epframe+'" src="'+settings.host+settings.baseUrl+settings.padId+'?showControls='+settings.showControls+'&showChat='+settings.showChat+'&showLineNumbers='+settings.showLineNumbers+'&useMonospaceFont='+settings.useMonospaceFont+'&userName=' + settings.userName + '&storageAddress=' + settings.storageAddress + '&storageApi=' + settings.storageApi + '&bearerToken=' + settings.bearerToken + '&noColors=' + settings.noColors + '&hideQRCode=' + settings.hideQRCode + '"></iframe>';
+      var iFrameLink = '<iframe id="epframe'+epframe+'" src="'+settings.host+settings.baseUrl+settings.padId+'?showControls='+settings.showControls+'&showChat='+settings.showChat+'&showLineNumbers='+settings.showLineNumbers+'&useMonospaceFont='+settings.useMonospaceFont+'&userName=' + settings.userName + '&noColors=' + settings.noColors + '&hideQRCode=' + settings.hideQRCode + '"></iframe>';
       // console.log(iFrameLink);
       this.html(iFrameLink);
     }
