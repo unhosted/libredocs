@@ -55,7 +55,7 @@ function showList(page) {
   str += newDocumentRow();
   sortedByTimestamp(docs, page, per_page, function(doc) {
     str += documentRow(doc);
-    updateDocPreview(doc.id);
+    syncPadData(doc.id);
   });
   str += paginationRow(page, per_page, lengthOf(docs));
   document.getElementById('doclist').innerHTML = str;
@@ -72,13 +72,21 @@ function newDocumentRow()
 
 function documentRow(doc)
 {
+
   return '<li id="'+doc.id+'">'
     + '<a class="doclink" onclick="showDoc(\''+doc.id+'\');"><strong>'+doc.title+'</strong>'
     + ' <span class="preview" id="'+doc.id+'-preview" onclick="showDoc(\''+doc.id+'\');">'
-    + truncate(doc.text)+'</span></a>'
+    + previewText(doc)+'</span></a>'
     + '<span class="date" style="'+modifiedDateColor(doc.timestamp)+'" title="'+new Date(doc.timestamp).toLocaleString()+'">'+relativeModifiedDate(doc.timestamp)+'</span>'
     + '<a class="btn share" href="#" rel="popover" title="Share this link" data-content="<a href=\''+share(doc.id)+'\'>'+share(doc.id)+'</a>"><i class="icon-share-alt"></i> Share</a>'
     + '</li>';
+}
+
+function previewText(doc)
+{
+  var pad = JSON.parse(localStorage.getItem('pad:'+doc.id) || "null");
+  if(!pad || !pad.atext) return "";
+  return truncate(pad.atext.text);
 }
 
 function paginationRow(page, per_page, total)
@@ -125,7 +133,7 @@ function getDocAddress(doc, beautiful) {
 }
 
 // TODO: so far this only works for our own docs
-function updateDocPreview(id) {
+function syncPadData(id) {
   var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
   require(['http://unhosted.org/remoteStorage-0.4.2.js'], function(remoteStorage) {
     var client = remoteStorage.createClient(sessionObj.storageInfo, 'documents', sessionObj.bearerToken);
@@ -135,11 +143,8 @@ function updateDocPreview(id) {
       } else {
         var pad = data;
         if(pad!=null){
-          var docs = JSON.parse(localStorage.getItem('list'));
-          docs[id].text = pad.atext.text;
           document.getElementById(id+'-preview').innerHTML = truncate(pad.atext.text);
-          localStorage.setItem('list', JSON.stringify(docs));
-          pushList();
+          localStorage.setItem('pad:'+id, JSON.stringify(data));
         }
       }
     });
