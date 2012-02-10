@@ -262,6 +262,7 @@ var remoteStorageClient = (function() {
   }
   function doSelfAccess2(cb) {
     pimper.createDb(sessionObj.couchHost, sessionObj.userAddress, sessionObj.adminPwd, 'documents', cb);
+    pimper.createDb(sessionObj.couchHost, sessionObj.userAddress, sessionObj.adminPwd, 'public', cb);
   }
   function doSelfAccess3(cb) {
     pimper.giveAccess(sessionObj.couchHost, sessionObj.userAddress, sessionObj.adminPwd, 'documents', 'http___libredocs_org', false, cb);
