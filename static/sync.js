@@ -1,5 +1,8 @@
-//deal with legacy accounts:
+//deal with legacy accounts and anonymous users:
 (function() {
+  localStorage.documents = localStorage.documents || '{}';
+  localStorage.index = localStorage.index || '{}';
+  if(!currentUser()) return;
   var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
   if(!sessionObj.storageInfo) {
     sessionObj.storageInfo = {
@@ -32,7 +35,7 @@ function signOut()
 
 function currentUser()
 {
-  var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
+  var sessionObj = JSON.parse(localStorage.getItem('sessionObj') || '{}');
   return sessionObj.userAddress;
 }
 
@@ -58,7 +61,7 @@ function saveDocument(doc, cb){
 function fetchPadId(owner, link, cb){
   var key = owner + '$' + link;
   var done = false;
-  var index;
+  var index = {};
   getAndFetch('index', function(idx){
     idx = idx || {}
     index = idx; //cache for updating later
@@ -84,10 +87,10 @@ function fetchPadId(owner, link, cb){
           {
             docs[data.id] = data;
             setAndPush('documents', docs);
+            index[key] = data.id;
+            setAndPush('index', index);
+            cb(data.id);
           });
-          index[key] = data.id;
-          setAndPush('index', index);
-          cb(data.id);
         }
       });
     });
@@ -120,14 +123,14 @@ function getOrFetchStorageInfo(user, cb) {
   var storageOwners = JSON.parse(localStorage.getItem('storageOwners') || '{}');
   if(storageOwners[user])
   {
-    cb(storageOwners[user]);
+    cb(null, storageOwners[user]);
     return;
   }
   require(['http://unhosted.org/remoteStorage-0.4.2.js'], function(remoteStorage) {
     remoteStorage.getStorageInfo(user, function(err, storageInfo){
       storageOwners[user] = storageInfo;
       localStorage.setItem('storageOwners', JSON.stringify(storageOwners));
-      cb(storageInfo);
+      cb(null, storageInfo);
     });
   });
 }
@@ -208,6 +211,7 @@ function setAndPush(key, value, cb){
 }
 
 function fetchRemote(key, cb){
+  if(!currentUser()) return;
   var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
   require(['http://unhosted.org/remoteStorage-0.4.2.js'], function(remoteStorage) {
     var client = remoteStorage.createClient(sessionObj.storageInfo, 'documents', sessionObj.bearerToken);
@@ -219,6 +223,7 @@ function fetchRemote(key, cb){
 }
 
 function fetchPublicRemote(key, cb){
+  if(!currentUser()) return;
   var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
   require(['http://unhosted.org/remoteStorage-0.4.2.js'], function(remoteStorage) {
     var client = remoteStorage.createClient(sessionObj.storageInfo, 'public');
@@ -230,6 +235,7 @@ function fetchPublicRemote(key, cb){
 }
 
 function pushRemote(key, value, cb){
+  if(!currentUser()) return;
   var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
   require(['http://unhosted.org/remoteStorage-0.4.2.js'], function(remoteStorage) {
     var client = remoteStorage.createClient(sessionObj.storageInfo, 'documents', sessionObj.bearerToken);

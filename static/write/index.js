@@ -1,7 +1,7 @@
 function getPad(cb) {
   fetchPadId(getCurrDocOwner(), getCurrDocLink(), function(id)
   {
-    var documents = JSON.parse(localStorage.getItem('documents'));
+    var documents = JSON.parse(localStorage.getItem('documents') || '{}');
     if(id && documents[id])
     {
       cb(documents[id]);
