@@ -36,32 +36,25 @@ function renderDocumentPreview(doc) {
 }
 
 function newDoc() {
-  var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
   var time = new Date().getTime();
-  var owner = sessionObj.userAddress;
+  var owner = currentUser();
   id = owner+'$'+time;
-  var docs = JSON.parse(localStorage.getItem('documents') || '{}');
-  docs[id] = {
+  var doc = {
     id: id,
     title: 'New document',
     link: time,
     owner: owner,
     timestamp: time
   };
-  // TODO:Check me... do we need to wait for the sync?
-  // Then use the saveDocuments callback
-  saveDocuments(docs, function() {
-    window.location=getDocAddress(docs[id], true);
+  saveDocument(doc, function() {
+    window.location=getDocAddress(doc, true);
   });
 }
 
 function showDoc(id) {
-  var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
   var docs = JSON.parse(localStorage.getItem('documents'));
   docs[id].timestamp = new Date().getTime();
-  // TODO:Check me... do we need to wait for the sync?
-  // Then use the saveDocuments callback
-  saveDocuments(docs, function() {
+  saveDocument(docs[id], function() {
     window.location=getDocAddress(docs[id], true);
   });
 }

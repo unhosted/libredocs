@@ -40,49 +40,77 @@ function fetchDocuments(cb){
   getAndFetch('documents',cb);
 }
 
+// gets the etherpad document - contains text and all.
 function fetchDocument(id, cb){
   getAndFetch('pad:'+id,function(doc){
+    if(!doc) return;
     doc.id = id;
     cb(doc);
   });
 }
 
-function saveDocuments(documents, cb){
-  setAndPush('documents', documents, cb);
+function saveDocument(doc, cb){
+  syncAndAdd('documents', doc.id, doc, cb);
+  syncAndAdd('index', doc.owner+'$'+doc.link, doc.id);
 }
 
+
 function fetchPadId(owner, link, cb){
-  if(owner == currentUser())
-  {
-    getOrFetchPublic('pad:'+link, cb);
-    return;
-  }
+  var key = owner + '$' + link;
+  var done = false;
+  var index;
+  getAndFetch('index', function(idx){
+    idx = idx || {}
+    index = idx; //cache for updating later
+    if(done) return;
+    if(idx[key])
+    {
+      done = true;
+      cb(idx[key]);
+    }
+  });
 
   require(['http://unhosted.org/remoteStorage-0.4.2.js'], function(remoteStorage) {
     getOrFetchStorageInfo(owner, function(err, ownerStorageInfo) {
+      if(err) return; //TODO: might want to record this for debugging
       var client = remoteStorage.createClient(ownerStorageInfo, 'public');
-      client.get('padId:'+link, function(err2, data) {
-        if(err2) {//the callback should use getPad which will deal with a null
+      client.get('padInfo:'+link, function(err2, data) {
+        // if(data.movedTo)
+        if(done) return; // got the info from my own doc list.
+        if(err2) {//the callback should deal with a null
           cb(null);
         } else {
-          cb(data);
+          getAndFetch('documents', function(docs)
+          {
+            docs[data.id] = data;
+            setAndPush('documents', docs);
+          });
+          index[key] = data.id;
+          setAndPush('index', index);
+          cb(data.id);
         }
       });
     });
   });
 }
 
-//TODO: push title aswell.
-function pushPadId(link, padId, cb) {
-  var links2Id = JSON.parse(localStorage.getItem('links2id') || '{}')
-  links2Id[link] = padId;
-  localStorage.setItem('links2id', JSON.stringify(links2Id));
+function publishPadInfo(pad, cb) {
+  var link = pad.link;
+  var key = pad.owner + '$' + pad.link;
+  var index = JSON.parse(localStorage.getItem('index') || '{}')
+  index[key] = pad.id;
+  setAndPush('index', index);
 
+  var info = {
+    id: pad.id,
+    title: pad.title,
+    owner: pad.owner
+  }
   var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
   require(['http://unhosted.org/remoteStorage-0.4.2.js'], function(remoteStorage) {
     var client = remoteStorage.createClient(sessionObj.storageInfo, 'public', sessionObj.bearerToken);
-    client.put('padId:'+link, padId, function(err, data) {
-      console.log('pushed padId '+padId+' for docLink "'+link+'" - '+err+':"'+data+'"');
+    client.put('padInfo:'+link, info, function(err, data) {
+      console.log('pushed info '+info+' for docLink "'+link+'" - '+err+':"'+data+'"');
       cb();
     });
   });
@@ -98,9 +126,18 @@ function getOrFetchStorageInfo(user, cb) {
   require(['http://unhosted.org/remoteStorage-0.4.2.js'], function(remoteStorage) {
     remoteStorage.getStorageInfo(user, function(err, storageInfo){
       storageOwners[user] = storageInfo;
-      localStorage.setItem('storageOwners', storageOwners);
+      localStorage.setItem('storageOwners', JSON.stringify(storageOwners));
       cb(storageInfo);
     });
+  });
+}
+
+function syncAndAdd(table, key, value, cb)
+{
+  getAndFetch(table, function(recs)
+  {
+    recs[key] = value;
+    setAndPush(table, recs, cb);
   });
 }
 
@@ -114,6 +151,8 @@ function getAndFetch(key, cb){
   if(isRecent(key)) return;
   if(!hasBeenUpdated(key)) return;
   fetchRemote(key, function(err, value){
+    // merge both records
+    for (var i in local) { value[i] = value[i] || local[i]; }
     storeAndCallback(key, err, value, cb);
   });
 }

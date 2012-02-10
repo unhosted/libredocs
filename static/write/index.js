@@ -1,24 +1,29 @@
-function getPadId(cb) {
-  var link = getCurrDocOwner()+'$'+getCurrDocLink();
-  var links2Id = JSON.parse(localStorage.getItem('links2id') || '{}')
-  if(links2Id[link])
-  {
-    cb(links2Id[link]);
-    return;
-  }
+function getPad(cb) {
   fetchPadId(getCurrDocOwner(), getCurrDocLink(), function(id)
   {
-    links2Id[link] = id;
-    localStorage.setItem('links2id', JSON.stringify(links2Id));
-    cb(id);
+    var documents = JSON.parse(localStorage.getItem('documents'));
+    if(id && documents[id])
+    {
+      cb(documents[id]);
+    }
+    else
+    {
+      alert("Could not find document " + getCurrDocLink() + " from " + getCurrDocOwner());
+    }
   });
 }
 
-function connectToOwnpad(padId) {
-  var pad = getPad(padId);
+function currentPad() {
+  var documents = JSON.parse(localStorage.getItem('documents'));
+  var index = JSON.parse(localStorage.getItem('index'));
+  return documents[index[getCurrDocOwner() +'$'+ getCurrDocLink()]];
+}
 
-  document.getElementsByTagName('h1')[0].innerHTML = docTitleSpan(pad) + signupStatus();
-  embedPad(pad);
+
+function connectToOwnpad(padInfo) {
+
+  document.getElementsByTagName('h1')[0].innerHTML = docTitleSpan(padInfo) + signupStatus();
+  embedPad(padInfo);
 }
 
 // disabled for now... too slow and ugly
@@ -72,18 +77,16 @@ var editingDocTitle;
 function changeDocTitle() {
   if(!editingDocTitle) {
     editingDocTitle = true;
-    document.getElementById('docTitle').innerHTML = '<input id="docTitleInput" onblur="saveDocTitle();" type="text" value="'+getPad().title+'" />';
+    document.getElementById('docTitle').innerHTML = '<input id="docTitleInput" onblur="saveDocTitle();" type="text" value="'+currentPad().title+'" />';
   }
 }
 function saveDocTitle() {
   editingDocTitle = false;
-  var pad = getPad();
-  pad.title = document.getElementById('docTitleInput').value;
-  pad.link = getLinkFromTitle(pad.title);
-  var docs = JSON.parse(localStorage.getItem('documents'));
-  docs[pad.id] = pad;
-  pushPadId(pad.link, pad.id, function() {
-    saveDocuments(docs, function() {
+  getPad(function (pad){
+    pad.title = document.getElementById('docTitleInput').value;
+    pad.link = getLinkFromTitle(pad.title);
+    saveDocument(pad);
+    publishPadInfo(pad, function() {
       location.hash = '#!/'+getCurrDocOwner()+'/'+pad.link;
       document.getElementById('docTitle').innerHTML = pad.title;
     });
@@ -94,24 +97,6 @@ function getCurrDocOwner() {
 }
 function getCurrDocLink() {
   return location.hash.split('/')[2];
-}
-function getPad(linkOrId) {
-  var docs = JSON.parse(localStorage.getItem('documents')||'{}');
-  if(docs[linkOrId])
-  {
-    return docs[linkOrId];
-  }
-  links2id = JSON.parse(localStorage.getItem('links2id')||'{}');
-  if(links2id[linkOrId] && docs[links2id[linkOrId]])
-  {
-    return docs[links2id[linkOrId]];
-  }
-  // haven't found the pad in our documents list - use url params
-  return {
-    owner: getCurrDocOwner(),
-    id: linkOrId || getCurrDocOwner()+'$'+getCurrDocLink(),
-    title: getCurrDocLink(),
-  };
 }
 
 // TODO: make sure this is unique
@@ -128,5 +113,5 @@ function unhyphenify(userAddress) {
   return userAddress.replace(/-dot-/g, '.').replace(/-at-/g, '@').replace(/-dash-/g, '-');
 }
 
-document.getElementsByTagName('body')[0].setAttribute('onload', 'getPadId(connectToOwnpad);');
+document.getElementsByTagName('body')[0].setAttribute('onload', 'getPad(connectToOwnpad);');
 document.getElementById('loading').style.display='none';
