@@ -66,9 +66,9 @@ var remoteStorageClient = (function() {
         }
         if(fsmInfo.action) {
            stepToTimeout = sessionObj.state;
-           setTimeout(stepTimeout, 5000);
+           var t = setTimeout(stepTimeout, 5000);
            fsmInfo.action(function(result) {
-            stepToTimeout = null;
+            cancelTimeout(t);
             console.log('got result "'+result+'" in step "'+sessionObj.state+'".');
             if(fsmInfo.next && fsmInfo.next[result]) {
               sessionObj.state = fsmInfo.next[result];
