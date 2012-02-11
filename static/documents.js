@@ -53,10 +53,7 @@ function newDoc() {
 
 function showDoc(id) {
   var docs = JSON.parse(localStorage.getItem('documents'));
-  docs[id].timestamp = new Date().getTime();
-  saveDocument(docs[id], function() {
-    window.location=getDocAddress(docs[id], true);
-  });
+  window.location=getDocAddress(docs[id], true);
 }
 
 function shareDoc(id) {
