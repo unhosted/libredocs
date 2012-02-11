@@ -7,11 +7,14 @@ exports.handler = (function() {
     cb();
   }
   function serve(req, res, baseDir) {
+    console.log('in serve');
     var dataStr = '';
     req.on('data', function(chunk) {
+      console.log('got data:"'+chunk+'"');
       dataStr += chunk;
     });
     req.on('end', function() {
+      console.log('end!');
       var incoming = JSON.parse(dataStr);
       console.log(incoming);
       checkToken(incoming.userAddress, incoming.token, function() {
