@@ -267,6 +267,7 @@ var remoteStorageClient = (function() {
         template: 'http://'+sessionObj.proxy+sessionObj.couchHost + '/{category}/',
         auth: 'http://'+sessionObj.couchHost + '/cors/auth/modal.html'
       };
+      sessionObj.ownPadBackDoor = 'https://'+sessionObj.couchHost+'/documents';
       localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
       cb(result);
     });
