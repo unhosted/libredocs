@@ -12,7 +12,7 @@ var remoteStorageClient = (function() {
     pinging: { page: '/loggedIn.html', display:'pending', loadingBar:50, action: doPing, next:{200:'squatting1'}},
     squatting1: { page: '/loggedIn.html', display:'pending', loadingBar:60, action: doSquat1, next:{201:'squatting2'}},
     squatting2: { page: '/loggedIn.html', display:'pending', loadingBar:63, action: doSquat2, next:{200:'createDb'}},
-    createDb: { page: '/loggedIn.html', display:'pending', loadingBar:66, action: createDb, next:{201:'pop1'}},
+    createDb: { page: '/loggedIn.html', display:'pending', loadingBar:66, action: createDb, next:{201:'pop1', 412:'pop1'}},
     pop1: { page: '/loggedIn.html', display:'pending', loadingBar:70, action: pop1, next:{201: 'pop2'}},
     pop2: { page: '/loggedIn.html', display:'pending', loadingBar:73, action: pop2, next:{201: 'pop3'}},
     pop3: { page: '/loggedIn.html', display:'pending', loadingBar:76, action: pop3, next:{201: 'pop4'}},
