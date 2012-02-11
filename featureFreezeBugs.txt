@@ -1,0 +1,5 @@
+- SignIn button is disabled
+- it gets ok back in wf1 for dejong.michiel@gmail.com and that's incorrect
+- in allowRemoteStorage state, the buttons are not visible
+- set browserid to true in iriscouch config
+- got result "0" in step "squatting2".
