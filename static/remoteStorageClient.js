@@ -75,6 +75,7 @@ var remoteStorageClient = (function() {
               localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
               checkForLogin();
             } else {
+              sessionObj.problem = 'no handler for result "'+result+'" in step "'+sessionObj.state+'"';
               sessionObj.state = 'error';
               localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
               checkForLogin();
@@ -155,7 +156,9 @@ var remoteStorageClient = (function() {
   }
   function ping(couchHost, proxy, counter, cb) {
     if(counter > 10) {//we could move this into the state machine as states ping1 .. ping10, but that would give so many states
-      alert('your remote storage was not deployed within 10 pings. please try again.');
+      var sessionObj = JSON.parse(localStorage.sessionObj);
+      sessionObj.problem = 'could not ping "'+couchHost+'" through proxy "'+proxy+'" for "'+counter+'" times';
+      localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
       cb('error');
     } else {
       pimper.ping(couchHost, proxy, function(result) {
