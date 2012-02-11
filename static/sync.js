@@ -11,6 +11,7 @@
       auth: 'http://'+sessionObj.subdomain+'.iriscouch.com/cors/auth/modal.html'
     };
     sessionObj.ownPadBackDoor = 'https://'+sessionObj.subdomain+'.iriscouch.com/documents';
+    sessionObj.state = 'storing' // write this to the db next time.
     localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
   }
 })();
@@ -45,6 +46,7 @@ function fetchDocuments(cb){
 
 // gets the etherpad document - contains text and all.
 function fetchDocument(id, cb){
+  if(id.split('$')[0] != currentUser()) return;
   getAndFetch('pad:'+id,function(doc){
     if(!doc) return;
     doc.id = id;
