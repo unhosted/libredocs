@@ -65,7 +65,10 @@ var remoteStorageClient = (function() {
           document.getElementById(fsmInfo.displayNone).style.display='none';
         }
         if(fsmInfo.action) {
-          fsmInfo.action(function(result) {
+           stepToTimeout = sessionObj.state;
+           setTimeout(stepTimeout, 5000);
+           fsmInfo.action(function(result) {
+            stepToTimeout = null;
             console.log('got result "'+result+'" in step "'+sessionObj.state+'".');
             if(fsmInfo.next && fsmInfo.next[result]) {
               sessionObj.state = fsmInfo.next[result];
@@ -81,6 +84,11 @@ var remoteStorageClient = (function() {
       }
     } else {
       window.location = '/';
+    }
+  }
+  function stepTimeout() {
+    if(stepToTimeout) {
+      alert('Oops! timeout in step "'+stepToTimeout+'" for user address "'+sessionObj.userAddress+'". Please go to the #unhosted channel on freenode for help');
     }
   }
   function doSignIn(cb) {
