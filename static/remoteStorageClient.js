@@ -24,7 +24,7 @@ var remoteStorageClient = (function() {
     storing: { page: '/loggedIn.html', display:'pending', loadingBar:96, action: doStore, next:{200: 'ready'}},
     allowRemoteStorage: { page: '/loggedIn.html', loadingBar:60, buttons:['Allow', 'Cancel']},
     ready: { page: '/documents.html' },
-    error: { page: '/loggedIn.html', display:'error', buttons:['Sign out']}
+    error: { page: '/loggedIn.html', display:'error', action: alertError, buttons:['Sign out']}
   };
   function checkForLogin() {
     if(!sessionObj) {
@@ -68,7 +68,7 @@ var remoteStorageClient = (function() {
            stepToTimeout = sessionObj.state;
            var t = setTimeout(stepTimeout, 5000);
            fsmInfo.action(function(result) {
-            cancelTimeout(t);
+            clearTimeout(t);
             console.log('got result "'+result+'" in step "'+sessionObj.state+'".');
             if(fsmInfo.next && fsmInfo.next[result]) {
               sessionObj.state = fsmInfo.next[result];
@@ -289,6 +289,9 @@ var remoteStorageClient = (function() {
   }
   function pull(cb) {
     cb('done');
+  }
+  function alertError(cb) {
+    alert('oops! this went wrong: '+JSON.stringify(localStorage.sessionObj)+' Please come to the #unhosted chat on freenode for help.');
   }
   function allow() {
     if(!sessionObj) {
