@@ -47,18 +47,18 @@ function newDoc() {
     timestamp: time
   };
   saveDocument(doc, function() {
-    window.location=getDocAddress(doc, true);
+    window.location=getDocAddress(doc);
   });
 }
 
 function showDoc(id) {
   var docs = JSON.parse(localStorage.getItem('documents'));
-  window.location=getDocAddress(docs[id], true);
+  window.location=getDocAddress(docs[id]);
 }
 
 function shareDoc(id) {
   var docs = JSON.parse(localStorage.getItem('documents'));
-  return getDocAddress(docs[id], false);
+  return getDocAddress(docs[id]);
 }
 
 
@@ -93,16 +93,9 @@ function sortedByTimestamp(docs, page, count, cb) {
   }
 }
 
-function getDocAddress(doc, beautiful) {
+function getDocAddress(doc) {
   // the more beautiful links so far only work for ourselves
-  if(beautiful)
-  {
-    return 'http://libredocs.org/write/#!/'+doc.owner+'/'+doc.link;
-  }
-  else
-  {
-    return 'http://libredocs.org/write/#!/'+doc.id.replace('$','/');
-  }
+  return 'http://libredocs.org/write/#!/'+doc.owner+'/'+doc.link;
 }
 
 document.getElementById('list').setAttribute('onload', 'checkLogin();fetchDocuments(listDocuments);') 
