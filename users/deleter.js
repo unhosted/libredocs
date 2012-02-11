@@ -21,7 +21,7 @@ exports.handler = (function() {
     });
   }
           initRedis(function() {
-            redisClient.get('dejong.michiel@gmail.com', function(err, data) {
+            redisClient.del('user@host', function(err, data) {
               console.log('this came from redis:');
               console.log(err);
               console.log(data);
