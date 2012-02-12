@@ -25,6 +25,7 @@ exports.handler = (function() {
               console.log('this came from redis:');
               console.log(err);
               console.log(data);
+              redisClient.quit();
             });
             console.log('outside redisClient.get');
           });
