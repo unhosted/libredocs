@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Clearing localStorage</title>
+    <script>
+      var sessionObj = JSON.parse(localStorage.sessionObj);
+      sessionObj.step = location.search.substring(1);
+      localStorage.sessionObj = JSON.stringify(sessionObj);
+    </script>
+  </head>
+  <body>
+    Done. Click <a href="/">here</a> to go back to the main page.
+  </body>
+</html>
