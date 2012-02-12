@@ -30,8 +30,8 @@ function checkLogin() {
 
 function signOut()
 {
-  // once we have sync we can just clear this one.
-  localStorage.removeItem("sessionObj");
+  // signing a user out means clearing all their personal data off the device:
+  localStorage.clear();
   window.location = '/';
 }
 
