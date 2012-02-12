@@ -130,6 +130,7 @@ exports.handler = (function() {
                 console.log('go to webfinger');
                 webfingerLookup(r.email, postData.audience, res);
               }
+              redisClient.quit();
             });
             console.log('outside redisClient.get');
           });
@@ -163,6 +164,7 @@ exports.handler = (function() {
               });
               res.write('stored');
               res.end();
+              redisClient.quit();
             });
           } else {
             console.log('password "'+params.adminPwd+'" rejected');
@@ -173,11 +175,13 @@ exports.handler = (function() {
             });
             res.write('not the right adminPwd');
             res.end();
+            redisClient.quit();
           }
         } else {
           res.writeHead(404, {});
           res.write('cannot find user "'+params.userAddress+'":'+data);
           res.end();
+          redisClient.quit();
         }
       });
     });
