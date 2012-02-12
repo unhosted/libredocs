@@ -4,7 +4,7 @@ function go() {
   navigator.id.get(function(assertion) {
     if(assertion) {
       remoteStorageClient.signIn('http://libredocs.org', assertion);
-      window.location='loggedIn.html';
+      window.location='signin.html';
     }
     else {
       document.getElementById("signin-button").style.display='inline';
@@ -14,7 +14,7 @@ function go() {
 }
 
 if(localStorage.getItem('sessionObj')) {
-  window.location = '/loggedIn.html';
+  window.location = '/signin.html';
 }
 document.getElementById('signin-button').onclick = go;
 document.getElementById('signin-loading').style.display='none';
