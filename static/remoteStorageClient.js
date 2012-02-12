@@ -80,10 +80,12 @@ var remoteStorageClient = (function() {
               localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
               checkForLogin();
             } else {
-              sessionObj.problem = 'no handler for result "'+result+'" in step "'+sessionObj.state+'"';
-              sessionObj.state = 'error';
-              localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
-              checkForLogin();
+              if(sessionObj.state != 'ready') {
+                sessionObj.problem = 'no handler for result "'+result+'" in step "'+sessionObj.state+'"';
+                sessionObj.state = 'error';
+                localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
+                checkForLogin();
+              }
             }
           });
         }
