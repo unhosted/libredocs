@@ -65,10 +65,15 @@ var remoteStorageClient = (function() {
           document.getElementById(fsmInfo.displayNone).style.display='none';
         }
         if(fsmInfo.action) {
-           stepToTimeout = sessionObj.state;
-           var t = setTimeout(stepTimeout, 20000);
+           var t;
+           if(sessionObj.state != 'ready' && sessionObj.state != 'error') {
+             stepToTimeout = sessionObj.state;
+             t = setTimeout(stepTimeout, 20000);
+           }
            fsmInfo.action(function(result) {
-            clearTimeout(t);
+            if(t) {
+              clearTimeout(t);
+            }
             console.log('got result "'+result+'" in step "'+sessionObj.state+'".');
             if(fsmInfo.next && fsmInfo.next[result]) {
               sessionObj.state = fsmInfo.next[result];
