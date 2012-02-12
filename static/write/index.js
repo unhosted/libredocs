@@ -4,6 +4,8 @@ function getPad(cb) {
     var documents = JSON.parse(localStorage.getItem('documents') || '{}');
     if(id && documents[id])
     {
+      documents[id].timestamp = new Date().getTime();
+      saveDocument(documents[id]);
       cb(documents[id]);
     }
     else

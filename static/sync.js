@@ -4,13 +4,14 @@
   localStorage.index = localStorage.index || '{}';
   if(!currentUser()) return;
   var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
-  if(!sessionObj.storageInfo) {
+  if(!sessionObj.storageInfo || !sessionObj.ownPadBackDoor) {
     sessionObj.storageInfo = {
       api: 'CouchDB',
       template: 'http://'+sessionObj.proxy+sessionObj.subdomain+'.iriscouch.com/{category}/',
       auth: 'http://'+sessionObj.subdomain+'.iriscouch.com/cors/auth/modal.html'
     };
-    sessionObj.ownPadBackDoor = 'https://'+sessionObj.subdomain+'.iriscouch.com/documents';
+    sessionObj.couchHost = sessionObj.couchHost || sessionObj.subdomain+'.iriscouch.com';
+    sessionObj.ownPadBackDoor = 'https://'+sessionObj.couchHost+'/documents';
     sessionObj.state = 'storing' // write this to the db next time.
     localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
   }
@@ -109,7 +110,8 @@ function publishPadInfo(pad, cb) {
   var info = {
     id: pad.id,
     title: pad.title,
-    owner: pad.owner
+    owner: pad.owner,
+    link: pad.link
   }
   var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
   require(['http://unhosted.org/remoteStorage-0.4.2.js'], function(remoteStorage) {

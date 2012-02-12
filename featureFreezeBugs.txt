@@ -3,5 +3,6 @@
 - set browserid to true in iriscouch config
 - got result "0" in step "squatting2".
 - the 'check' on the browserid step covers up the 'First name' input and makes it hard to click
+- the '<-' to doc list doesn't make sense when you're not logged in on a shared pad
 - check the token in /squat/handler.js
 - it's trying to connect to http://yourremotestorage.net/CouchDB/proxy/undefined.iriscouch.com/documents/pad:michiel@unhosted.org$1328977497529 and this gives a 500
