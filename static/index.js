@@ -89,16 +89,24 @@ function saveDocTitle() {
     pad.link = getLinkFromTitle(pad.title);
     saveDocument(pad);
     publishPadInfo(pad, function() {
-      location.hash = '#!/'+getCurrDocOwner()+'/'+pad.link;
+      location.hash = '#'+getCurrDocOwner()+'/'+pad.link;
       document.getElementById('docTitle').innerHTML = pad.title;
     });
   });
 }
 function getCurrDocOwner() {
-  return unhyphenify(location.hash.split('/')[1]);
+  if(location.hash.length) {
+    return location.hash.split('/')[1];
+  } else {
+    window.location = '/welcome.html';
+  }
 }
 function getCurrDocLink() {
-  return location.hash.split('/')[2];
+  if(location.hash.length) {
+    return location.hash.split('/')[2];
+  } else {
+    window.location = '/welcome.html';
+  }
 }
 
 // TODO: make sure this is unique
