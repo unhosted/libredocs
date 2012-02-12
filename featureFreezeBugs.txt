@@ -1,8 +1,15 @@
 - it's slow
-- SignIn button is disabled
+  - hit libredocs.org
+    3s
+  - click 'Sign In'
+    8s
+  - select user address to use
+    11s
+  - Agree to the ToC
+    70s
+  - Click '+ New Document'
+    8s
+  - Start typing
 - in allowRemoteStorage state, the buttons are not visible
-- setting browserid to true in step pop5 seems to not (always) work
-- the 'check' on the browserid step covers up the 'First name' input and makes it hard to click
 - the '<-' to doc list doesn't make sense when you're not logged in on a shared pad
 - check the token in /squat/handler.js
-- it's trying to connect to http://yourremotestorage.net/CouchDB/proxy/undefined.iriscouch.com/documents/pad:michiel@unhosted.org$1328977497529 and this gives a 500
