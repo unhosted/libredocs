@@ -91,7 +91,7 @@ var remoteStorageClient = (function() {
         }
       }
     } else {
-      window.location = '/';
+      window.location = '/welcome.html';
     }
   }
   function stepTimeout() {
@@ -125,7 +125,7 @@ var remoteStorageClient = (function() {
         } else {
           alert('something went wrong! "'+xhr.responseText+'"['+xhr.status+']');
           localStorage.clear();
-          window.location='/';
+          window.location='/welcome.html';
         }
       }
     };
@@ -331,7 +331,7 @@ var remoteStorageClient = (function() {
   }
   function signOut() {
     localStorage.clear();
-    window.location = '/';
+    window.location = '/welcome.html';
   }
   return {
     on: on,

@@ -21,7 +21,7 @@ function checkLogin() {
   var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
   if(!sessionObj || sessionObj.state != 'ready')
   {
-    window.location = '/'
+    window.location = '/welcome.html'
     return;
   }
   document.getElementsByTagName('small')[0].innerHTML = (sessionObj.userAddress?' '+sessionObj.userAddress:'');
@@ -32,7 +32,7 @@ function signOut()
 {
   // signing a user out means clearing all their personal data off the device:
   localStorage.clear();
-  window.location = '/';
+  window.location = '/welcome.html';
 }
 
 function currentUser()
