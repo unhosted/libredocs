@@ -17,7 +17,7 @@ var remoteStorageClient = (function() {
     pop2: { page: '/loggedIn.html', display:'pending', loadingBar:73, action: pop2, next:{201: 'pop3'}},
     pop3: { page: '/loggedIn.html', display:'pending', loadingBar:76, action: pop3, next:{201: 'pop4'}},
     pop4: { page: '/loggedIn.html', display:'pending', loadingBar:80, action: pop4, next:{201: 'pop5'}},
-    pop5: { page: '/loggedIn.html', display:'pending', loadingBar:83, action: pop5, next:{201: 'selfAccess1'}},
+    pop5: { page: '/loggedIn.html', display:'pending', loadingBar:83, action: pop5, next:{200: 'selfAccess1'}},
     selfAccess1: { page: '/loggedIn.html', display:'pending', loadingBar:86, action: doSelfAccess1, next:{201: 'selfAccess2'}},
     selfAccess2: { page: '/loggedIn.html', display:'pending', loadingBar:90, action: doSelfAccess2, next:{201: 'selfAccess3'}},
     selfAccess3: { page: '/loggedIn.html', display:'pending', loadingBar:93, action: doSelfAccess3, next:{200: 'storing'}},
@@ -261,10 +261,7 @@ var remoteStorageClient = (function() {
   }
   function pop5(cb) {
     var couchAddress = sessionObj.couchHost;
-    pimper.setConfig(couchAddress, sessionObj.userAddress, sessionObj.adminPwd, 'browserid', {
-      enabled: true,
-      verify_url: 'https://browserid.org/verify'
-    }, cb);
+    pimper.setConfig(couchAddress, sessionObj.userAddress, sessionObj.adminPwd, 'browserid', 'enabled', 'true', cb);
   }
   function doSelfAccess1(cb) {
     pimper.createUser(sessionObj.couchHost, sessionObj.userAddress, sessionObj.adminPwd, 'http___libredocs_org', function(result, token) {
