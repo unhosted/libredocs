@@ -96,14 +96,14 @@ function saveDocTitle() {
 }
 function getCurrDocOwner() {
   if(location.hash.length) {
-    return location.hash.split('/')[1];
+    return location.hash.split('/')[0].substring(1);
   } else {
     window.location = '/welcome.html';
   }
 }
 function getCurrDocLink() {
   if(location.hash.length) {
-    return location.hash.split('/')[2];
+    return location.hash.split('/')[1];
   } else {
     window.location = '/welcome.html';
   }
