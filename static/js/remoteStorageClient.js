@@ -82,6 +82,7 @@ var remoteStorageClient = (function() {
             } else {
               if(sessionObj.state != 'ready') {
                 sessionObj.problem = 'no handler for result "'+result+'" in step "'+sessionObj.state+'"';
+                sessionObj.step = sessionObj.state;
                 sessionObj.state = 'error';
                 localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
                 checkForLogin();
