@@ -328,6 +328,7 @@ var remoteStorageClient = (function() {
     xhr.onreadystatechange = function() {
       if(xhr.readyState == 4) {
         localStorage.clear();
+        sessionObj=null;
         checkForLogin();
       }
     };
