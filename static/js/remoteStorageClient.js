@@ -324,16 +324,12 @@ var remoteStorageClient = (function() {
     reset.action='set';
     reset.ok=false;
     reset.userAddress=sessionObj.userAddress;
-    var xhr = new XMLHttpRequest();
-    xhr.open('PUT', 'http://libredocs.org/users', true);
-    xhr.onreadystatechange = function() {
-      if(xhr.readyState == 4) {
-        localStorage.clear();
-        sessionObj=null;
-        checkForLogin();
-      }
-    };
-    xhr.send(JSON.stringify(reset));
+    reset.adminPwd=sessionObj.adminPwd;
+    reset.firstName=sessionObj.firstName;
+    reset.lastName=sessionObj.lastName;
+    localStorage.setItem('sessionObj', JSON.stringify(reset));
+    sessionObj=reset;
+    checkForLogin();
   }
   function allow() {
     if(!sessionObj) {
