@@ -14,9 +14,9 @@ var showDebug = function() {
   document.getElementById('error-debug').style.display = 'block';
 }
 remoteStorageClient.on('status', function(status) {
-  document.getElementsByTagName('small')[0].innerHTML = (status.userAddress?' '+status.userAddress:'');
+  document.getElementsById('signout').innerHTML = (status.userAddress?' '+status.userAddress:'');
   for(i in status.buttons) {
-    document.getElementsByTagName('small')[0].innerHTML += '<a class="btn btn-danger" href="#" onclick="remoteStorageClient.'+status.buttons[i]+'();"><i class="icon-remove icon-white"></i> '+status.buttons[i]+'</a>';
+    document.getElementsById('signout').innerHTML += '<a class="btn btn-danger" href="#" onclick="remoteStorageClient.'+status.buttons[i]+'();"><i class="icon-remove icon-white"></i> '+status.buttons[i]+'</a>';
   }
   if(status.step) {
     document.getElementById('easyfreedom-loading').style.display = 'block';

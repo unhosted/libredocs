@@ -54,11 +54,11 @@ function signupStatus() {
   // not signed in
   if(sessionObj == null || !sessionObj.userAddress) 
   {
-    return '<small><input type="submit" value="Sign in" onclick="location=\'/\';"></small>';
+    return '<small id="signout"><input type="submit" value="Sign in" onclick="location=\'/\';"></small>';
   }
   else
   {
-    return '<small> '+sessionObj.userAddress
+    return '<small id="signout"> '+sessionObj.userAddress
     +'<a class="btn btn-danger" href="#" onclick="localStorage.clear();location=\'/\';"><i class="icon-remove icon-white"></i> Sign out</a>'
     +'</small>'
   }
