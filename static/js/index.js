@@ -23,7 +23,7 @@ function currentPad() {
 
 
 function connectToOwnpad(padInfo) {
-
+  document.title = padInfo.title+' on Libre Docs &ndash; liberate your ideas';
   document.getElementsByTagName('h1')[0].innerHTML = docTitleSpan(padInfo) + signupStatus();
   embedPad(padInfo);
 }
