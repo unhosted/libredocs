@@ -11,7 +11,6 @@ function listDocuments(docs, page){
   sortedByTimestamp(docs, page, per_page, function(doc) {
     fetchDocument(doc.id, renderDocumentPreview);
   });
-  $('.progress').hide();
   $('.share').popover({ delay:{show:0, hide:5000} });
   $('.share').popover('hide');
   $('a[rel=popover]').popover().click(function(e) { e.preventDefault(); });
