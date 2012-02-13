@@ -96,7 +96,8 @@ var remoteStorageClient = (function() {
   }
   function stepTimeout() {
     if(stepToTimeout) {
-      alert('Oops! timeout in step "'+stepToTimeout+'" for user address "'+sessionObj.userAddress+'". Please go to the #unhosted channel on freenode for help');
+      var message = 'Step took to long for "'+sessionObj.userAddress+'".';
+      doAlert('Providing remoteStorage timed out at '+stepToTimeout, message, sessionObj)
     }
   }
   function doSignIn(cb) {
@@ -123,7 +124,8 @@ var remoteStorageClient = (function() {
           console.log('calling webfinger for '+sessionObj.userAddress);
           cb('needsWebfinger');
         } else {
-          alert('something went wrong! "'+xhr.responseText+'"['+xhr.status+']');
+          doAlert('Failed fetching user data from database.',
+             'This should not have happened.', xhr);
           localStorage.clear();
           window.location='/welcome.html';
         }
@@ -295,11 +297,23 @@ var remoteStorageClient = (function() {
     };
     xhr.send(JSON.stringify(sessionObj));
   }
+  function doAlert(heading, message, debug) {
+    if(typeof alertMessage === 'function'){
+      alertMessage(heading, message, debug);
+    }
+    else
+    {
+      alert(heading + message);
+    }
+  }
   function pull(cb) {
     cb('done');
   }
   function alertError(cb) {
-    alert('oops! this went wrong: '+JSON.stringify(localStorage.sessionObj)+' Please come to the #unhosted chat on freenode for help.');
+    var sessionObj = JSON.parse(localStorage.sessionObj);
+    var step = sessionObj.step || sessionObj.state;
+    var problem = sessionObj.problem
+    doAlert('Providing remoteStorage failed at '+step, problem, sessionObj)
   }
   function allow() {
     if(!sessionObj) {

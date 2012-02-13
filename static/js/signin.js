@@ -1,3 +1,18 @@
+var alertMessage = function(heading, message, debug) {
+  var pretty;
+  document.getElementById('error-heading').innerHTML = heading;
+  document.getElementById('error-message').innerHTML = message;
+  if(debug){
+    if (typeof debug === 'object'){
+      pretty = JSON.stringify(debug,null, 2)
+    }
+    document.getElementById('error-debug').innerHTML = pretty || debug;
+  }
+  document.getElementById('error').style.display = 'block';
+}
+var showDebug = function() {
+  document.getElementById('error-debug').style.display = 'block';
+}
 remoteStorageClient.on('status', function(status) {
   document.getElementsByTagName('small')[0].innerHTML = (status.userAddress?' '+status.userAddress:'');
   for(i in status.buttons) {

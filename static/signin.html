@@ -33,6 +33,22 @@
           <div id="easyfreedom-loading" class="progress progress-info progress-striped active">
             <div id="easyfreedom-loadingbar" class="bar" style="width:5%;"><p id="easyfreedom-loadingtext"></p></div>
           </div>
+          <div id="error" class="alert alert-block alert-error fade in" style="display:none;">
+            <a class="close" href="#" data-dismiss="alert">×</a>
+            <h4 id="error-heading" class="alert-heading"></h4>
+            <p id="error-message"></p>
+            <pre id="error-debug" style="display:none;"></pre>
+            <p>
+            <a class="btn small" onclick="retryStep()">
+              Try last step again
+            </a>
+            <a class="btn small" target="_blank" onclick="showDebug()" href="http://webchat.freenode.net/?channels=unhosted">
+              Help debugging
+            </a>
+            <a class="btn small btn-danger" onclick="startOver()">
+              Start over
+            </a>
+          </div>
         </div>
 
         <div id="steps" class="row">
