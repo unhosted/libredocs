@@ -21,7 +21,7 @@ small:hover a.btn { display:inline; position:absolute; right:0; top:-.4em; }
 .step.remotestorage img { margin:3em 0 .5em; }
 .step.write img { margin-top:1em; }
 
-.checkmark { position:absolute; font-size:20em; left:.05em; top:.35em; }
+.checkmark { position:absolute; font-size:15em; left:.15em; top:.6em; color:#005580; opacity: 0.5 }
 
 #current-state { min-height:100px; }
 #easyfreedom-signup { margin-bottom:3em; }
