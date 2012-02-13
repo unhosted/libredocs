@@ -310,10 +310,28 @@ var remoteStorageClient = (function() {
     cb('done');
   }
   function alertError(cb) {
-    var sessionObj = JSON.parse(localStorage.sessionObj);
     var step = sessionObj.step || sessionObj.state;
     var problem = sessionObj.problem
     doAlert('Providing remoteStorage failed at '+step, problem, sessionObj)
+  }
+  function retryStep() {
+    sessionObj.state = sessionObj.step || sessionObj.state;
+    checkForLogin();
+  }
+  function startOver() {
+    var reset = {}
+    reset.action='set';
+    reset.ok=false;
+    reset.userAddress=sessionObj.userAddress;
+    var xhr = new XMLHttpRequest();
+    xhr.open('PUT', 'http://libredocs.org/users', true);
+    xhr.onreadystatechange = function() {
+      if(xhr.readyState == 4) {
+        localStorage.clear();
+        checkForLogin();
+      }
+    };
+    xhr.send(JSON.stringify(reset));
   }
   function allow() {
     if(!sessionObj) {
@@ -354,6 +372,8 @@ var remoteStorageClient = (function() {
     allow: allow,
     agree: agree,
     signOut: signOut,
+    retryStep: retryStep,
+    startOver: startOver,
     cancel: signOut
   };
 })();
