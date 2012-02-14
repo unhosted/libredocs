@@ -59,6 +59,8 @@ ul#doclist li:hover a.btn { position:absolute; display:inline; right:1em; top:.5
 #write .content { margin:-20px -20px -25px; }
 #write .page-header { border-bottom:none; }
 
+#error { z-index:1; position:absolute; width:63em; }
+
 /* The white background content wrapper */
 .container > .content {
 background-color:#fff;
