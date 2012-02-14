@@ -14,7 +14,7 @@ function go() {
 }
 
 if(localStorage.getItem('sessionObj')) {
-  window.location = 'signin.html';
+  window.location = '/signin.html';
 }
 document.getElementById('signin-button').onclick = go;
 document.getElementById('signin-loading').style.display='none';
