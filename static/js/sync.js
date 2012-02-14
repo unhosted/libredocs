@@ -24,8 +24,8 @@ function checkLogin() {
     window.location = '/welcome.html'
     return;
   }
-  document.getElementsById('signout').innerHTML = (sessionObj.userAddress?' '+sessionObj.userAddress:'');
-  document.getElementsById('signout').innerHTML += '<a class="btn btn-danger" href="#" onclick="signOut();"><i class="icon-remove icon-white"></i> Sign out</a>';
+  document.getElementById('signout').innerHTML = (sessionObj.userAddress?' '+sessionObj.userAddress:'');
+  document.getElementById('signout').innerHTML += '<a class="btn btn-danger" href="#" onclick="signOut();"><i class="icon-remove icon-white"></i> Sign out</a>';
 }
 
 function signOut()
