@@ -97,9 +97,17 @@ function getCurrDocLink() {
   }
 }
 
-// TODO: make sure this is unique
 function getLinkFromTitle(title) {
   title = title.replace(/\s+/g, '-');
+  // unchanged...
+  if(title==getCurrDocLink()) return(title);
+  var main = title;
+  var postfix = 0;
+  var index = JSON.parse(localStorage.index);
+  while(index[getCurrDocOwner()+'$'+title]) {
+    postfix++;
+    title = main + '-' + postfix;
+  }
   return encodeURIComponent(title);
 }
 
