@@ -32,6 +32,7 @@ h1+small:hover a.btn { display:inline; position:absolute; right:0; top:-.4em; }
 .progress .bar p { padding:.7em; display:inline; position:absolute; }
 
 ul#doclist { margin:-20px; font-size:1.3em; list-style:none; }
+ul#doclist #loadingdocs { background:url('images/loading.gif') no-repeat left; margin-left:.7em; padding-left:1.2em; }
 ul#doclist li { padding:.7em 0; border:none; white-space:nowrap; position:relative; }
 ul#doclist li:hover { background:#f8f8f8; }
 ul#doclist li:first-child { padding-top:1em; border-bottom:1px solid #eee; cursor:pointer; }
