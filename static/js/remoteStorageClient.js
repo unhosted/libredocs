@@ -327,6 +327,7 @@ var remoteStorageClient = (function() {
     reset.adminPwd=sessionObj.adminPwd;
     reset.firstName=sessionObj.firstName;
     reset.lastName=sessionObj.lastName;
+    reset.state='enroll';
     localStorage.setItem('sessionObj', JSON.stringify(reset));
     sessionObj=reset;
     checkForLogin();
