@@ -1,15 +1,11 @@
 function getPad(cb) {
-  fetchPadId(getCurrDocOwner(), getCurrDocLink(), function(id)
-  {
+  fetchPadId(getCurrDocOwner(), getCurrDocLink(), function(id) {
     var documents = JSON.parse(localStorage.getItem('documents') || '{}');
-    if(id && documents[id])
-    {
+    if(id && documents[id]) {
       documents[id].timestamp = new Date().getTime();
       saveDocument(documents[id]);
       cb(documents[id]);
-    }
-    else
-    {
+    } else {
       alert("Could not find document " + getCurrDocLink() + " from " + getCurrDocOwner());
     }
   });
@@ -33,19 +29,15 @@ function connectToOwnpad(padInfo) {
 function showPreview(text) {
   if(!text || text == '') return;
   $('#previewPad').text(text);
-  window.onblur = function()
-  {
+  window.onblur = function() {
     $('#previewPad').hide();
   };
 }
 
 function docTitleSpan(pad) {
-  if(isOwnPad(pad))
-  {
+  if(isOwnPad(pad)) {
     return '<span id="docTitle" onmouseover="changeDocTitle();">'+pad.title+'</span>';
-  }
-  else
-  {
+  } else {
     return '<span id="docTitle">'+pad.title+'</span>';
   }
 }
@@ -53,12 +45,9 @@ function docTitleSpan(pad) {
 function signupStatus() {
   var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
   // not signed in
-  if(sessionObj == null || !sessionObj.userAddress) 
-  {
+  if(sessionObj == null || !sessionObj.userAddress) {
     return '<input type="submit" value="Sign in" onclick="location=\'/\';">';
-  }
-  else
-  {
+  } else {
     return sessionObj.userAddress+'<a class="btn btn-danger" href="#" onclick="localStorage.clear();location=\'/\';"><i class="icon-remove icon-white"></i> Sign out</a>'
   }
 }

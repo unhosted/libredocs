@@ -19,8 +19,7 @@
 
 function checkLogin() {
   var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
-  if(!sessionObj || sessionObj.state != 'ready')
-  {
+  if(!sessionObj || sessionObj.state != 'ready') {
     window.location = '/welcome.html'
     return;
   }
@@ -28,15 +27,13 @@ function checkLogin() {
   document.getElementById('signout').innerHTML += '<a class="btn btn-danger" href="#" onclick="signOut();"><i class="icon-remove icon-white"></i> Sign out</a>';
 }
 
-function signOut()
-{
+function signOut() {
   // signing a user out means clearing all their personal data off the device:
   localStorage.clear();
   window.location = '/welcome.html';
 }
 
-function currentUser()
-{
+function currentUser() {
   var sessionObj = JSON.parse(localStorage.getItem('sessionObj') || '{}');
   return sessionObj.userAddress;
 }
@@ -69,8 +66,7 @@ function fetchPadId(owner, link, cb){
     idx = idx || {}
     index = idx; //cache for updating later
     if(done) return;
-    if(idx[key])
-    {
+    if(idx[key]) {
       done = true;
       cb(idx[key]);
     }
@@ -86,8 +82,7 @@ function fetchPadId(owner, link, cb){
         if(err2) {//the callback should deal with a null
           cb(null);
         } else {
-          getAndFetch('documents', function(docs)
-          {
+          getAndFetch('documents', function(docs) {
             docs[data.id] = data;
             setAndPush('documents', docs);
             index[key] = data.id;
@@ -125,8 +120,7 @@ function publishPadInfo(pad, cb) {
 
 function getOrFetchStorageInfo(user, cb) {
   var storageOwners = JSON.parse(localStorage.getItem('storageOwners') || '{}');
-  if(storageOwners[user])
-  {
+  if(storageOwners[user]) {
     cb(null, storageOwners[user]);
     return;
   }
@@ -139,10 +133,8 @@ function getOrFetchStorageInfo(user, cb) {
   });
 }
 
-function syncAndAdd(table, key, value, cb)
-{
-  getAndFetch(table, function(recs)
-  {
+function syncAndAdd(table, key, value, cb) {
+  getAndFetch(table, function(recs) {
     recs[key] = value;
     setAndPush(table, recs, cb);
   });
@@ -150,8 +142,7 @@ function syncAndAdd(table, key, value, cb)
 
 function getAndFetch(key, cb){
   var local = localStorage.getItem(key);
-  if(local)
-  {
+  if(local) {
     local = JSON.parse(local);
     cb(local);
   }
@@ -166,8 +157,7 @@ function getAndFetch(key, cb){
 
 function getOrFetchPublic(key, cb){
   var local = localStorage.getItem(key);
-  if(local)
-  {
+  if(local) {
     local = JSON.parse(local);
     cb(local);
     return;
@@ -178,18 +168,14 @@ function getOrFetchPublic(key, cb){
 }
 
 function storeAndCallback(key, err, value, cb){
-  if(!err)
-  {
+  if(!err) {
     localStorage.setItem(key, JSON.stringify(value));
     timestamps = JSON.parse(localStorage.getItem('_timestamps')||'{}')
     timestamps[key] = new Date().getTime();
     localStorage.setItem('_timestamps', JSON.stringify(timestamps));
     cb(value);
-  }
-  else
-  {
-    if(err==404)
-    {
+  } else {
+    if(err==404) {
       cb(null);
     }
   }

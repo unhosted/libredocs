@@ -2,8 +2,7 @@ function hyphenify(userAddress) {
   return userAddress.replace(/-/g, '-dash-').replace(/@/g, '-at-').replace(/\./g, '-dot-');
 }
 
-function truncate(text, length)
-{
+function truncate(text, length) {
   text = text || '';
   length = length || 70;
   return (text.length > length) ?
@@ -40,12 +39,10 @@ function modifiedDateColor(timestamp) {
   return 'color:rgb('+modifiedColor+','+modifiedColor+','+modifiedColor+')';
 }
 
-function lengthOf(obj)
-{
+function lengthOf(obj) {
   var length = 0, key;
   for (key in obj) {
     if (obj.hasOwnProperty(key)) length++;
   }
   return length;
 }
-

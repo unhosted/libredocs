@@ -1,4 +1,4 @@
-function listDocuments(docs, page){
+function listDocuments(docs, page) {
   page = page || 1;
   per_page = 5; // TODO: this should be a constant somewhere
   var str = '';
@@ -61,16 +61,13 @@ function shareDoc(id) {
 }
 
 
-function paginationRow(page, per_page, total)
-{
+function paginationRow(page, per_page, total) {
   if(total < per_page) return '';
   var str = '<tr><td colspan=2>\n';
-  if(page != 1)
-  {
+  if(page != 1) {
     str += '<span onclick="showList('+(page-1)+');" style="float:left;">newer documents</span>\n';
   }
-  if(page*per_page < total)
-  {
+  if(page*per_page < total) {
     str += '<span onclick="showList('+(page+1)+');" style="float:right;">older documents</span>\n';
   }
   str += '</td></tr>\n';
