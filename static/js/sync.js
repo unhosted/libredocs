@@ -76,7 +76,7 @@ function fetchPadId(owner, link, cb){
     getOrFetchStorageInfo(owner, function(err, ownerStorageInfo) {
       if(err) return; //TODO: might want to record this for debugging
       var client = remoteStorage.createClient(ownerStorageInfo, 'public');
-      client.get('padInfo:'+link, function(err2, data) {
+      client.get(encodeURIComponent('padInfo:'+link), function(err2, data) {
         // if(data.movedTo)
         if(done) return; // got the info from my own doc list.
         if(err2) {//the callback should deal with a null

@@ -91,7 +91,7 @@ function getCurrDocOwner() {
 }
 function getCurrDocLink() {
   if(location.hash.length) {
-    return location.hash.split('/')[1];
+    return location.hash.substr(location.hash.indexOf('/') + 1);
   } else {
     window.location = '/welcome.html';
   }
