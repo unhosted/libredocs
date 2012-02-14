@@ -7,7 +7,8 @@ footer { border:none; margin:1em; }
 
 .page-header { background-color:#f5f5f5; padding:4em 2em 1em; margin:-20px -20px 20px; }
 .page-header img { width:3em; height:3em; }
-h1 { font-size:4em; display:inline; color:#000; }
+h1 { position:relative; font-size:4em; display:inline; color:#000; }
+h1 span#docTitle { position:absolute; left:.08em; width:11em; white-space:nowrap; text-overflow:ellipsis; overflow:hidden; }
 h1+small { float:right; position:relative; top:1.5em; right:-.5em; }
 h1+small a.btn { display:none; }
 h1+small:hover a.btn { display:inline; position:absolute; right:0; top:-.4em; }
