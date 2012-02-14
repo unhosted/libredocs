@@ -1,7 +1,7 @@
 html, body { background-color:#eee; }
 .container > footer p { text-align:center; }
 .container { max-width:870px; }
-#frontpage h3 { margin-top:1em; }
+#welcome h3 { margin-top:1em; }
 footer { border:none; margin:1em; }
 #write footer { margin:3em; }
 
