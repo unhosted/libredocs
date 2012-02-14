@@ -24,7 +24,8 @@ function currentPad() {
 
 function connectToOwnpad(padInfo) {
   document.title = padInfo.title+' on Libre Docs &ndash; liberate your ideas';
-  document.getElementsByTagName('h1')[0].innerHTML = docTitleSpan(padInfo) + signupStatus();
+  document.getElementsByTagName('h1')[0].innerHTML = docTitleSpan(padInfo);
+  document.getElementById('signout').innerHTML = signupStatus();
   embedPad(padInfo);
 }
 
@@ -54,13 +55,11 @@ function signupStatus() {
   // not signed in
   if(sessionObj == null || !sessionObj.userAddress) 
   {
-    return '<small id="signout"><input type="submit" value="Sign in" onclick="location=\'/\';"></small>';
+    return '<input type="submit" value="Sign in" onclick="location=\'/\';">';
   }
   else
   {
-    return '<small id="signout"> '+sessionObj.userAddress
-    +'<a class="btn btn-danger" href="#" onclick="localStorage.clear();location=\'/\';"><i class="icon-remove icon-white"></i> Sign out</a>'
-    +'</small>'
+    return sessionObj.userAddress+'<a class="btn btn-danger" href="#" onclick="localStorage.clear();location=\'/\';"><i class="icon-remove icon-white"></i> Sign out</a>'
   }
 }
 
