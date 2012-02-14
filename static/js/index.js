@@ -74,7 +74,7 @@ function saveDocTitle() {
   editingDocTitle = false;
   getPad(function (pad){
     pad.title = document.getElementById('docTitleInput').value;
-    pad.link = getLinkFromTitle(pad.title);
+    pad.link = getLinkForPad(pad);
     saveDocument(pad);
     publishPadInfo(pad, function() {
       location.hash = '#'+getCurrDocOwner()+'/'+pad.link;
@@ -97,18 +97,20 @@ function getCurrDocLink() {
   }
 }
 
-function getLinkFromTitle(title) {
-  title = title.replace(/\s+/g, '-');
+function getLinkForPad(pad) {
+  var link = pad.title.replace(/\s+/g, '-');
   // unchanged...
-  if(title==getCurrDocLink()) return(title);
-  var main = title;
+  if(link==getCurrDocLink()) return(link);
+  var main = link;
   var postfix = 0;
+  var key = getCurrDocOwner()+'$'+link;
   var index = JSON.parse(localStorage.index);
-  while(index[getCurrDocOwner()+'$'+title]) {
+  while(index[key] && index[key] != pad.id) {
     postfix++;
-    title = main + '-' + postfix;
+    link = main + '-' + postfix;
+    key = getCurrDocOwner()+'$'+link;
   }
-  return encodeURIComponent(title);
+  return encodeURIComponent(link);
 }
 
 function hyphenify(userAddress) {
