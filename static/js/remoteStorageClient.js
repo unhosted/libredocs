@@ -242,7 +242,7 @@ var remoteStorageClient = (function() {
       usr:sessionObj.userAddress,
       pwd:sessionObj.adminPwd
     };
-    pimper.uploadAttachment(putHost, 'cors', 'auth', authStr, 'modal.html', 'http://libredocs.org/beFree/files/modal.html', 'text/html', cb);
+    pimper.uploadAttachment(putHost, 'cors', 'auth', authStr, 'modal.html', 'http://libredocs.org/modal.html', 'text/html', cb);
   }
   function pop3(cb) {
     var couchAddress = sessionObj.couchHost;
@@ -251,7 +251,7 @@ var remoteStorageClient = (function() {
       usr:sessionObj.userAddress,
       pwd:sessionObj.adminPwd
     };
-    pimper.uploadAttachment(putHost, 'cors', 'base64', authStr, 'base64.js', 'http://libredocs.org/beFree/files/base64.js', 'application/javascript', cb);
+    pimper.uploadAttachment(putHost, 'cors', 'base64', authStr, 'base64.js', 'http://libredocs.org/js/base64.js', 'application/javascript', cb);
   }
   function pop4(cb) {
     var couchAddress = sessionObj.couchHost;
@@ -260,7 +260,7 @@ var remoteStorageClient = (function() {
       usr:sessionObj.userAddress,
       pwd:sessionObj.adminPwd
     };
-    pimper.uploadAttachment(putHost, 'cors', 'sha1', authStr, 'sha1.js', 'http://libredocs.org/beFree/files/sha1.js', 'application/javascript', cb);
+    pimper.uploadAttachment(putHost, 'cors', 'sha1', authStr, 'sha1.js', 'http://libredocs.org/js/sha1.js', 'application/javascript', cb);
   }
   function pop5(cb) {
     var couchAddress = sessionObj.couchHost;
