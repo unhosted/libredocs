@@ -23,6 +23,8 @@ body#welcome .content, body#signup .content { height:33em; }
 .step.remotestorage img, .step.write img { position:relative; left:28%; }
 .step.remotestorage img { margin:3em 0 .5em; }
 .step.write img { margin-top:1em; }
+.step h3 { position:absolute; top:6.5em; }
+.step p { position:absolute; top:12.5em; }
 
 .checkmark { position:absolute; font-size:15em; left:.15em; top:.6em; color:#005580; opacity: 0.5 }
 
