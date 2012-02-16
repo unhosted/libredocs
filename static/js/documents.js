@@ -46,13 +46,13 @@ function newDoc() {
     timestamp: time
   };
   saveDocument(doc, function() {
-    window.location=getDocAddress(doc);
+    window.location.href = getDocAddress(doc);
   });
 }
 
 function showDoc(id) {
   var docs = JSON.parse(localStorage.getItem('documents'));
-  window.location=getDocAddress(docs[id]);
+  window.location.href = getDocAddress(docs[id]);
 }
 
 function shareDoc(id) {

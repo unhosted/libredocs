@@ -92,7 +92,7 @@ var remoteStorageClient = (function() {
         }
       }
     } else {
-      window.location = '/welcome.html';
+      window.location.href = 'welcome.html';
     }
   }
   function stepTimeout() {
@@ -128,7 +128,7 @@ var remoteStorageClient = (function() {
           doAlert('Failed fetching user data from database.',
              'This should not have happened.', xhr);
           localStorage.clear();
-          window.location='/welcome.html';
+          window.location.href = 'welcome.html';
         }
       }
     };
@@ -362,7 +362,7 @@ var remoteStorageClient = (function() {
   }
   function signOut() {
     localStorage.clear();
-    window.location = '/welcome.html';
+    window.location.href = 'welcome.html';
   }
   return {
     on: on,

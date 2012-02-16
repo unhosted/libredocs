@@ -46,9 +46,9 @@ function signupStatus() {
   var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
   // not signed in
   if(sessionObj == null || !sessionObj.userAddress) {
-    return '<input type="submit" value="Sign in" onclick="location=\'/\';">';
+    return '<input type="submit" value="Sign in" onclick="location=\'welcome.html\';">';
   } else {
-    return sessionObj.userAddress+'<a class="btn btn-danger" href="#" onclick="localStorage.clear();location=\'/\';"><i class="icon-remove icon-white"></i> Sign out</a>'
+    return sessionObj.userAddress+'<a class="btn btn-danger" href="#" onclick="localStorage.clear();location=\'welcome.html\';"><i class="icon-remove icon-white"></i> Sign out</a>'
   }
 }
 
@@ -86,14 +86,14 @@ function getCurrDocOwner() {
   if(location.hash.length) {
     return location.hash.split('/')[0].substring(1);
   } else {
-    window.location = '/welcome.html';
+    window.location.href = 'welcome.html';
   }
 }
 function getCurrDocLink() {
   if(location.hash.length) {
     return location.hash.substr(location.hash.indexOf('/') + 1);
   } else {
-    window.location = '/welcome.html';
+    window.location.href = 'welcome.html';
   }
 }
 
