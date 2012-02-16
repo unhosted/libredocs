@@ -19,6 +19,7 @@ createDb/config.js
 provision/config.js
 squat/config.js
 users/config.js
+useraddress/config.js
 setConfig/config.js
 
 # node modules
