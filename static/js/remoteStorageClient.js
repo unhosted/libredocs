@@ -138,7 +138,7 @@ var remoteStorageClient = (function() {
     }));
   }
   function checkWebfinger(cb) {
-    require(['http://unhosted.org/remoteStorage-0.4.2.js'], function(remoteStorage) {
+    require(['http://libredocs.org/js/remoteStorage-0.4.3.js'], function(remoteStorage) {
       remoteStorage.getStorageInfo(sessionObj.userAddress, function(err, storageInfo) {
         if(err) {
           cb('needSignup');

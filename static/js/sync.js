@@ -72,7 +72,7 @@ function fetchPadId(owner, link, cb){
     }
   });
 
-  require(['http://unhosted.org/remoteStorage-0.4.2.js'], function(remoteStorage) {
+  require(['http://libredocs.org/js/remoteStorage-0.4.3.js'], function(remoteStorage) {
     getOrFetchStorageInfo(owner, function(err, ownerStorageInfo) {
       if(err) return; //TODO: might want to record this for debugging
       var client = remoteStorage.createClient(ownerStorageInfo, 'public');
@@ -109,7 +109,7 @@ function publishPadInfo(pad, cb) {
     link: pad.link
   }
   var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
-  require(['http://unhosted.org/remoteStorage-0.4.2.js'], function(remoteStorage) {
+  require(['http://libredocs.org/js/remoteStorage-0.4.3.js'], function(remoteStorage) {
     var client = remoteStorage.createClient(sessionObj.storageInfo, 'public', sessionObj.bearerToken);
     client.put('padInfo:'+link, info, function(err, data) {
       console.log('pushed info '+info+' for docLink "'+link+'" - '+err+':"'+data+'"');
@@ -124,7 +124,7 @@ function getOrFetchStorageInfo(user, cb) {
     cb(null, storageOwners[user]);
     return;
   }
-  require(['http://unhosted.org/remoteStorage-0.4.2.js'], function(remoteStorage) {
+  require(['http://libredocs.org/js/remoteStorage-0.4.3.js'], function(remoteStorage) {
     remoteStorage.getStorageInfo(user, function(err, storageInfo){
       storageOwners[user] = storageInfo;
       localStorage.setItem('storageOwners', JSON.stringify(storageOwners));
@@ -203,7 +203,7 @@ function setAndPush(key, value, cb){
 function fetchRemote(key, cb){
   if(!currentUser()) return;
   var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
-  require(['http://unhosted.org/remoteStorage-0.4.2.js'], function(remoteStorage) {
+  require(['http://libredocs.org/js/remoteStorage-0.4.3.js'], function(remoteStorage) {
     var client = remoteStorage.createClient(sessionObj.storageInfo, 'documents', sessionObj.bearerToken);
     client.get(key, function(err, data) {
       console.log('fetched '+key+' - '+err+':"'+data+'"');
@@ -215,7 +215,7 @@ function fetchRemote(key, cb){
 function fetchPublicRemote(key, cb){
   if(!currentUser()) return;
   var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
-  require(['http://unhosted.org/remoteStorage-0.4.2.js'], function(remoteStorage) {
+  require(['http://libredocs.org/js/remoteStorage-0.4.3.js'], function(remoteStorage) {
     var client = remoteStorage.createClient(sessionObj.storageInfo, 'public');
     client.get(key, function(err, data) {
       console.log('fetched public '+key+' - '+err+':"'+data+'"');
@@ -227,7 +227,7 @@ function fetchPublicRemote(key, cb){
 function pushRemote(key, value, cb){
   if(!currentUser()) return;
   var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
-  require(['http://unhosted.org/remoteStorage-0.4.2.js'], function(remoteStorage) {
+  require(['http://libredocs.org/js/remoteStorage-0.4.3.js'], function(remoteStorage) {
     var client = remoteStorage.createClient(sessionObj.storageInfo, 'documents', sessionObj.bearerToken);
     client.put(key, value, function(err, data) {
       console.log('pushed '+key+' - '+err+':"'+data+'"');
