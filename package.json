@@ -5,7 +5,8 @@
     "libredocs.org",
     "www.libredocs.org",
     "libredoc.org",
-    "www.libredoc.org"
+    "www.libredoc.org",
+    "proxy.libredocs.org"
   ],
   "scripts": {
     "start": "server.js"

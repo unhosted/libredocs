@@ -9,9 +9,11 @@ exports.config = {
   host: {
     'libredocs.org': '/static'
   },
+  handler: {
+    'proxy.libredocs.org': './proxy'
+  },
   pathHandler: {
     'libredocs.org/users': './users',
-    'libredocs.org/proxy': './proxy',
     'libredocs.org/useraddress': './useraddress',
     'libredocs.org/browserid-verifier': './browserid',
     'libredocs.org/provision': './provision',
