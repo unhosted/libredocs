@@ -158,7 +158,7 @@ var remoteStorageClient = (function() {
         localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
       } else if(result==201) {
         sessionObj.couchHost = userName+'.iriscouch.com';
-        sessionObj.proxy = 'yourremotestorage.net/CouchDB/proxy/';
+        sessionObj.proxy = 'proxy.libredocs.org/';
         localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
       }
       cb(result);

@@ -22,7 +22,7 @@ var pimper = (function() {
     }
   }
   function createAdminUser1(hostToSquat, adminUsr, adminPwd, cb) {
-    var putHost = 'http://yourremotestorage.net/CouchDB/proxy/'+hostToSquat+'/_users/org.couchdb.user:'+adminUsr;
+    var putHost = 'http://proxy.libredocs.org/'+hostToSquat+'/_users/org.couchdb.user:'+adminUsr;
     var userObj = genUser(adminUsr, adminPwd);
     userObj.browserid=true;
     userObj.roles=['admin', 'browserid'];
@@ -74,7 +74,7 @@ var pimper = (function() {
     };
   }
   function couchPut(couchAddress, masterUser, masterPass, dbName, key, value, cb) {
-    var putHost = 'http://yourremotestorage.net/CouchDB/proxy/'+couchAddress;
+    var putHost = 'http://proxy.libredocs.org/'+couchAddress;
     var authStr = {
       usr:masterUser,
       pwd:masterPass
@@ -170,6 +170,6 @@ if(window) {
   options = process.argv.splice(2);
   pimper.pimp(options[0], options[1], options[2]);
 } else if(process.argv) {
-  console.log('use as: node pimp.js {user}@{domain} {password} {yourremotestorage.net/CouchDB/proxy/}');
-  console.log('E.g.: node pimp.js me@michiel.iriscouch.com asdf yourremotestorage.net/CouchDB/proxy/');
+  console.log('use as: node pimp.js {user}@{domain} {password} {proxy.libredocs.org/}');
+  console.log('E.g.: node pimp.js me@michiel.iriscouch.com asdf proxy.libredocs.org/');
 }

@@ -24,7 +24,7 @@
           prepareSessionObj('http://libredocs.org', assertion, function(sessionObj) {
             sessionObj.state = 'pinging';
             sessionObj.couchHost = document.getElementById('couchHost').value;
-            sessionObj.proxy = 'yourremotestorage.net/CouchDB/proxy/';
+            sessionObj.proxy = 'proxy.libredocs.org/';
             localStorage.sessionObj=JSON.stringify(sessionObj);
             location='/signin.html';
           });
