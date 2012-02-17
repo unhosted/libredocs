@@ -4,7 +4,8 @@
   localStorage.index = localStorage.index || '{}';
   if(!currentUser()) return;
   var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
-  if(!sessionObj.storageInfo || !sessionObj.ownPadBackDoor) {
+  var changed = false;
+  if(!sessionObj.storageInfo || !sessionObj.ownPadBackDoor || !sessionObj.couchHost) {
     sessionObj.storageInfo = {
       api: 'CouchDB',
       template: 'http://'+sessionObj.proxy+sessionObj.subdomain+'.iriscouch.com/{category}/',
@@ -12,6 +13,17 @@
     };
     sessionObj.couchHost = sessionObj.couchHost || sessionObj.subdomain+'.iriscouch.com';
     sessionObj.ownPadBackDoor = 'https://'+sessionObj.couchHost+'/documents';
+    changed = true;
+  }
+  if(sessionObj.proxy.indexOf('yourremotestorage.net') != -1)
+  {
+    sessionObj.proxy = 'proxy.libredocs.org/';
+    sessionObj.storageInfo.template = 
+      'http://' + sessionObj.proxy + sessionObj.couchHost + '/{category}/';
+    changed = true;
+  }
+  if(changed)
+  {
     sessionObj.state = 'storing' // write this to the db next time.
     localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
   }
