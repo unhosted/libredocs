@@ -34,9 +34,9 @@ define([
   }
   function getDriver(api, cb) {
     if(api == 'CouchDB') {
-      require(['http://unhosted.org/lib/couch-0.4.2.js'], cb);
+      require(['http://libredocs.org/js/lib/couch-0.4.2.js'], cb);
     } else {//'simple', 'WebDAV'
-      require(['http://unhosted.org/lib/dav-0.4.2.js'], cb);
+      require(['http://libredocs.org/js/lib/dav-0.4.2.js'], cb);
     }
   }
   function createClient(storageInfo, category, token) {

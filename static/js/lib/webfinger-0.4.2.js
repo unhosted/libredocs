@@ -1,4 +1,4 @@
-define(['http://unhosted.org/lib/ajax-0.4.2.js'], function(ajax) {
+define(['http://libredocs.org/js/lib/ajax-0.4.2.js'], function(ajax) {
 
     ///////////////
    // Webfinger //
