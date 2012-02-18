@@ -52,13 +52,6 @@ function fetchDocumentId(owner, link, cb){
 }
 
 function publishDocument(doc, cb) {
-  var link = doc.link;
-  var key = doc.owner + '$' + doc.link;
-  var index = localGet('index');
-  index[key] = doc.id;
-  localSet('index', index);
-  pushRemote('index');
-
   var info = {
     id: doc.id,
     title: doc.title,
@@ -67,8 +60,8 @@ function publishDocument(doc, cb) {
   }
   var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
   getMyRemoteClient('public', function(client) {
-    client.put('padInfo:'+link, info, function(err, data) {
-      console.log('pushed info '+info+' for docLink "'+link+'" - '+err+':"'+data+'"');
+    client.put('padInfo:'+doc.link, info, function(err, data) {
+      console.log('pushed info '+info+' for docLink "'+doc.link+'" - '+err+':"'+data+'"');
       cb();
     });
   });

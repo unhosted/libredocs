@@ -3,7 +3,7 @@ function getPad(cb) {
     var documents = localGet('documents') || '{}';
     if(id && documents[id]) {
       documents[id].timestamp = new Date().getTime();
-      saveDocument(documents[id]);
+      localSet('documents', documents);
       cb(documents[id]);
     } else {
       alert("Could not find document " + getCurrDocLink() + " from " + getCurrDocOwner());
