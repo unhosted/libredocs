@@ -23,6 +23,8 @@ function newDocumentRow() {
 function documentRow(doc) { 
   return '<li id="'+doc.id+'">'
     + '<a class="doclink" onclick="showDoc(\''+doc.id+'\');"><strong>'+doc.title+'</strong>'
+    + ' <span class="owner" id="'+doc.id+'-owner">'
+    + ((doc.owner == currentUser()) ? '' : doc.owner) +'</span></a>'
     + ' <span class="preview" id="'+doc.id+'-preview"></span></a>'
     + '<span class="date" style="'+modifiedDateColor(doc.timestamp)+'" title="'+new Date(doc.timestamp).toLocaleString()+'">'+relativeModifiedDate(doc.timestamp)+'</span>'
     + '<a class="btn share" href="#" rel="popover" title="Share this link" data-content="<a href=\''+shareDoc(doc.id)+'\'>'+shareDoc(doc.id)+'</a>"><i class="icon-share-alt"></i> Share</a>'
