@@ -1,4 +1,4 @@
-function listDocuments(docs, page) {
+function listDocuments(docs, synced, page) {
   page = page || 1;
   per_page = 5; // TODO: this should be a constant somewhere
   var str = '';
@@ -6,6 +6,7 @@ function listDocuments(docs, page) {
   sortedByTimestamp(docs, page, per_page, function(doc) {
     str += documentRow(doc);
   });
+  if(!synced) str += loadingRow();
   str += paginationRow(page, per_page, lengthOf(docs));
   document.getElementById('doclist').innerHTML = str;
   sortedByTimestamp(docs, page, per_page, function(doc) {
@@ -16,12 +17,35 @@ function listDocuments(docs, page) {
   $('a[rel=popover]').popover().click(function(e) { e.preventDefault(); });
 }
 
+function showList(page) {
+  fetchDocuments( function(docs, synced) {
+    listDocuments(docs, synced, page);
+  });
+}
+
 function newDocumentRow() {
   return '<li onclick="newDoc();"><strong>+ New document</strong></li>';
 }
 
 function documentRow(doc) {
   return (doc.owner == currentUser()) ? myDocumentRow(doc) : sharedDocumentRow(doc);
+}
+
+function loadingRow() {
+  return '<li><strong id="loadingdocs">Loading documents &hellip;</strong></li>'
+}
+
+function paginationRow(page, per_page, total) {
+  if(total < per_page) return '';
+  var str = '<li>\n';
+  if(page != 1) {
+    str += '<span onclick="showList('+(page-1)+');" style="float:left;">newer documents</span>\n';
+  }
+  if(page*per_page < total) {
+    str += '<span onclick="showList('+(page+1)+');" style="float:right;">older documents</span>\n';
+  }
+  str += '<li>\n';
+  return str;
 }
 
 function myDocumentRow(doc) {
@@ -64,28 +88,15 @@ function newDoc() {
 }
 
 function showDoc(id) {
-  var docs = JSON.parse(localStorage.getItem('documents'));
+  var docs = localGet('documents');
   window.location.href = getDocAddress(docs[id]);
 }
 
 function shareDoc(id) {
-  var docs = JSON.parse(localStorage.getItem('documents'));
+  var docs = localGet('documents');
   return getDocAddress(docs[id]);
 }
 
-
-function paginationRow(page, per_page, total) {
-  if(total < per_page) return '';
-  var str = '<tr><td colspan=2>\n';
-  if(page != 1) {
-    str += '<span onclick="showList('+(page-1)+');" style="float:left;">newer documents</span>\n';
-  }
-  if(page*per_page < total) {
-    str += '<span onclick="showList('+(page+1)+');" style="float:right;">older documents</span>\n';
-  }
-  str += '</td></tr>\n';
-  return str;
-}
 
 function sortedByTimestamp(docs, page, count, cb) {
   var tuples = [];

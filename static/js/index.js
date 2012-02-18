@@ -1,6 +1,6 @@
 function getPad(cb) {
-  fetchPadId(getCurrDocOwner(), getCurrDocLink(), function(id) {
-    var documents = JSON.parse(localStorage.getItem('documents') || '{}');
+  fetchDocumentId(getCurrDocOwner(), getCurrDocLink(), function(id) {
+    var documents = localGet('documents') || '{}';
     if(id && documents[id]) {
       documents[id].timestamp = new Date().getTime();
       saveDocument(documents[id]);
@@ -12,8 +12,8 @@ function getPad(cb) {
 }
 
 function currentPad() {
-  var documents = JSON.parse(localStorage.getItem('documents'));
-  var index = JSON.parse(localStorage.getItem('index'));
+  var documents = localGet('documents');
+  var index = localGet('index');
   return documents[index[getCurrDocOwner() +'$'+ getCurrDocLink()]];
 }
 
@@ -76,7 +76,7 @@ function saveDocTitle() {
     pad.title = document.getElementById('docTitleInput').value;
     pad.link = getLinkForPad(pad);
     saveDocument(pad);
-    publishPadInfo(pad, function() {
+    publishDocument(pad, function() {
       location.hash = '#'+getCurrDocOwner()+'/'+pad.link;
       document.getElementById('docTitle').innerHTML = pad.title;
     });
@@ -104,7 +104,7 @@ function getLinkForPad(pad) {
   var main = link;
   var postfix = 0;
   var key = getCurrDocOwner()+'$'+link;
-  var index = JSON.parse(localStorage.index);
+  var index = localGet('index');
   while(index[key] && index[key] != pad.id) {
     postfix++;
     link = main + '-' + postfix;

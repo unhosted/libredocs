@@ -1,128 +1,72 @@
-//deal with legacy accounts and anonymous users:
-(function() {
-  localStorage.documents = localStorage.documents || '{}';
-  localStorage.index = localStorage.index || '{}';
-  if(!currentUser()) return;
-  var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
-  var changed = false;
-  if(!sessionObj.storageInfo || !sessionObj.ownPadBackDoor || !sessionObj.couchHost) {
-    sessionObj.storageInfo = {
-      api: 'CouchDB',
-      template: 'http://'+sessionObj.proxy+sessionObj.subdomain+'.iriscouch.com/{category}/',
-      auth: 'http://'+sessionObj.subdomain+'.iriscouch.com/cors/auth/modal.html'
-    };
-    sessionObj.couchHost = sessionObj.couchHost || sessionObj.subdomain+'.iriscouch.com';
-    sessionObj.ownPadBackDoor = 'https://'+sessionObj.couchHost+'/documents';
-    changed = true;
-  }
-  if(sessionObj.proxy.indexOf('yourremotestorage.net') != -1)
-  {
-    sessionObj.proxy = 'proxy.libredocs.org/';
-    sessionObj.storageInfo.template = 
-      'http://' + sessionObj.proxy + sessionObj.couchHost + '/{category}/';
-    changed = true;
-  }
-  if(changed)
-  {
-    sessionObj.state = 'storing' // write this to the db next time.
-    localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
-  }
-})();
-
-function checkLogin() {
-  var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
-  if(!sessionObj || sessionObj.state != 'ready') {
-    window.location.href = 'welcome.html'
-    return;
-  }
-  document.getElementById('signout').innerHTML = (sessionObj.userAddress?' '+sessionObj.userAddress:'');
-  document.getElementById('signout').innerHTML += '<a class="btn btn-danger" href="#" onclick="signOut();"><i class="icon-remove icon-white"></i> Sign out</a>';
-}
-
-function signOut() {
-  // signing a user out means clearing all their personal data off the device:
-  localStorage.clear();
-  window.location.href = 'welcome.html';
-}
-
-function currentUser() {
-  var sessionObj = JSON.parse(localStorage.getItem('sessionObj') || '{}');
-  return sessionObj.userAddress;
-}
 
 function fetchDocuments(cb){
-  getAndFetch('documents',cb);
+  cb(localGet('documents'), isRecent('documents'));
+  if(!isRecent('documents')) pullRemote('documents', function(err){
+    if(!err) fetchDocuments(cb);
+  });
 }
 
 // gets the etherpad document - contains text and all.
 function fetchDocument(id, cb){
   if(id.split('$')[0] != currentUser()) return;
-  getAndFetch('pad:'+id,function(doc){
-    if(!doc) return;
-    doc.id = id;
-    cb(doc);
+  var key = 'pad:'+id;
+  local = localGet(key);
+  if(local){local.id = id; cb(local, isRecent(key));}
+  if(!isRecent(key)) pullRemote(key, function(err){
+    if(!err) fetchDocument(id, cb);
   });
 }
 
 function saveDocument(doc, cb){
-  syncAndAdd('documents', doc.id, doc, cb);
-  syncAndAdd('index', doc.owner+'$'+doc.link, doc.id);
+  var documents = localGet('documents');
+  var index = localGet('index');
+  var key = doc.owner+'$'+doc.link;
+  documents[doc.id] = doc;
+  index[key] = doc.id;
+  localSet('documents', documents);
+  localSet('index', index);
+  async.parallel([
+    function(callback) {pushRemote('documents', callback)},
+    function(callback) {pushRemote('index', callback)}
+  ], cb);
 }
 
-
-function fetchPadId(owner, link, cb){
+function fetchDocumentId(owner, link, cb){
   var key = owner + '$' + link;
   var done = false;
   var index = {};
-  getAndFetch('index', function(idx){
-    idx = idx || {}
-    index = idx; //cache for updating later
-    if(done) return;
-    if(idx[key]) {
-      done = true;
-      cb(idx[key]);
-    }
-  });
-
-  require(['http://libredocs.org/js/remoteStorage-0.4.3.js'], function(remoteStorage) {
-    getOrFetchStorageInfo(owner, function(err, ownerStorageInfo) {
-      if(err) return; //TODO: might want to record this for debugging
-      var client = remoteStorage.createClient(ownerStorageInfo, 'public');
-      client.get(encodeURIComponent('padInfo:'+link), function(err2, data) {
-        // if(data.movedTo)
-        if(done) return; // got the info from my own doc list.
-        if(err2) {//the callback should deal with a null
-          cb(null);
-        } else {
-          getAndFetch('documents', function(docs) {
-            docs[data.id] = data;
-            setAndPush('documents', docs);
-            index[key] = data.id;
-            setAndPush('index', index);
-            cb(data.id);
-          });
-        }
-      });
+  var index = localGet('index');
+  if(index[key]) { cb(index[key]); return }
+  getRemoteClient(owner, function(client) {
+    client.get(encodeURIComponent('padInfo:'+link), function(err, data) {
+      console.log('fetched public '+link+' from '+owner+':"'+err+'"');
+      // if(data.movedTo)
+      if(err) {//the callback should deal with a null
+        cb(null);
+      } else {
+        saveDocument(data);
+        cb(data.id);
+      }
     });
   });
 }
 
-function publishPadInfo(pad, cb) {
-  var link = pad.link;
-  var key = pad.owner + '$' + pad.link;
-  var index = JSON.parse(localStorage.getItem('index') || '{}')
-  index[key] = pad.id;
-  setAndPush('index', index);
+function publishDocument(doc, cb) {
+  var link = doc.link;
+  var key = doc.owner + '$' + doc.link;
+  var index = localGet('index');
+  index[key] = doc.id;
+  localSet('index', index);
+  pushRemote('index');
 
   var info = {
-    id: pad.id,
-    title: pad.title,
-    owner: pad.owner,
-    link: pad.link
+    id: doc.id,
+    title: doc.title,
+    owner: doc.owner,
+    link: doc.link
   }
   var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
-  require(['http://libredocs.org/js/remoteStorage-0.4.3.js'], function(remoteStorage) {
-    var client = remoteStorage.createClient(sessionObj.storageInfo, 'public', sessionObj.bearerToken);
+  getMyRemoteClient('public', function(client) {
     client.put('padInfo:'+link, info, function(err, data) {
       console.log('pushed info '+info+' for docLink "'+link+'" - '+err+':"'+data+'"');
       cb();
@@ -130,8 +74,82 @@ function publishPadInfo(pad, cb) {
   });
 }
 
+function localGet(key){
+  var local = localStorage.getItem(key);
+  if(local) {
+    local = JSON.parse(local);
+  }
+  return local;
+}
+
+function localSet(key,value){
+  localStorage.setItem(key, JSON.stringify(value));
+  timestamps = JSON.parse(localStorage.getItem('_timestamps')||'{}')
+  timestamps[key] = new Date().getTime();
+  localStorage.setItem('_timestamps', JSON.stringify(timestamps));
+}
+
+function pullRemote(key, cb){
+  getMyRemoteClient('documents', function (client) {
+    client.get(key, function(err, data) {
+      console.log('fetched '+key+' - '+err+':"'+data+'"');
+      // 404 - no remote record - nothing to pull
+      // 500 - ups - can't do anything about that
+      if(err) { cb(err); return; }
+      // merge both records
+      var local = localGet(key);
+      for (var i in local) { data[i] = data[i] || local[i]; }
+      localSet(key, data);
+      cb(null); //this is synced
+    });
+  });
+}
+
+function pushRemote(key, cb){
+  getMyRemoteClient('documents', function (client) {
+    client.put(key, localGet(key), function(err, data) {
+      if(err==409){
+        console.log('outdated rev for '+key+' getting new one');
+        async.series([
+          function(callback) { pullRemote(key, callback) }, // this will merge
+          function(callback) { pushRemote(key, callback) }
+        ], cb);
+      } else {
+        console.log('pushed '+key+' - '+err+':"'+data+'"');
+        if(cb) cb();
+      }
+    });
+  });
+}
+
+function isRecent(key, time){
+  timestamps = JSON.parse(localStorage.getItem('_timestamps')||'{}')
+  if(!timestamps[key]) return false;
+  now = new Date().getTime();
+  return now - timestamps[key] < (time || 60000);
+}
+
+function getMyRemoteClient(category, cb){
+  if(!currentUser()) return;
+  var sessionObj = localGet('sessionObj');
+  require(['http://libredocs.org/js/remoteStorage-0.4.3.js'], function(remoteStorage) {
+    var client = remoteStorage.createClient(sessionObj.storageInfo, category, sessionObj.bearerToken);
+    cb(client)
+  });
+}
+
+function getRemoteClient(owner, cb){
+  require(['http://libredocs.org/js/remoteStorage-0.4.3.js'], function(remoteStorage) {
+    getOrFetchStorageInfo(owner, function(err, ownerStorageInfo) {
+      if(err) return; //TODO: might want to record this for debugging
+      var client = remoteStorage.createClient(ownerStorageInfo, 'public');
+      cb(client);
+    });
+  });
+}
+
 function getOrFetchStorageInfo(user, cb) {
-  var storageOwners = JSON.parse(localStorage.getItem('storageOwners') || '{}');
+  var storageOwners = localGet('storageOwners') || '{}';
   if(storageOwners[user]) {
     cb(null, storageOwners[user]);
     return;
@@ -145,105 +163,3 @@ function getOrFetchStorageInfo(user, cb) {
   });
 }
 
-function syncAndAdd(table, key, value, cb) {
-  getAndFetch(table, function(recs) {
-    recs[key] = value;
-    setAndPush(table, recs, cb);
-  });
-}
-
-function getAndFetch(key, cb){
-  var local = localStorage.getItem(key);
-  if(local) {
-    local = JSON.parse(local);
-    cb(local);
-  }
-  if(isRecent(key)) return;
-  if(!hasBeenUpdated(key)) return;
-  fetchRemote(key, function(err, value){
-    // merge both records
-    for (var i in local) { value[i] = value[i] || local[i]; }
-    storeAndCallback(key, err, value, cb);
-  });
-}
-
-function getOrFetchPublic(key, cb){
-  var local = localStorage.getItem(key);
-  if(local) {
-    local = JSON.parse(local);
-    cb(local);
-    return;
-  }
-  fetchPublicRemote(key, function(err, value){
-    storeAndCallback(key, err, value, cb);
-  });
-}
-
-function storeAndCallback(key, err, value, cb){
-  if(!err) {
-    localStorage.setItem(key, JSON.stringify(value));
-    timestamps = JSON.parse(localStorage.getItem('_timestamps')||'{}')
-    timestamps[key] = new Date().getTime();
-    localStorage.setItem('_timestamps', JSON.stringify(timestamps));
-    cb(value);
-  } else {
-    if(err==404) {
-      cb(null);
-    }
-  }
-}
-
-function isRecent(key, time){
-  timestamps = JSON.parse(localStorage.getItem('_timestamps')||'{}')
-  if(!timestamps[key]) return false;
-  now = new Date().getTime();
-  return now - timestamps[key] < (time || 60000);
-}
-
-function hasBeenUpdated(key, time){
-  return true;
-}
-
-function setAndPush(key, value, cb){
-  localStorage.setItem(key, JSON.stringify(value));
-  timestamps = JSON.parse(localStorage.getItem('_timestamps')||'{}')
-  timestamps[key] = new Date().getTime();
-  localStorage.setItem('_timestamps', JSON.stringify(timestamps));
-  pushRemote(key, value, cb);
-}
-
-function fetchRemote(key, cb){
-  if(!currentUser()) return;
-  var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
-  require(['http://libredocs.org/js/remoteStorage-0.4.3.js'], function(remoteStorage) {
-    var client = remoteStorage.createClient(sessionObj.storageInfo, 'documents', sessionObj.bearerToken);
-    client.get(key, function(err, data) {
-      console.log('fetched '+key+' - '+err+':"'+data+'"');
-      cb(err, data);
-    });
-  });
-}
-
-function fetchPublicRemote(key, cb){
-  if(!currentUser()) return;
-  var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
-  require(['http://libredocs.org/js/remoteStorage-0.4.3.js'], function(remoteStorage) {
-    var client = remoteStorage.createClient(sessionObj.storageInfo, 'public');
-    client.get(key, function(err, data) {
-      console.log('fetched public '+key+' - '+err+':"'+data+'"');
-      cb(err, data);
-    });
-  });
-}
-
-function pushRemote(key, value, cb){
-  if(!currentUser()) return;
-  var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
-  require(['http://libredocs.org/js/remoteStorage-0.4.3.js'], function(remoteStorage) {
-    var client = remoteStorage.createClient(sessionObj.storageInfo, 'documents', sessionObj.bearerToken);
-    client.put(key, value, function(err, data) {
-      console.log('pushed '+key+' - '+err+':"'+data+'"');
-      if(cb) cb();
-    });
-  });
-}
