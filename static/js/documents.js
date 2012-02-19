@@ -82,11 +82,14 @@ define(function() {
       }
     }
 
+
+
     function myDocumentRow(doc) {
       return $('<li id="'+doc.id+'" class="mine" style="display:none">'
         + ' <strong class="docTitle">'+doc.title+'</strong>'
         + ' <input class="editTitle" type="text" value="'+doc.title+'" style="display:none;" />'
         + ' <span class="preview" id="'+doc.link+'-preview"></span>'
+        + downloadLink(doc)
         + ' <time datetime="'+new Date(doc.timestamp).toLocaleString()+'"></time>'
         + ' <a class="btn share" href="#" rel="popover" title="Share this link" data-content="<a href=\''+shareDoc(doc.id)+'\'>'+shareDoc(doc.id)+'</a>"><i class="icon-share-alt"></i> Share</a>'
         + ' <div class="editor" id="'+doc.link+'-edit" style="display:none;"></div>'
@@ -101,6 +104,11 @@ define(function() {
         + ' <a class="btn share" href="#" rel="popover" title="Share this link" data-content="<a href=\''+shareDoc(doc.id)+'\'>'+shareDoc(doc.id)+'</a>"><i class="icon-share-alt"></i> Share</a>'
         + ' <div class="editor" style="display:none;"></div>'
         + '</li>');
+    }
+
+    function downloadLink(doc) {
+      if(!doc.data) return "";
+      return '<a href="'+doc.data+'">download</a>';
     }
 
     function renderDocumentPreview(doc) {

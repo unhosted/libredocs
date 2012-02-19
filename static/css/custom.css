@@ -38,6 +38,12 @@ h1+small { float:right; position:relative; top:-2em; right:0em; }
 .progress .bar { height:3.5em; }
 .progress .bar p { padding:.7em; display:inline; position:absolute; }
 
+.box { margin-left:.7em; padding-left:2em; height: 2em; width: 11em; border: dotted 3px gray; border-radius: 5px; float: left; font-size:1.3em;}
+.box.hover { margin-left:.7em; padding-left:2em; height: 2em; width: 11em; border: dotted 3px black; border-radius: 5px; float: left; font-size:1.3em;}
+#newbox { background:url('../images/plus.png') no-repeat left;}
+#dropbox { background:url('../images/down_arrow.png') no-repeat left;}
+#trashbox { background:url('../images/trash.png') no-repeat left;}
+ul#doclist { margin:-20px; font-size:1.3em; list-style:none; clear:both; }
 ul#doclist, #new-document { margin-left:-20px; font-size:1.3em; cursor:pointer; list-style:none; }
 #new-document { padding:1em; margin-top:-20px; width:101.1%; }
 ul#doclist #loadingdocs { background:url('../images/loading.gif') no-repeat left; margin-left:.7em; padding-left:1.2em; }
