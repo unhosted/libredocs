@@ -18,7 +18,7 @@ define(function() {
       var row = documentRow(doc);
       var time = row.find('time');
       row.appendTo('#doclist');
-      fetchDocument(doc.id, renderDocumentPreview);
+      if (!doc.data) fetchDocument(doc.id, renderDocumentPreview);
       time.text(relativeModifiedDate(doc.timestamp));
       time.attr('style', modifiedDateColor(doc.timestamp));
       time.attr('title',new Date(doc.timestamp).toLocaleString());
