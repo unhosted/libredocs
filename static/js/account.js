@@ -1,5 +1,8 @@
 //deal with legacy accounts and anonymous users:
 (function() {
+  // make sure we throw no errors in old browsers
+  if(!window.localStorage) return;
+
   localStorage.documents = localStorage.documents || '{}';
   localStorage.index = localStorage.index || '{}';
   if(!currentUser()) return;
