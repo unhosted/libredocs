@@ -7,10 +7,12 @@ exports.config = {
     'libredoc.org': 'http://libredocs.org'
   },
   host: {
-    'libredocs.org': '/static'
+    'libredocs.org': '/static',
+    'libredocs.local': '/static'
   },
   handler: {
-    'proxy.libredocs.org': './proxy'
+    'proxy.libredocs.org': './proxy',
+    'proxy.libredocs.local': './proxy'
   },
   pathHandler: {
     'libredocs.org/users': './users',
@@ -19,6 +21,13 @@ exports.config = {
     'libredocs.org/provision': './provision',
     'libredocs.org/squat': './squat',
     'libredocs.org/createDb': './createDb',
-    'libredocs.org/setConfig': './setConfig'
+    'libredocs.org/setConfig': './setConfig',
+    'libredocs.local/users': './users',
+    'libredocs.local/useraddress': './useraddress',
+    'libredocs.local/browserid-verifier': './browserid',
+    'libredocs.local/provision': './provision',
+    'libredocs.local/squat': './squat',
+    'libredocs.local/createDb': './createDb',
+    'libredocs.local/setConfig': './setConfig'
   }
 };
