@@ -65,6 +65,7 @@ ul#doclist li:hover a.btn { position:absolute; display:inline; right:1em; top:.5
 #write .page-header { border-bottom:none; }
 
 #error { z-index:1; position:absolute; width:63em; }
+#error #error-webchat { width:100%; height:25em; border:0; }
 
 /* The white background content wrapper */
 .container > .content {
