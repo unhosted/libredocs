@@ -6,7 +6,9 @@ function alertFeature(feature) {
   document.getElementById('error-message').innerHTML += message;
   document.getElementById('error').style.display = 'block';
 }
-(function() {
-  if(!$.support.cors) alertFeature('CORS');
-  if(!window.localStorage) alertFeature('Local Storage');
-})();
+(function($) {
+  $(document).ready(function() {
+    if(!$.support.cors) alertFeature('CORS');
+    if(!window.localStorage) alertFeature('Local Storage');
+  });
+})(jQuery);
