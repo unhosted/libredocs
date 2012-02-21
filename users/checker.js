@@ -21,13 +21,28 @@ exports.handler = (function() {
     });
   }
           initRedis(function() {
-            redisClient.get('dejong.michiel@gmail.com', function(err, data) {
-              console.log('this came from redis:');
-              console.log(err);
-              console.log(data);
+            redisClient.keys('*', function(err, keys) {
+              redisClient.mget(keys, function(err, data) {
+                var states = {}, problems = {}, oks = {}, userNameTries = {};
+                console.log('err:'+err);
+                for(i in data) {
+                  d = JSON.parse(data[i]);
+                  states[d.state] = (states[d.state] || 0) + 1;
+                  problems[d.problem] = (problems[d.problem] || 0) + 1;
+                  oks[d.ok] = (oks[d.ok] || 0) + 1;
+                  userNameTries[d.userNameTry] = (userNameTries[d.userNameTry] || 0) + 1;
+                }
+                var res = {
+                  states: states,
+                  problems: problems,
+                  oks: oks,
+                  userNameTries: userNameTries
+                }
+                console.log(JSON.stringify(res, null, 2));
+              });
               redisClient.quit();
             });
-            console.log('outside redisClient.get');
+            console.log('outside redisClient.keys');
           });
           console.log('outside initRedis');
 })();
