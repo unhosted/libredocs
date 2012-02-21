@@ -26,30 +26,10 @@ DnD.init = function() {
     e.preventDefault();
     var files = e.dataTransfer.files;
      setTimeout(function() {
-      for(var i = 0, f; f=files[i]; i++) {
-        var reader = new FileReader();
-        reader.onload = (function(file) {
-          return function(e) {
-            var time = new Date().getTime();
-            var owner = currentUser();
-            id = owner+'$'+time;
-            var doc = {
-              id: id,
-              title: file.name,
-              link: file.name, //TODO: prevent duplicates and so on.
-              data: e.target.result,
-              type: file.type,
-              owner: owner,
-              timestamp: time
-            };
-            saveDocument(doc, function() {
-              showList(1);
-            });
-          }
-        })(f);
-        reader.readAsDataURL(f);
-      }
-    },1000);
+       async.forEach(files, uploadToDocument, function(err) {
+         showList(1);
+       });
+    },100);
   };
 
   trashbox.ondrop = function(e) {
