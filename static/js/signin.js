@@ -12,6 +12,7 @@ var alertMessage = function(heading, message, debug) {
 }
 var showDebug = function() {
   document.getElementById('error-debug').style.display = 'block';
+  document.getElementById('error-webchat').style.display = 'block';
 }
 remoteStorageClient.on('status', function(status) {
   document.getElementById('signout').innerHTML = (status.userAddress?' '+status.userAddress:'');
