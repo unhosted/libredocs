@@ -343,7 +343,9 @@ var remoteStorageClient = (function() {
     }
     window.addEventListener('message', function(event) {
       if(event.origin == location.protocol +'//'+ location.host) {
-        var sessionObj = JSON.parse(localStorage.sessionObj);
+        if(!sessionObj) {
+          sessionObj = JSON.parse(localStorage.sessionObj);
+        }
         sessionObj.bearerToken = event.data;
         sessionObj.state = 'storing';
         localStorage.sessionObj = JSON.stringify(sessionObj);
