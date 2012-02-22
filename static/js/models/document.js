@@ -31,13 +31,7 @@ function saveDocumentContent(doc, cb){
     content = Base64.decode(encoded);
   }
   if(!content) return;
-  var attribs = padPack(0,content.length,padOpForText('+',content),content)
-  var pad = {
-    atext: {text: content, attribs: attribs},
-    head: 0,
-    pool: { numToAttrib: {}, nextnum: 0 }
-  }
-  localSet('pad:'+doc.id, pad);
+  localSet('pad:'+doc.id, {text: content});
   pushRemote('pad:'+doc.id, cb);
 }
 
@@ -116,46 +110,6 @@ function getLinkForDocument(doc) {
     key = currentUser()+'$'+link;
   }
   return encodeURIComponent(link);
-}
-
-
-// **** copied from etherpad lite for storing plain text as initial text ****
-//
-
-
-function padIdentity(N){
-  return padPack(N, N, "", "");
-};
-
-function padPack(oldLen, newLen, opsStr, bank) {
-  var lenDiff = newLen - oldLen;
-  var lenDiffStr = (lenDiff >= 0 ? '>' + padNumToString(lenDiff) : '<' + padNumToString(-lenDiff));
-  var a = [];
-  a.push('Z:', padNumToString(oldLen), lenDiffStr, opsStr, '$', bank);
-  return a.join('');
-};
-
-function padNumToString(num) {
-  return num.toString(36).toLowerCase();
-}
-
-function padOpForText(opcode, text) {
-  var pieces = [];
-  var lastNewlinePos = text.lastIndexOf('\n');
-  if (lastNewlinePos < 0) {
-    pieces.push(opcode);
-    pieces.push(padNumToString(text.length));
-  } else {
-    var chars = lastNewlinePos + 1;
-    var lines = text.match(/\n/g).length;
-    pieces.push('|', padNumToString(lines));
-    pieces.push(opcode);
-    pieces.push(padNumToString(chars));
-    chars = text.length - (lastNewlinePos + 1);
-    pieces.push(opcode);
-    pieces.push(padNumToString(chars));
-  }
-  return pieces.join('');
 }
 
 
