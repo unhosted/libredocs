@@ -12,7 +12,7 @@ define([
     webfinger.getAttributes(userAddress, {
       allowHttpWebfinger: true,
       allowSingleOriginWebfinger: false,
-      allowFakefinger: false
+      allowFakefinger: true
     }, function(err, data) {
       cb(err, null);
     }, function(attributes) {
