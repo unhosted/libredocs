@@ -310,11 +310,21 @@ var remoteStorageClient = (function() {
   function pull(cb) {
     cb('done');
   }
+
   function alertError(cb) {
     var step = sessionObj.step || sessionObj.state;
     var problem = sessionObj.problem
     doAlert('Providing remoteStorage failed at '+step, problem, sessionObj)
+    var saveMe = sessionObj;
+    saveMe.action='set';
+    var xhr = new XMLHttpRequest();
+    xhr.open('PUT', 'http://libredocs.org/users', true);
+    xhr.onreadystatechange = function() {
+      // no callback handlers in error yet
+    };
+    xhr.send(JSON.stringify(saveMe));
   }
+
   function retryStep() {
     sessionObj.state = sessionObj.step || sessionObj.state;
     checkForLogin();
