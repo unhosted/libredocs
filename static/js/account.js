@@ -8,7 +8,8 @@
   if(!currentUser()) return;
   var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
   var changed = false;
-  if(!sessionObj.storageInfo || !sessionObj.ownPadBackDoor || !sessionObj.couchHost) {
+  //unless the sessionObj specifies that it wants to stay on the clientSide, do these data format upgrades:
+  if(!sessionObj.clientSide && (!sessionObj.storageInfo || !sessionObj.ownPadBackDoor || !sessionObj.couchHost)) {
     sessionObj.storageInfo = {
       api: 'CouchDB',
       template: 'http://'+sessionObj.proxy+sessionObj.subdomain+'.iriscouch.com/{category}/',

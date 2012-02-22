@@ -337,7 +337,9 @@ var remoteStorageClient = (function() {
       sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
     }
     if(sessionObj.storageInfo.auth.indexOf('?') == -1) {
-      window.open(sessionObj.storageInfo.auth+'?redirect_uri=http://libredocs.org/rcvToken.html&scope=documents');
+      window.open(sessionObj.storageInfo.auth
+        +'?redirect_uri='+encodeURIComponent('http://libredocs.org/rcvToken.html')
+        +'&scope='+encodeURIComponent('documents'));
     } else {
       window.open(sessionObj.storageInfo.auth+'&redirect_uri=http://libredocs.org/rcvToken.html&scope=documents');
     }
@@ -347,7 +349,9 @@ var remoteStorageClient = (function() {
           sessionObj = JSON.parse(localStorage.sessionObj);
         }
         sessionObj.bearerToken = event.data;
-        sessionObj.state = 'storing';
+        sessionObj.state = 'ready';
+        sessionObj.proxy = '';
+        sessionObj.clientSide = true;//prevents storing with migration fields in account.js
         localStorage.sessionObj = JSON.stringify(sessionObj);
         document.getElementById('allowButton').style.display='none';
         checkForLogin();
@@ -378,7 +382,7 @@ var remoteStorageClient = (function() {
   }
   function signOut() {
     localStorage.clear();
-    window.location.href = 'welcome.html';
+    indow.location.href = 'welcome.html';
   }
   return {
     on: on,
