@@ -22,7 +22,7 @@ var remoteStorageClient = (function() {
     selfAccess2: { page: 'signin.html', display:'Linking &hellip;', loadingBar:90, action: doSelfAccess2, next:{201: 'selfAccess3'}},
     selfAccess3: { page: 'signin.html', display:'Linking &hellip;', loadingBar:93, action: doSelfAccess3, next:{200: 'storing'}},
     storing: { page: 'signin.html', display:'Saving &hellip;', loadingBar:96, action: doStore, next:{200: 'ready'}},
-    allowRemoteStorage: { page: 'signin.html', loadingBar:60, buttons:['Allow', 'Cancel']},
+    allowRemoteStorage: { page: 'signin.html', loadingBar:60, displayBlock:'allowButton'},
     ready: { page: 'documents.html' },
     error: { page: 'signin.html', display:'Error', action: alertError, buttons:['Sign out']}
   };
@@ -336,7 +336,21 @@ var remoteStorageClient = (function() {
     if(!sessionObj) {
       sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
     }
-    window.open(sessionObj.storageInfo.auth);
+    if(sessionObj.storageInfo.auth.indexOf('?') == -1) {
+      window.open(sessionObj.storageInfo.auth+'?redirect_uri=http://libredocs.org/rcvToken.html&scope=documents');
+    } else {
+      window.open(sessionObj.storageInfo.auth+'&redirect_uri=http://libredocs.org/rcvToken.html&scope=documents');
+    }
+    window.addEventListener('message', function(event) {
+      if(event.origin == location.protocol +'//'+ location.host) {
+        var sessionObj = JSON.parse(localStorage.sessionObj);
+        sessionObj.bearerToken = event.data;
+        sessionObj.state = 'storing';
+        localStorage.sessionObj = JSON.stringify(sessionObj);
+        document.getElementById('allowButton').style.display='none';
+        checkForLogin();
+      }
+    }, false);
   }
   function agree() {
     if(!sessionObj) {

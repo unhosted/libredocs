@@ -1,12 +1,12 @@
 function getClientSideFakeFinger(email) {
   var emailParts = email.split('@');
   if(emailParts.length == 2) {
-    if(['uva.nl', 'surf.unhosted.org'].indexOf(emailParts[1])) {
+    if(['uva.nl', 'unhosted.org', 'surf.unhosted.org'].indexOf(emailParts[1])) {
       return {
         userAddress: email,
         storageInfo: {
           type: 'simple',
-          auth: 'http://surf.unhosted.org:81/saml.php?userId='+email,
+          auth: 'http://surf.unhosted.org:81/saml.php?user_id='+email,
           template: 'http://surf.unhosted.org/'+email+'/{category}/'
         },
         state: 'allowRemoteStorage'

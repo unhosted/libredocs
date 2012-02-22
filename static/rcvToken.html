@@ -1,11 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
   <head>
+    <title>Closing dialog...</title>
     <meta charset="utf-8">
-    <title>Receiving token &hellip;</title>
-    <script src="js/require.js"></script>
+    <script src="http://unhosted.org/require.js"></script>
+    <script>
+      require(['http://unhosted.org/remoteStorage-0.4.2.js'], function(remoteStorage) {
+        window.opener.postMessage(remoteStorage.receiveToken(), location.protocol+'//'+location.host);
+        window.close();
+      });
+    </script>
   </head>
   <body>
-    <p>[under construction] Receiving token &hellip;</p>
+    Closing dialog...
   </body>
 </html>
