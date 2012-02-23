@@ -15,6 +15,7 @@ define(function() {
     sortedByTimestamp(docs, page, per_page, function(doc) {
       fetchDocument(doc.id, renderDocumentPreview);
     });
+    showDocs();
     $('.share').popover({ delay:{show:0, hide:5000} });
     $('.share').popover('hide');
     $('a[rel=popover]').popover().click(function(e) { e.preventDefault(); });
@@ -53,19 +54,21 @@ define(function() {
 
   function myDocumentRow(doc) {
     return '<li id="'+doc.id+'" class="mine">'
-      + '<a class="doclink" onclick="showDoc(\''+doc.id+'\');"><strong>'+doc.title+'</strong>'
-      + ' <span class="preview" id="'+doc.id+'-preview"></span></a>'
+      + '<strong>'+doc.title+'</strong>'
+      + ' <span class="preview" id="'+doc.id+'-preview"></span>'
       + '<span class="date" style="'+modifiedDateColor(doc.timestamp)+'" title="'+new Date(doc.timestamp).toLocaleString()+'">'+relativeModifiedDate(doc.timestamp)+'</span>'
       + '<a class="btn share" href="#" rel="popover" title="Share this link" data-content="<a href=\''+shareDoc(doc.id)+'\'>'+shareDoc(doc.id)+'</a>"><i class="icon-share-alt"></i> Share</a>'
+      + '<div class="editor" style="display:none;"></div>'
       + '</li>';
   }
 
   function sharedDocumentRow(doc) {
     return '<li id="'+doc.id+'" class="shared">'
-      + '<a class="doclink" onclick="showDoc(\''+doc.id+'\');"><strong>'+doc.title+'</strong>'
-      + ' <span class="owner" id="'+doc.id+'-owner">'+doc.owner+'</span></a>'
+      + '<strong>'+doc.title+'</strong>'
+      + ' <span class="owner" id="'+doc.id+'-owner">'+doc.owner+'</span>'
       + '<span class="date" style="'+modifiedDateColor(doc.timestamp)+'" title="'+new Date(doc.timestamp).toLocaleString()+'">'+relativeModifiedDate(doc.timestamp)+'</span>'
       + '<a class="btn share" href="#" rel="popover" title="Share this link" data-content="<a href=\''+shareDoc(doc.id)+'\'>'+shareDoc(doc.id)+'</a>"><i class="icon-share-alt"></i> Share</a>'
+      + '<div class="editor" style="display:none;"></div>'
       + '</li>';
   }
 
@@ -90,9 +93,27 @@ define(function() {
     });
   }
 
-  function showDoc(id) {
-    var docs = localGet('documents');
-    window.location.href = getDocAddress(docs[id]);
+  function showDocs() {
+    $('#doclist li').click(function () {
+      var index = $("#doclist li").index(this);
+      var old = $('#doclist li .editor').first()
+      if(index > 0){
+        old.empty();
+        old.hide();
+        $("#doclist li").first().before(this);
+      } else {
+        // li item is already in the first position
+        // and pad is displayed
+        if(old.find('iframe').length) return;
+      }
+      var editor = $(this).find('.editor')
+      editor.pad({
+        'padId':encodeURIComponent(this.id),
+        'userName':hyphenify(currentUser() || 'unknown'),
+      });
+      editor.show();
+      return;
+    });
   }
 
   function shareDoc(id) {
