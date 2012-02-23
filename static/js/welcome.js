@@ -1,3 +1,4 @@
+var sessionObj;
 function signin() {
   document.getElementById("signin-button").style.display='none';
   document.getElementById("signin-checking").style.display='inline';
@@ -34,11 +35,9 @@ function allow() {
       sessionObj.proxy = '';
       sessionObj.clientSide = true;//prevents storing with migration fields in account.js
       localStorage.sessionObj = JSON.stringify(sessionObj);
-      document.getElementById('allowButton').style.display='none';
-      checkForLogin();
+      window.location = '/signin.html';
     }
   }, false);
-  }
 }
 function couldBeEmail(str) {
   return /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/.test(str);
