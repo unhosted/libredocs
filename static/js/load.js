@@ -1,22 +1,31 @@
 (function($) {
   $(document).ready(function() {
-    loadView();
-    activateLinks();
+    selectView();
   });
 })(jQuery);
 
-function loadView() {
-  // we might be calling this ahead of time.
-  if(!$('#content').length) return;
-  view = history.state.view;
+function selectView() {
+  if(location.pathname.length < 2) {
+    if(localStorage.documents && localStorage.documents.length > 2){
+      loadView('documents');
+    }
+    else { 
+      loadView('welcome');
+    }
+  }
+}
+
+function loadView(view) {
   // we're not dealing with pads yet
   if(view.indexOf('/')!=-1) return;
   if(!$('#'+view).lenght){
     $('#content').load(view+'.html', function(){$('#'+view).show()});
   }
+  getScripts(view, function(script) {
+    script.load();
+  });
 }
 
-function activateLinks() {
-  $('#welcome-menu').click(loadWelcome);
-  $('#documents-menu').click(loadDocuments);
+function getScripts(view, cb) {
+  require(['http://libredocs.org/js/'+view+'.js'], cb);
 }
