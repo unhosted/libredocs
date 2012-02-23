@@ -12,7 +12,33 @@ function signin() {
   });
 }
 function allow() {
-  window.location.href = 'signin.html';
+  if(!sessionObj) {
+    sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
+  }
+  if(sessionObj.storageInfo.auth.indexOf('?') == -1) {
+    window.open(sessionObj.storageInfo.auth
+      +'?redirect_uri='+encodeURIComponent('http://libredocs.org/rcvToken.html')
+      +'&scope='+encodeURIComponent('documents'));
+  } else {
+    window.open(sessionObj.storageInfo.auth
+      +'&redirect_uri='+encodeURIComponent('http://libredocs.org/rcvToken.html')
+      +'&scope='+encodeURIComponent('documents'));
+  }
+  window.addEventListener('message', function(event) {
+    if(event.origin == location.protocol +'//'+ location.host) {
+      if(!sessionObj) {
+        sessionObj = JSON.parse(localStorage.sessionObj);
+      }
+      sessionObj.bearerToken = event.data;
+      sessionObj.state = 'ready';
+      sessionObj.proxy = '';
+      sessionObj.clientSide = true;//prevents storing with migration fields in account.js
+      localStorage.sessionObj = JSON.stringify(sessionObj);
+      document.getElementById('allowButton').style.display='none';
+      checkForLogin();
+    }
+  }, false);
+  }
 }
 function couldBeEmail(str) {
   return /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/.test(str);
