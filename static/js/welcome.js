@@ -40,8 +40,7 @@ if(localStorage.getItem('sessionObj')) {
 }
 document.getElementById('signin-button').onclick = signin;
 document.getElementById('allow-button').onclick = allow;
-document.getElementById('check-button').onclick = checkEmail;
-document.getElementById('check-button').style.display = 'block';
+document.getElementById('email').onkeyup = checkEmail;
 
 (function($) {
   $(document).ready(function() {
