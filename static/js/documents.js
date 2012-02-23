@@ -103,6 +103,8 @@ function sortedByTimestamp(docs, page, count, cb) {
   for(var id in docs) tuples.push([id, docs[id]]);
 
   tuples.sort(function(a,b) {
+    if(!b[1].timestamp) return -1;
+    if(!a[1].timestamp) return 1;
     return b[1].timestamp - a[1].timestamp;
   });
 
