@@ -6,45 +6,45 @@
     <link href="../css/bootstrap.min.css" rel="stylesheet">
     <link href="../css/bootstrap-responsive.min.css" rel="stylesheet">
     <link href="../css/custom.css" rel="stylesheet">
-    <!--[if lt IE 9]>
-    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
     <link rel="shortcut icon" href="../images/cheerleader.svg">
     <link rel="apple-touch-icon" href="../images/cheerleader.svg">
-    <script src="js/redirect.js"></script>
+    <script src="js/init.js"></script>
+    <!-- HEAD -->
   </head>
-  <body id="write">
+  <body>  <!-- can we set an id with js or would it be better to use a class instead? -->
     <div class="container">
-      <div class="content">
-        <div class="page-header">
-          <a href="../documents.html"><img alt="&larr; Back" src="../images/back.svg" /></a>
-          <h1>Document title</h1><small id="signout"></small>
-        </div>
-        <div id="loading" class="progress progress-info progress-striped active">
-          <div class="bar" style="width:80%;"><p>Loading document &hellip;</p></div>
-        </div>
-        <div id="error" class="alert alert-block alert-error fade in" style="display:none;">
-          <h4 id="error-heading" class="alert-heading"></h4>
-          <p id="error-message">&nbsp;</p>
-        </div>
-        <div id="editorPad"></div>
+      <div class="page-header" id="header">
+        <img alt="" src="images/brain.svg" />
+        <img alt="" src="images/document.svg" />
+        <img alt="" src="images/cheerleader.svg" />
+        <h1>Libre Docs <small>alpha</small></h1><small id="signout"></small>
+        <ul id='menu'>
+          <li id='welcome-menu' class='menu-item'>welcome</li>
+          <li id='documents-menu' class='menu-item'>documents</li>
+        </ul>
       </div>
-
+      <div id="error" class="alert alert-block alert-error fade in" style="display:none;">
+        <h4 id="error-heading" class="alert-heading"><!-- ERROR HEAD --></h4>
+        <div id="error-message"><!-- ERROR MESSAGE --></div>
+      </div>
+      <div id="content" class="content">
+        <!-- CONTENT -->
+      </div>
       <footer>
         <p><a href="/">Libre Docs</a> is a <a href="https://github.com/unhosted/libredocs">free software</a> app by <a href="http://unhosted.org">Unhosted</a> for a more open web.</p>
       </footer>
     </div> <!-- /container -->
     <script src="js/require.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="js/load.js"></script>
     <script src="js/ieblock.js"></script>
     <script src="js/features.js"></script>
     <script src="js/async.js"></script>
     <script src="js/account.js"></script>
-    <script src="js/etherpad.js"></script>
     <script src="js/helpers.js"></script>
     <script src="js/models/document.js"></script>
     <script src="js/sync.js"></script>
-    <script src="js/index.js"></script>
     <script src="js/bootstrap.min.js"></script>
+    <!-- SCRIPTS -->
   </body>
 </html>
