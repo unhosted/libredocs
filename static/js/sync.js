@@ -74,11 +74,7 @@ function getRemoteClient(owner, cb){
 
 function getOrFetchStorageInfo(user, cb) {
   var storageOwners = localGet('storageOwners') || {};
-  var sessionObj = JSON.parse(localStorage.sessionObj);
-  var currentUser = sessionObj.userAddress
-  if(!storageOwners[currentUser]) {
-    storageOwners[currentUser] = sessionObj.storageInfo
-  }
+  setOwnStorageInfo();
   if(storageOwners[user]) {
     cb(null, storageOwners[user]);
     return;
@@ -92,3 +88,11 @@ function getOrFetchStorageInfo(user, cb) {
   });
 }
 
+function setOwnStorageInfo() {
+  if(!localStorage.sessionObj) return;
+  var sessionObj = JSON.parse(localStorage.sessionObj);
+  var currentUser = sessionObj.userAddress
+  if(!storageOwners[currentUser]) {
+    storageOwners[currentUser] = sessionObj.storageInfo
+  }
+}
