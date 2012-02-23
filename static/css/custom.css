@@ -20,6 +20,7 @@ body#welcome .content, body#signup .content { height:33em; }
 #steps { position:absolute; top:18.5em; }
 .step, .step.done, .step.done:hover { opacity:.5; position:relative; }
 .step.active, .step:hover { opacity:1; }
+.step.signin #email { margin:4em 0 .5em; }
 .step.remotestorage img, .step.write img { position:relative; left:28%; }
 .step.remotestorage img { margin:3em 0 .5em; }
 .step.write img { margin-top:1em; }
