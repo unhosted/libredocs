@@ -5,8 +5,8 @@ var remoteStorageClient = (function() {
   }
   var sessionObj;
   var sessionStates = {
-    signIn: { page: 'signin.html', display:'Sign in &hellip;', loadingBar:10, action: doSignIn, next:{found:'ready', needsWebfinger:'wf1', needsAllow:'allowRemoteStorage'}},
-    wf1: { page: 'signin.html', display:'Checking &hellip;', loadingBar:20, action: checkWebfinger, next:{needSignup: 'needed', ok: 'allowRemoteStorage'}},
+    signIn: { page: 'signin.html', display:'Sign in &hellip;', loadingBar:10, action: doSignIn, next:{found:'ready', needsWebfinger:'wf1'}},
+    wf1: { page: 'signin.html', display:'Checking &hellip;', loadingBar:20, action: checkWebfinger, next:{needSignup: 'needed'}},
     needed: { page: 'signin.html', display:'', displayBlock:'easyfreedom-signup'},
     enroll: { page: 'signin.html', display:'Creating account &hellip;', loadingBar:40, displayNone:'easyfreedom-signup', action: enroll, next:{409: 'enroll',201:'pinging'}},
     pinging: { page: 'signin.html', display:'Creating account &hellip;', loadingBar:50, action: doPing, next:{200:'squatting1'}},
@@ -22,7 +22,6 @@ var remoteStorageClient = (function() {
     selfAccess2: { page: 'signin.html', display:'Linking &hellip;', loadingBar:90, action: doSelfAccess2, next:{201: 'selfAccess3'}},
     selfAccess3: { page: 'signin.html', display:'Linking &hellip;', loadingBar:93, action: doSelfAccess3, next:{200: 'storing'}},
     storing: { page: 'signin.html', display:'Saving &hellip;', loadingBar:96, action: doStore, next:{200: 'ready'}},
-    allowRemoteStorage: { page: 'signin.html', loadingBar:60, displayBlock:'allowButton'},
     ready: { page: 'documents.html' },
     error: { page: 'signin.html', display:'Error', action: alertError, buttons:['Sign out']}
   };
@@ -372,7 +371,6 @@ var remoteStorageClient = (function() {
     on: on,
     signIn: signIn,
     checkForLogin: checkForLogin,
-    allow: allow,
     agree: agree,
     signOut: signOut,
     retryStep: retryStep,
