@@ -10,16 +10,17 @@ define(function() {
       sortedByTimestamp(docs, page, renderDocument);
       appendPagination(page, lengthOf(docs));
       setSyncState(synced);
-      addClickHandlers();
-      addPopover();
     }
 
     function emptyDocuments() {
+      $('#doclist li').off('click');
       $('#doclist').empty();
     }
 
     function renderDocument(doc) {
-      $('#doclist').append(documentRow(doc));
+      var row = documentRow(doc);
+      row.appendTo('#doclist');
+      row.click(showDocument);
       fetchDocument(doc.id, renderDocumentPreview);
     }
 
@@ -28,11 +29,10 @@ define(function() {
     }
 
     function setSyncState(synced) {
-      if(!synced) $('#doclist').append(loadingRow())
+      if(!synced) $('#doclist').append(loadingRow());
     }
 
     function addClickHandlers() {
-      $('#doclist li').click(showDocument);
       $('#new-document').click(newDocument);
       $('#previous-page').click(previousPage);
       $('#next-page').click(nextPage);
@@ -55,11 +55,16 @@ define(function() {
       var current = parseInt(parent_id.substr(5));
       showList(current+1);
     }
-    
+
     function showList(page) {
-      fetchDocuments( function(docs, synced) {
-        listDocuments(docs, synced, page);
-      });
+      listDocuments(localGet('documents'), isRecent('documents'), page);
+      addClickHandlers();
+      addPopover();
+      if(!isRecent('documents')) {
+        pullRemote('documents', function(err){
+          if(!err) listDocuments(localGet('documents'), true, page);
+        });
+      }
     }
 
     function documentRow(doc) {
@@ -67,43 +72,40 @@ define(function() {
     }
 
     function loadingRow() {
-      return '<li><strong id="loadingdocs">Loading documents &hellip;</strong></li>'
+      return $('<li><strong id="loadingdocs">Loading documents &hellip;</strong></li>');
     }
 
     function paginationRow(page, total) {
       page = page || 1;
       if(total < per_page) return '';
-      var str = '<li id="page-'+page+'">\n';
+      var li = $('<li id="page-'+page+'">\n</li>');
       if(page != 1) {
-        str += '<span id="previous-page">newer documents</span>\n';
-          //onclick="showList('+(page-1)+');" style="float:left;"
+        li.append('<span id="previous-page">newer documents</span>\n');
       }
       if(page*per_page < total) {
-        str += '<span id="next-page">older documents</span>\n';
-          //onclick="showList('+(page+1)+');" style="float:right;"
+        li.append('<span id="next-page">older documents</span>\n');
       }
-      str += '</li>\n';
-      return str;
+      return li;
     }
 
     function myDocumentRow(doc) {
-      return '<li id="'+doc.id+'" class="mine">'
+      return $('<li id="'+doc.id+'" class="mine">'
         + '<strong>'+doc.title+'</strong>'
         + ' <span class="preview" id="'+doc.id+'-preview"></span>'
         + '<span class="date" style="'+modifiedDateColor(doc.timestamp)+'" title="'+new Date(doc.timestamp).toLocaleString()+'">'+relativeModifiedDate(doc.timestamp)+'</span>'
         + '<a class="btn share" href="#" rel="popover" title="Share this link" data-content="<a href=\''+shareDoc(doc.id)+'\'>'+shareDoc(doc.id)+'</a>"><i class="icon-share-alt"></i> Share</a>'
         + '<div class="editor" style="display:none;"></div>'
-        + '</li>';
+        + '</li>');
     }
 
     function sharedDocumentRow(doc) {
-      return '<li id="'+doc.id+'" class="shared">'
+      return $('<li id="'+doc.id+'" class="shared">'
         + '<strong>'+doc.title+'</strong>'
         + ' <span class="owner" id="'+doc.id+'-owner">'+doc.owner+'</span>'
         + '<span class="date" style="'+modifiedDateColor(doc.timestamp)+'" title="'+new Date(doc.timestamp).toLocaleString()+'">'+relativeModifiedDate(doc.timestamp)+'</span>'
         + '<a class="btn share" href="#" rel="popover" title="Share this link" data-content="<a href=\''+shareDoc(doc.id)+'\'>'+shareDoc(doc.id)+'</a>"><i class="icon-share-alt"></i> Share</a>'
         + '<div class="editor" style="display:none;"></div>'
-        + '</li>';
+        + '</li>');
     }
 
     function renderDocumentPreview(doc) {
@@ -127,13 +129,13 @@ define(function() {
     }
 
     var showDocument = function(e) {
-      var li = e.target;
+      var li = e.currentTarget;
       var index = $("#doclist li").index(li);
       var old = $('#doclist li .editor').first();
       if(index > 0){
         old.empty();
         old.hide();
-        $("#doclist li").first().before(li);
+        $(li).prependTo("#doclist");
       } else {
         // li item is already in the first position
         // and pad is displayed
