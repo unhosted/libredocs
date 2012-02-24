@@ -18,8 +18,12 @@ define(function() {
 
     function renderDocument(doc) {
       var row = documentRow(doc);
+      var time = row.find('time');
       row.appendTo('#doclist');
       fetchDocument(doc.id, renderDocumentPreview);
+      time.text(relativeModifiedDate(doc.timestamp));
+      time.attr('style', modifiedDateColor(doc.timestamp));
+      time.attr('title',new Date(doc.timestamp).toLocaleString());
     }
 
     function appendPagination(page, total) {
@@ -91,27 +95,28 @@ define(function() {
 
     function myDocumentRow(doc) {
       return $('<li id="'+doc.id+'" class="mine">'
-        + '<strong class="docTitle">'+doc.title+'</strong>'
+        + ' <strong class="docTitle">'+doc.title+'</strong>'
         + ' <span class="preview" id="'+doc.id+'-preview"></span>'
-        + '<span class="date" style="'+modifiedDateColor(doc.timestamp)+'" title="'+new Date(doc.timestamp).toLocaleString()+'">'+relativeModifiedDate(doc.timestamp)+'</span>'
-        + '<a class="btn share" href="#" rel="popover" title="Share this link" data-content="<a href=\''+shareDoc(doc.id)+'\'>'+shareDoc(doc.id)+'</a>"><i class="icon-share-alt"></i> Share</a>'
-        + '<div class="editor" style="display:none;"></div>'
+        + ' <time datetime="'+new Date(doc.timestamp).toLocaleString()+'"></time>'
+        + ' <a class="btn share" href="#" rel="popover" title="Share this link" data-content="<a href=\''+shareDoc(doc.id)+'\'>'+shareDoc(doc.id)+'</a>"><i class="icon-share-alt"></i> Share</a>'
+        + ' <div class="editor" style="display:none;"></div>'
         + '</li>');
     }
 
     function sharedDocumentRow(doc) {
       return $('<li id="'+doc.id+'" class="shared">'
-        + '<strong class="docTitle">'+doc.title+'</strong>'
+        + ' <strong class="docTitle">'+doc.title+'</strong>'
         + ' <span class="owner" id="'+doc.id+'-owner">'+doc.owner+'</span>'
-        + '<span class="date" style="'+modifiedDateColor(doc.timestamp)+'" title="'+new Date(doc.timestamp).toLocaleString()+'">'+relativeModifiedDate(doc.timestamp)+'</span>'
-        + '<a class="btn share" href="#" rel="popover" title="Share this link" data-content="<a href=\''+shareDoc(doc.id)+'\'>'+shareDoc(doc.id)+'</a>"><i class="icon-share-alt"></i> Share</a>'
-        + '<div class="editor" style="display:none;"></div>'
+        + ' <time datetime="'+new Date(doc.timestamp).toLocaleString()+'"></time>'
+        + ' <a class="btn share" href="#" rel="popover" title="Share this link" data-content="<a href=\''+shareDoc(doc.id)+'\'>'+shareDoc(doc.id)+'</a>"><i class="icon-share-alt"></i> Share</a>'
+        + ' <div class="editor" style="display:none;"></div>'
         + '</li>');
     }
 
     function renderDocumentPreview(doc) {
       if(!doc.atext) return;
-      document.getElementById(doc.id+'-preview').innerHTML = truncate(doc.atext.text);
+      var li = $(document.getElementById(doc.id));
+      li.find('.preview').html(truncate(doc.atext.text));
     }
 
     var newDocument = function(e) {
@@ -133,23 +138,21 @@ define(function() {
       var li = $(e.currentTarget);
       var index = $("#doclist li").index(li);
       var old = $('#doclist li').first();
-      var documents = localGet('documents');
       var id = li.attr('id');
 
       if(index > 0){
         old.find('#editor').empty().hide();
         old.removeClass('active')
+        updateTime(old.attr('id'));
         li.prependTo("#doclist");
       } else {
         // li item is already in the first position
         // and pad is displayed
         if(old.find('iframe').length) return;
       }
-
-      documents[id].timestamp = new Date().getTime();
-      localSet('documents', documents);
-
+      updateTime(id);
       li.addClass('active')
+      var time = li.find('time');
       var editor = li.find('.editor');
       editor.pad({
         'padId':encodeURIComponent(id),
@@ -157,6 +160,19 @@ define(function() {
       });
       editor.show();
       return;
+    }
+
+    function updateTime(id){
+      var li = $(document.getElementById(id));
+      var time = li.find('time');
+      var now = new Date().getTime();
+      var documents = localGet('documents')
+      documents[id].timestamp = now;
+      localSet('documents', documents);
+      time.attr('datetime',now.toLocaleString());
+      time.text(relativeModifiedDate(now));
+      time.attr('style', modifiedDateColor(now));
+      time.attr('title', now.toLocaleString());
     }
 
     var editingDocTitle;
