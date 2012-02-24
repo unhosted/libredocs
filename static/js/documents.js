@@ -5,7 +5,6 @@ define(function() {
     page = page || 1;
     per_page = 5; // TODO: this should be a constant somewhere
     var str = '';
-    str += newDocumentRow();
     sortedByTimestamp(docs, page, per_page, function(doc) {
       str += documentRow(doc);
     });
@@ -16,6 +15,7 @@ define(function() {
       fetchDocument(doc.id, renderDocumentPreview);
     });
     showDocs();
+    newDoc();
     $('.share').popover({ delay:{show:0, hide:5000} });
     $('.share').popover('hide');
     $('a[rel=popover]').popover().click(function(e) { e.preventDefault(); });
@@ -25,10 +25,6 @@ define(function() {
     fetchDocuments( function(docs, synced) {
       listDocuments(docs, synced, page);
     });
-  }
-
-  function newDocumentRow() {
-    return '<li onclick="newDoc();"><strong>+ New document</strong></li>';
   }
 
   function documentRow(doc) {
@@ -78,18 +74,20 @@ define(function() {
   }
 
   function newDoc() {
-    var time = new Date().getTime();
-    var owner = currentUser();
-    id = owner+'$'+time;
-    var doc = {
-      id: id,
-      title: 'New document',
-      link: time,
-      owner: owner,
-      timestamp: time
-    };
-    saveDocument(doc, function() {
-      window.location.href = getDocAddress(doc);
+    $('#new-document').click(function () {
+      var time = new Date().getTime();
+      var owner = currentUser();
+      id = owner+'$'+time;
+      var doc = {
+        id: id,
+        title: 'New document',
+        link: time,
+        owner: owner,
+        timestamp: time
+      };
+      saveDocument(doc, function() { 
+        $('#doclist').prepend(myDocumentRow(doc));
+      });
     });
   }
 

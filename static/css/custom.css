@@ -39,13 +39,11 @@ body#welcome .content, body#signup .content { height:33em; }
 .progress .bar { height:3.5em; }
 .progress .bar p { padding:.7em; display:inline; position:absolute; }
 
-ul#doclist { margin:-20px; font-size:1.3em; list-style:none; }
+#new-document { font-size: 1.3em;  } 
+ul#doclist { margin-left:-20px; font-size:1.3em; list-style:none; }
 ul#doclist #loadingdocs { background:url('../images/loading.gif') no-repeat left; margin-left:.7em; padding-left:1.2em; }
 ul#doclist li { padding:.7em 0; border:none; white-space:nowrap; position:relative; }
 ul#doclist li:hover { background:#f8f8f8; }
-ul#doclist li:first-child { padding-top:1em; border-bottom:1px solid #eee; cursor:pointer; }
-ul#doclist li:first-child strong { color:#666; padding-left:1em; }
-ul#doclist li:first-child:hover strong { color:#000; }
 ul#doclist li:last-child { height:1.5em; }
 ul#doclist li .doclink { cursor:pointer; text-decoration:none; }
 ul#doclist strong { color:#000; padding:.7em 0 .7em 1.8em; }
