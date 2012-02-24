@@ -6,6 +6,40 @@ exports.handler = (function() {
   function checkToken(userAddress, token, cb) {
     cb();
   }
+  function doProvision(data, cb) {
+    var authStr = irisCouchProvisioning.usr + ':' + irisCouchProvisioning.pwd;
+    console.log(authStr);
+    var options = {
+      host: irisCouchProvisioning.host,
+      port: 443,
+      path: irisCouchProvisioning.path,
+      method: 'POST', 
+      headers: {
+        'Authorization': 'Basic ' + new Buffer(authStr).toString('base64'),
+        'Content-Type': 'application/json'
+      }
+    };
+    console.log(options);
+    var request = https.request(options, function(response) {
+      console.log('STATUS: ' + response.statusCode);
+      console.log('HEADERS: ' + JSON.stringify(response.headers));
+      response.setEncoding('utf8');
+      var resStr = '';
+      response.on('data', function (chunk) {
+        resStr += chunk;
+        console.log('BODY: ' + chunk);
+      });
+      response.on('end', function() {
+        console.log('END');
+        cb(response.statusCode, response.headers, resStr);
+      });
+    });
+    console.log('writing to the request');
+    request.write(data);
+    console.log('ending the request');
+    request.end();
+    console.log('setting request.on(\'response\', ...)');
+  });
   function serve(req, res, baseDir) {
     var dataStr = '';
     req.on('data', function(chunk) {
@@ -14,43 +48,8 @@ exports.handler = (function() {
     req.on('end', function() {
       var incoming = JSON.parse(dataStr);
       console.log(incoming);
-      postData = {
-        audience: 'http://libredocs.org',
-        assertion: incoming.browserIdAssertion
-      };
       console.log(postData);
       checkToken(incoming.userAddress, incoming.token, function() {
-        var authStr = irisCouchProvisioning.usr + ':' + irisCouchProvisioning.pwd;
-        console.log(authStr);
-        var options = {
-          host: irisCouchProvisioning.host,
-          port: 443,
-          path: irisCouchProvisioning.path,
-          method: 'POST', 
-          headers: {
-            'Authorization': 'Basic ' + new Buffer(authStr).toString('base64'),
-            'Content-Type': 'application/json'
-          }
-        };
-        console.log(options);
-        var request = https.request(options, function(response) {
-          console.log('STATUS: ' + response.statusCode);
-          console.log('HEADERS: ' + JSON.stringify(response.headers));
-          response.setEncoding('utf8');
-          var resStr = '';
-          response.on('data', function (chunk) {
-            resStr += chunk;
-            console.log('BODY: ' + chunk);
-          });
-          response.on('end', function() {
-            console.log('END');
-            res.writeHead(response.statusCode, response.headers);
-            res.write(resStr);
-            res.end();
-          });
-        });
-        console.log('writing to the request');
-
         var data = JSON.stringify({
           _id: 'Server/'+incoming.userName,
           partner: 'unhosted',
@@ -62,10 +61,11 @@ exports.handler = (function() {
           }
         });
         console.log(data);
-        request.write(data);
-        console.log('ending the request');
-        request.end();
-        console.log('setting request.on(\'response\', ...)');
+        doProvision(data, function(statusCode, headers, body) {
+          res.writeHead(statusCode, headers);
+          res.write(body);
+          res.end();
+        });
       });
     });
   }
