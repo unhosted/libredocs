@@ -122,9 +122,8 @@ define(function() {
         owner: owner,
         timestamp: time
       };
-      saveDocument(doc, function() { 
-        $('#doclist').prepend(myDocumentRow(doc));
-      });
+      saveDocument(doc);
+      $('#doclist').prepend(myDocumentRow(doc));
     }
 
     var showDocument = function(e) {
