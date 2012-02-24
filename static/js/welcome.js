@@ -5,7 +5,7 @@ function signin() {
   var email = document.getElementById('email').value;
   navigator.id.get(function(assertion) {
     if(assertion) {
-      remoteStorageClient.signIn('http://libredocs.org', assertion);
+      remoteStorageClient.signIn('http://'+location.host, assertion);
       window.location.href = 'signin.html';
     }
   }, {
@@ -18,11 +18,11 @@ function allow() {
   }
   if(sessionObj.storageInfo.auth.indexOf('?') == -1) {
     window.open(sessionObj.storageInfo.auth
-      +'?redirect_uri='+encodeURIComponent('http://libredocs.org/rcvToken.html')
+      +'?redirect_uri='+encodeURIComponent('http://'+location.host+'/rcvToken.html')
       +'&scope='+encodeURIComponent('documents'));
   } else {
     window.open(sessionObj.storageInfo.auth
-      +'&redirect_uri='+encodeURIComponent('http://libredocs.org/rcvToken.html')
+      +'&redirect_uri='+encodeURIComponent('http://'+location.host+'/rcvToken.html')
       +'&scope='+encodeURIComponent('documents'));
   }
   window.addEventListener('message', function(event) {

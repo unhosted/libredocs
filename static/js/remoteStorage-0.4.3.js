@@ -1,9 +1,9 @@
 define([
   'require',
-  'http://libredocs.org/js/lib/ajax-0.4.2.js',
-  'http://libredocs.org/js/lib/couch-0.4.2.js',
-  'http://libredocs.org/js/lib/dav-0.4.2.js',
-  'http://libredocs.org/js/lib/webfinger-0.4.2.js'
+  '/js/lib/ajax-0.4.2.js',
+  '/js/lib/couch-0.4.2.js',
+  '/js/lib/dav-0.4.2.js',
+  '/js/lib/webfinger-0.4.2.js'
 ], function(require, ajax, couch, dav, webfinger) {
   function onError(code, msg) {
     alert(msg);
@@ -34,9 +34,9 @@ define([
   }
   function getDriver(api, cb) {
     if(api == 'CouchDB') {
-      require(['http://libredocs.org/js/lib/couch-0.4.2.js'], cb);
+      require(['/js/lib/couch-0.4.2.js'], cb);
     } else {//'simple', 'WebDAV'
-      require(['http://libredocs.org/js/lib/dav-0.4.2.js'], cb);
+      require(['/js/lib/dav-0.4.2.js'], cb);
     }
   }
   function createClient(storageInfo, category, token) {

@@ -102,7 +102,7 @@ var remoteStorageClient = (function() {
   }
   function doSignIn(cb) {
     var xhr=new XMLHttpRequest();
-    xhr.open('POST', 'http://libredocs.org/users', true);
+    xhr.open('POST', '/users', true);
     xhr.onreadystatechange = function() {
       if(xhr.readyState == 4) {
         var newSessionObj = {};
@@ -115,7 +115,7 @@ var remoteStorageClient = (function() {
         }
         if(sessionObj.ok) {
           //this happens if we have a UserAddress record stored (for webfingerless user addresses)
-          if(oldSessionObj.audience=='http://libredocs.org') {//then the bearerToken is also directly stored in there
+          if(oldSessionObj.audience=='http://'+location.host) {//then the bearerToken is also directly stored in there
             cb('found');
           } else {
             cb('needsAllow');
@@ -137,7 +137,7 @@ var remoteStorageClient = (function() {
     }));
   }
   function checkWebfinger(cb) {
-    require(['http://libredocs.org/js/remoteStorage-0.4.3.js'], function(remoteStorage) {
+    require(['/js/remoteStorage-0.4.3.js'], function(remoteStorage) {
       remoteStorage.getStorageInfo(sessionObj.userAddress, function(err, storageInfo) {
         if(err) {
           cb('needSignup');
@@ -157,7 +157,7 @@ var remoteStorageClient = (function() {
         localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
       } else if(result==201) {
         sessionObj.couchHost = userName+'.iriscouch.com';
-        sessionObj.proxy = 'proxy.libredocs.org/';
+        sessionObj.proxy = 'proxy.'+location.host+'/';
         localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
       }
       cb(result);
@@ -241,7 +241,7 @@ var remoteStorageClient = (function() {
       usr:sessionObj.userAddress,
       pwd:sessionObj.adminPwd
     };
-    pimper.uploadAttachment(putHost, 'cors', 'auth', authStr, 'modal.html', 'http://libredocs.org/modal.html', 'text/html', cb);
+    pimper.uploadAttachment(putHost, 'cors', 'auth', authStr, 'modal.html', '/modal.html', 'text/html', cb);
   }
   function pop3(cb) {
     var couchAddress = sessionObj.couchHost;
@@ -250,7 +250,7 @@ var remoteStorageClient = (function() {
       usr:sessionObj.userAddress,
       pwd:sessionObj.adminPwd
     };
-    pimper.uploadAttachment(putHost, 'cors', 'base64', authStr, 'base64.js', 'http://libredocs.org/js/base64.js', 'application/javascript', cb);
+    pimper.uploadAttachment(putHost, 'cors', 'base64', authStr, 'base64.js', '/js/base64.js', 'application/javascript', cb);
   }
   function pop4(cb) {
     var couchAddress = sessionObj.couchHost;
@@ -259,14 +259,14 @@ var remoteStorageClient = (function() {
       usr:sessionObj.userAddress,
       pwd:sessionObj.adminPwd
     };
-    pimper.uploadAttachment(putHost, 'cors', 'sha1', authStr, 'sha1.js', 'http://libredocs.org/js/sha1.js', 'application/javascript', cb);
+    pimper.uploadAttachment(putHost, 'cors', 'sha1', authStr, 'sha1.js', '/js/sha1.js', 'application/javascript', cb);
   }
   function pop5(cb) {
     var couchAddress = sessionObj.couchHost;
     pimper.setConfig(couchAddress, sessionObj.userAddress, sessionObj.adminPwd, 'browserid', 'enabled', 'true', cb);
   }
   function doSelfAccess1(cb) {
-    pimper.createUser(sessionObj.couchHost, sessionObj.userAddress, sessionObj.adminPwd, 'http___libredocs_org', function(result, token) {
+    pimper.createUser(sessionObj.couchHost, sessionObj.userAddress, sessionObj.adminPwd, 'http___'+location.host.replace(/\./g, '_'), function(result, token) {
       sessionObj.bearerToken = token;
       sessionObj.storageInfo = {
         api: 'CouchDB',
@@ -283,13 +283,13 @@ var remoteStorageClient = (function() {
     pimper.createDb(sessionObj.couchHost, sessionObj.userAddress, sessionObj.adminPwd, 'public', cb);
   }
   function doSelfAccess3(cb) {
-    pimper.giveAccess(sessionObj.couchHost, sessionObj.userAddress, sessionObj.adminPwd, 'documents', 'http___libredocs_org', false, cb);
+    pimper.giveAccess(sessionObj.couchHost, sessionObj.userAddress, sessionObj.adminPwd, 'documents', 'http___'+location.host.replace(/\./g, '_'), false, cb);
   }
   function doStore(cb) {
     sessionObj.action='set';
     sessionObj.ok=true;
     var xhr = new XMLHttpRequest();
-    xhr.open('PUT', 'http://libredocs.org/users', true);
+    xhr.open('PUT', '/users', true);
     xhr.onreadystatechange = function() {
       if(xhr.readyState == 4) {
         cb(xhr.status);
@@ -317,7 +317,7 @@ var remoteStorageClient = (function() {
     var saveMe = sessionObj;
     saveMe.action='set';
     var xhr = new XMLHttpRequest();
-    xhr.open('PUT', 'http://libredocs.org/users', true);
+    xhr.open('PUT', '/users', true);
     xhr.onreadystatechange = function() {
       // no callback handlers in error yet
     };

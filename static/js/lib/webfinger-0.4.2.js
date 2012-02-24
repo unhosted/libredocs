@@ -1,4 +1,4 @@
-define(['http://libredocs.org/js/lib/ajax-0.4.2.js'], function(ajax) {
+define(['/js/lib/ajax-0.4.2.js'], function(ajax) {
 
     ///////////////
    // Webfinger //
@@ -57,7 +57,7 @@ define(['http://libredocs.org/js/lib/ajax-0.4.2.js'], function(ajax) {
     if(options.allowSingleOriginWebfinger) {
       console.log('Trying single origin webfinger through proxy');
       ajax.ajax({
-        url: 'http://proxy.libredocs.org/'+host+'/.well-known/host-meta',
+        url: 'http://proxy.'+location.host+'/'+host+'/.well-known/host-meta',
         success: function(data) {
           afterHostmetaSuccess(data, error, cb);
         },
@@ -74,7 +74,7 @@ define(['http://libredocs.org/js/lib/ajax-0.4.2.js'], function(ajax) {
     if(options.allowFakefinger) {
       console.log('Trying Fakefinger');
       ajax.ajax({
-        url: 'http://libredocs.org/useraddress',
+        url: '/useraddress',
         method: 'POST',
         data: JSON.stringify({
           audience: location.protocol+'//'+location.host,
@@ -103,7 +103,7 @@ define(['http://libredocs.org/js/lib/ajax-0.4.2.js'], function(ajax) {
         error: function(err){
           console.log('trying single-origin lrdd');
           ajax.ajax({
-            url: 'http://proxy.libredocs.org/'+templateParts[0].substring(7)+'acct:'+userAddress+templateParts[1],
+            url: 'http://proxy.'+location.host+'/'+templateParts[0].substring(7)+'acct:'+userAddress+templateParts[1],
             success: function(data) {afterLrddSuccess(data, error, cb);},
             error: function(err){afterLrddNoAcctError(error, cb);}
           });

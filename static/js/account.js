@@ -21,7 +21,7 @@
   }
   if(sessionObj.proxy.indexOf('yourremotestorage.net') != -1)
   {
-    sessionObj.proxy = 'proxy.libredocs.org/';
+    sessionObj.proxy = 'proxy.'+location.host+'/';
     sessionObj.storageInfo.template = 
       'http://' + sessionObj.proxy + sessionObj.couchHost + '/{category}/';
     changed = true;

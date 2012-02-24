@@ -117,7 +117,7 @@ function sortedByTimestamp(docs, page, count, cb) {
 
 function getDocAddress(doc) {
   // the more beautiful links so far only work for ourselves
-  return 'http://libredocs.org/#'+doc.owner+'/'+doc.link;
+  return 'http://'+location.host+'/#'+doc.owner+'/'+doc.link;
 }
 
 document.getElementById('list').setAttribute('onload', 'checkLogin();fetchDocuments(listDocuments);') 

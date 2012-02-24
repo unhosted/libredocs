@@ -1,5 +1,5 @@
 
-define(['http://libredocs.org/js/lib/ajax-0.4.2.js'], function(ajax) {
+define(['/js/lib/ajax-0.4.2.js'], function(ajax) {
     function normalizeKey(key) {
       var i = 0;
       while(i < key.length && key[i] =='u') {
