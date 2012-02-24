@@ -33,7 +33,7 @@ function selectView() {
     return 'documents';
   }
   // documents in local storage
-  if(localStorage.documents && localStorage.documents.length){
+  if(localStorage.documents && localStorage.documents.length < 2){
     return 'documents';
   }
   else { 
