@@ -30,71 +30,67 @@ var remoteStorageClient = (function() {
     if(!sessionObj) {
       sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
     }
-    if(sessionObj) {
-      if(sessionStates[sessionObj.state]) {
-        var fsmInfo = sessionStates[sessionObj.state];
-        if(window.location.pathname.split('/').pop() != fsmInfo.page) {
-          window.location = fsmInfo.page;
-        }
-        if(handlers['status']) {
-          var status = {};
-          if(fsmInfo.display) {
-            status.step = fsmInfo.display;
-          }
-          if(fsmInfo.buttons) {
-            status.buttons = fsmInfo.buttons;
-          }
-          if(fsmInfo.loadingBar) {
-            status.loadingBar = fsmInfo.loadingBar;
-          }
-          if(sessionObj.userAddress) {
-            status.userAddress = sessionObj.userAddress;
-          }
-          handlers['status'](status);
-        }
-        if(fsmInfo.loadingBar) {
-          document.getElementById('easyfreedom-loading').style.display='block';
-          document.getElementById('easyfreedom-loadingbar').style.width=fsmInfo+'%';
-        } else {
-          document.getElementById('easyfreedom-loading').style.display='none';
-        }
-        if(fsmInfo.displayBlock) {
-          document.getElementById(fsmInfo.displayBlock).style.display='block';
-        }
-        if(fsmInfo.displayNone) {
-          document.getElementById(fsmInfo.displayNone).style.display='none';
-        }
-        if(fsmInfo.action) {
-           var t;
-           if(sessionObj.state != 'ready' && sessionObj.state != 'error') {
-             stepToTimeout = sessionObj.state;
-             t = setTimeout(stepTimeout, 20000);
-           }
-           fsmInfo.action(function(result) {
-            if(t) {
-              clearTimeout(t);
-            }
-            console.log('got result "'+result+'" in step "'+sessionObj.state+'".');
-            if(fsmInfo.next && fsmInfo.next[result]) {
-              sessionObj.state = fsmInfo.next[result];
-              localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
-              checkForLogin();
-            } else {
-              if(sessionObj.state != 'ready') {
-                sessionObj.problem = 'no handler for result "'+result+'" in step "'+sessionObj.state+'"';
-                sessionObj.step = sessionObj.state;
-                sessionObj.state = 'error';
-                localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
-                checkForLogin();
-              }
-            }
-          });
-        }
+    if(!sessionObj || !sessionStates[sessionObj.state]) return;
+    var fsmInfo = sessionStates[sessionObj.state];
+    if(window.location.pathname.split('/').pop() != fsmInfo.page) {
+      window.location = fsmInfo.page;
+    }
+    if(handlers['status']) {
+      var status = {};
+      if(fsmInfo.display) {
+        status.step = fsmInfo.display;
       }
+      if(fsmInfo.buttons) {
+        status.buttons = fsmInfo.buttons;
+      }
+      if(fsmInfo.loadingBar) {
+        status.loadingBar = fsmInfo.loadingBar;
+      }
+      if(sessionObj.userAddress) {
+        status.userAddress = sessionObj.userAddress;
+      }
+      handlers['status'](status);
+    }
+    if(fsmInfo.loadingBar) {
+      document.getElementById('easyfreedom-loading').style.display='block';
+      document.getElementById('easyfreedom-loadingbar').style.width=fsmInfo+'%';
     } else {
-      window.location.href = 'welcome.html';
+      document.getElementById('easyfreedom-loading').style.display='none';
+    }
+    if(fsmInfo.displayBlock) {
+      document.getElementById(fsmInfo.displayBlock).style.display='block';
+    }
+    if(fsmInfo.displayNone) {
+      document.getElementById(fsmInfo.displayNone).style.display='none';
+    }
+    if(fsmInfo.action) {
+      var t;
+      if(sessionObj.state != 'ready' && sessionObj.state != 'error') {
+        stepToTimeout = sessionObj.state;
+        t = setTimeout(stepTimeout, 20000);
+      }
+      fsmInfo.action(function(result) {
+        if(t) {
+          clearTimeout(t);
+        }
+        console.log('got result "'+result+'" in step "'+sessionObj.state+'".');
+        if(fsmInfo.next && fsmInfo.next[result]) {
+          sessionObj.state = fsmInfo.next[result];
+          localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
+          checkForLogin();
+        } else {
+          if(sessionObj.state != 'ready') {
+            sessionObj.problem = 'no handler for result "'+result+'" in step "'+sessionObj.state+'"';
+            sessionObj.step = sessionObj.state;
+            sessionObj.state = 'error';
+            localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
+            checkForLogin();
+          }
+        }
+      });
     }
   }
+
   function stepTimeout() {
     if(stepToTimeout) {
       var message = 'Step took to long for "'+sessionObj.userAddress+'".';
@@ -128,7 +124,7 @@ var remoteStorageClient = (function() {
           doAlert('Failed fetching user data from database.',
              'This should not have happened.', xhr);
           localStorage.clear();
-          window.location.href = 'welcome.html';
+          window.location.href = '';
         }
       }
     };
@@ -368,7 +364,7 @@ var remoteStorageClient = (function() {
   }
   function signOut() {
     localStorage.clear();
-    indow.location.href = 'welcome.html';
+    window.location.href = '';
   }
   return {
     on: on,
