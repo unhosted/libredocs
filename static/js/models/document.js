@@ -1,10 +1,3 @@
-function fetchDocuments(cb){
-  cb(localGet('documents'), isRecent('documents'));
-  if(!isRecent('documents')) pullRemote('documents', function(err){
-    if(!err) fetchDocuments(cb);
-  });
-}
-
 // gets the etherpad document - contains text and all.
 function fetchDocument(id, cb){
   if(id.split('$')[0] != currentUser()) return;

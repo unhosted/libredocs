@@ -13,14 +13,12 @@ define(function() {
     }
 
     function emptyDocuments() {
-      $('#doclist li').off('click');
       $('#doclist').empty();
     }
 
     function renderDocument(doc) {
       var row = documentRow(doc);
       row.appendTo('#doclist');
-      row.click(showDocument);
       fetchDocument(doc.id, renderDocumentPreview);
     }
 
@@ -36,6 +34,9 @@ define(function() {
       $('#new-document').click(newDocument);
       $('#previous-page').click(previousPage);
       $('#next-page').click(nextPage);
+      $('#doclist').on('click', 'li', showDocument);
+      $('#doclist').on('mouseenter', 'li.active.mine .docTitle', editTitle);
+      $('#doclist').on('blur', 'li.active.mine .docTitle input', saveTitle);
     }
 
     function addPopover() {
@@ -90,7 +91,7 @@ define(function() {
 
     function myDocumentRow(doc) {
       return $('<li id="'+doc.id+'" class="mine">'
-        + '<strong>'+doc.title+'</strong>'
+        + '<strong class="docTitle">'+doc.title+'</strong>'
         + ' <span class="preview" id="'+doc.id+'-preview"></span>'
         + '<span class="date" style="'+modifiedDateColor(doc.timestamp)+'" title="'+new Date(doc.timestamp).toLocaleString()+'">'+relativeModifiedDate(doc.timestamp)+'</span>'
         + '<a class="btn share" href="#" rel="popover" title="Share this link" data-content="<a href=\''+shareDoc(doc.id)+'\'>'+shareDoc(doc.id)+'</a>"><i class="icon-share-alt"></i> Share</a>'
@@ -100,7 +101,7 @@ define(function() {
 
     function sharedDocumentRow(doc) {
       return $('<li id="'+doc.id+'" class="shared">'
-        + '<strong>'+doc.title+'</strong>'
+        + '<strong class="docTitle">'+doc.title+'</strong>'
         + ' <span class="owner" id="'+doc.id+'-owner">'+doc.owner+'</span>'
         + '<span class="date" style="'+modifiedDateColor(doc.timestamp)+'" title="'+new Date(doc.timestamp).toLocaleString()+'">'+relativeModifiedDate(doc.timestamp)+'</span>'
         + '<a class="btn share" href="#" rel="popover" title="Share this link" data-content="<a href=\''+shareDoc(doc.id)+'\'>'+shareDoc(doc.id)+'</a>"><i class="icon-share-alt"></i> Share</a>'
@@ -129,25 +130,78 @@ define(function() {
     }
 
     var showDocument = function(e) {
-      var li = e.currentTarget;
+      var li = $(e.currentTarget);
       var index = $("#doclist li").index(li);
-      var old = $('#doclist li .editor').first();
+      var old = $('#doclist li').first();
+      var documents = localGet('documents');
+      var id = li.attr('id');
+
       if(index > 0){
-        old.empty();
-        old.hide();
-        $(li).prependTo("#doclist");
+        old.find('#editor').empty().hide();
+        old.removeClass('active')
+        li.prependTo("#doclist");
       } else {
         // li item is already in the first position
         // and pad is displayed
         if(old.find('iframe').length) return;
       }
-      var editor = $(this).find('.editor');
+
+      documents[id].timestamp = new Date().getTime();
+      localSet('documents', documents);
+
+      li.addClass('active')
+      var editor = li.find('.editor');
       editor.pad({
-        'padId':encodeURIComponent(this.id),
+        'padId':encodeURIComponent(id),
         'userName':hyphenify(currentUser() || 'unknown'),
       });
       editor.show();
       return;
+    }
+
+    var editingDocTitle;
+
+    function editTitle(e) {
+      var title = $(e.currentTarget);
+      if(!editingDocTitle) {
+        editingDocTitle = true;
+        var input = $('<input type="text" value="'+title.text()+'" />');
+        title.empty().append(input);
+      }
+    }
+
+    function saveTitle(e) {
+      var input = $(e.currentTarget);
+      var container = input.parent();
+      var li = input.parents('#doclist li').first();
+
+      editingDocTitle = false;
+      doc = localGet('documents')[li.attr('id')];
+      doc.title = input.val();
+      doc.link = linkForDoc(doc);
+      saveDocument(doc);
+      container.html(doc.title);
+      publishDocument(doc, function() {
+        setLocation(doc);
+      });
+    }
+
+    function linkForDoc(doc) {
+      var link = doc.title.replace(/\s+/g, '-');
+      var main = link;
+      var postfix = 0;
+      var key = doc.owner+'$'+link;
+      var index = localGet('index');
+      while(index[key] && index[key] != doc.id) {
+        postfix++;
+        link = main + '-' + postfix;
+        key = doc.owner +'$'+link;
+      }
+      return encodeURIComponent(link);
+    }
+
+    function setLocation(doc) {
+      location.hash = '#'+doc.owner+'/'+doc.link;
     }
 
     function shareDoc(id) {
