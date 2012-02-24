@@ -39,7 +39,7 @@ exports.handler = (function() {
     console.log('ending the request');
     request.end();
     console.log('setting request.on(\'response\', ...)');
-  });
+  }
   function serve(req, res, baseDir) {
     var dataStr = '';
     req.on('data', function(chunk) {
@@ -48,7 +48,6 @@ exports.handler = (function() {
     req.on('end', function() {
       var incoming = JSON.parse(dataStr);
       console.log(incoming);
-      console.log(postData);
       checkToken(incoming.userAddress, incoming.token, function() {
         var data = JSON.stringify({
           _id: 'Server/'+incoming.userName,
