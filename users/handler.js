@@ -205,7 +205,7 @@ exports.handler = (function() {
         console.log('incoming post:');
         console.log(incoming);
         console.log('end of incoming post');
-        if(incoming.audience == 'http://libredocs.org') {
+        if((incoming.audience == 'http://libredocs.org') || (incoming.audience == 'http://mich.libredocs.org')) {
           console.log('Welcome, LibreDocs user');
           serveGet(req, res, {
             audience: incoming.audience,
