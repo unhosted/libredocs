@@ -1,30 +1,26 @@
-        <div id="current-state">
-          <h2>Liberate your ideas</h2>
-          <p><strong>Write online, from anywhere, with your friends.</strong> Easily keep track of your documents instead of being tracked and trapped by the web&apos;s monopolies. We neither store your data nor track you. Libre Docs is only the application &ndash; your data is stored where you want it to be, using the open <a href="http://www.w3.org/community/unhosted/wiki/RemoteStorage">remoteStorage protocol</a>.</p>
+<div id="current-state">
+  <h2>Liberate your ideas</h2>
+  <p><strong>Write online, from anywhere, with your friends.</strong> Easily keep track of your documents instead of being tracked and trapped by the web&apos;s monopolies. We neither store your data nor track you. Libre Docs is only the application &ndash; your data is stored where you want it to be, using the open <a href="http://www.w3.org/community/unhosted/wiki/RemoteStorage">remoteStorage protocol</a>.</p>
+</div>
+<div id="steps" class="row">
+  <div class="span3 step signin active">
+    <input id="email" placeholder="your user address"/><br>
+    <input type="submit" id="signin-button" value="" style="display:none;" />
+    <input type="submit" id="allow-button" value="allow" style="display:none;" />
+    <div id="signin-checking" style="display:none;">Checking &hellip;</div>
+    <h3>1. sign in with BrowserID</h3>
+    <p>We use <a href="http://browserid.org">BrowserID</a>, a great new technology to ease sign in, driven by our friends at <a href="http://mozilla.org">Mozilla</a>. <a href="http://support.mozilla.com/en-US/kb/what-browserid-and-how-does-it-work">Find out more</a>.</p>
+  </div>
 
-        </div>
-        <div id="steps" class="row">
-          <div class="span3 step signin active">
-            <input id="email" placeholder="your user address" autofocus />
-            <input type="submit" id="signin-button" value="" style="display:none;" />
-            <input type="submit" id="allow-button" class="btn-success" value="allow" style="display:none;" />
-            <div id="signin-checking" style="display:none;">Checking &hellip;</div>
-        	  <h3>1. sign in with BrowserID</h3>
-        	  <p>We use <a href="http://browserid.org">BrowserID</a>, a great new technology to ease sign in, driven by our friends at <a href="http://mozilla.org">Mozilla</a>. <a href="http://support.mozilla.com/en-US/kb/what-browserid-and-how-does-it-work">Find out more</a>.</p>
-          </div>
+  <div class="span3 step remotestorage">
+    <img alt="" src="images/iriscouch.png" />
+    <h3>2. get remoteStorage</h3>
+    <p>You&apos;ll get an account at <a href="http://iriscouch.com">Iris Couch</a> to use as your &raquo;<em>home folder for the web</em>&laquo;. We work on making other <a href="https://github.com/unhosted/website/wiki/remoteStorage-providers">storage providers</a> compatible.</p>
+  </div>
 
-          <div class="span3 step remotestorage">
-            <img alt="" src="images/iriscouch.png" />
-            <h3>2. get remoteStorage</h3>
-            <p>You&apos;ll get an account at <a href="http://iriscouch.com">Iris Couch</a> to use as your &raquo;<em>home folder for the web</em>&laquo;. We work on making other <a href="https://github.com/unhosted/website/wiki/remoteStorage-providers">storage providers</a> compatible.</p>
-          </div>
-
-          <div class="span3 step write">
-            <img alt="" src="images/cheerleader.svg" />
-        	<h3>3. write freely!</h3>
-        	<p>Apps are existing open web technologies. Starting out with <a href="http://etherpad.org">Etherpad</a>, soon adding <a href="http://webodf.org">WebODF</a>, <a href="http://code.google.com/p/svg-edit/">SVG-edit</a> and more.</p>
-          </div>
-        </div>
-
-      </div>
-
+  <div class="span3 step write">
+    <img alt="" src="images/cheerleader.svg" />
+    <h3>3. write freely!</h3>
+    <p>Apps are existing open web technologies. Starting out with <a href="http://etherpad.org">Etherpad</a>, soon adding <a href="http://webodf.org">WebODF</a>, <a href="http://code.google.com/p/svg-edit/">SVG-edit</a> and more.</p>
+  </div>
+</div>
