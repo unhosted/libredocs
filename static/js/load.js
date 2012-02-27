@@ -1,13 +1,12 @@
 (function($) {
   $(document).ready(function() {
-    loadView(selectView());
+    load();
   });
 })(jQuery);
 
 
-function loadView(view) {
-  // we're not dealing with pads yet
-  if(view.indexOf('/')!=-1) return;
+function load() {
+  var view = selectView();
   if(!$('#'+view).lenght){
     $('#content').load(view+'.html', function(){loaded(view)});
   }

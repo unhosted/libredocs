@@ -14,16 +14,21 @@
     <script src="js/base64.js"></script>
     <script src="js/sha1.js"></script>
     <script src="js/require.js"></script>
+    <script src="js/init.js"></script>
   </head>
   <body id="signup">
     <div class="container">
-      <div class="content">
-        <div class="page-header" id="header">
-          <img alt="" src="images/brain.svg" />
-          <img alt="" src="images/document.svg" />
-          <img alt="" src="images/cheerleader.svg" />
-          <h1>Libre Docs <small>alpha</small></h1><small id="signout"></small>
-        </div>
+      <div class="page-header" id="header">
+        <img alt="" src="images/brain.svg" />
+        <img alt="" src="images/document.svg" />
+        <img alt="" src="images/cheerleader.svg" />
+        <h1>Libre Docs <small>alpha</small></h1><small id="signout"></small>
+      </div>
+      <div id="error" class="alert alert-block alert-error fade in" style="display:none;">
+        <h4 id="error-heading" class="alert-heading"><!-- ERROR HEAD --></h4>
+        <div id="error-message"><!-- ERROR MESSAGE --></div>
+      </div>
+      <div id="content" class="content">
         <div id="current-state">
           <div id="allowButton" style="display:none;">
             <input type="submit" value="connect Libre Docs <-> your remoteStorage" id="allow-button">
@@ -85,5 +90,6 @@
     <script src="js/signin.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
+    <script src="js/load.js"></script>
   </body>
 </html>

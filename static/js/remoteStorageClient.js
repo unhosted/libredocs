@@ -23,7 +23,7 @@ var remoteStorageClient = (function() {
     selfAccess3: { page: 'signin.html', display:'Linking &hellip;', loadingBar:90, action: doSelfAccess3, next:{201: 'selfAccess4'}},
     selfAccess4: { page: 'signin.html', display:'Linking &hellip;', loadingBar:93, action: doSelfAccess4, next:{200: 'storing'}},
     storing: { page: 'signin.html', display:'Saving &hellip;', loadingBar:96, action: doStore, next:{200: 'ready'}},
-    ready: { page: 'documents.html' },
+    ready: { page: 'signin.html', action: initApp },
     error: { page: 'signin.html', display:'Error', action: alertError, buttons:['Sign out']}
   };
   function checkForLogin() {
@@ -295,6 +295,10 @@ var remoteStorageClient = (function() {
       }
     };
     xhr.send(JSON.stringify(sessionObj));
+  }
+  function initApp(cb) {
+    init();
+    load();
   }
   function doAlert(heading, message, debug) {
     if(typeof alertMessage === 'function'){
