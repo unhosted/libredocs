@@ -32,8 +32,9 @@ function selectView() {
   if(location.pathname.length > 2) {
     return 'documents';
   }
-  // documents in local storage
-  if(localStorage.documents && localStorage.documents.length < 2){
+
+  sessionObj = localStorage.sessionObj;
+  if(sessionObj && JSON.parse(sessionObj).state == 'ready'){
     return 'documents';
   }
   else { 
