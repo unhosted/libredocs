@@ -172,7 +172,7 @@ var remoteStorageClient = (function() {
       cb('error');
     } else {
       pimper.ping(couchHost, proxy, function(result) {
-        if(result==404) {
+        if(result==404 || result=='error') {
           console.log('ping '+counter+'...');
           ping(couchHost, proxy, counter+1, cb);
         } else {
