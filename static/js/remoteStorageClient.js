@@ -7,8 +7,8 @@ var remoteStorageClient = (function() {
   var sessionStates = {
     signIn: { display:'Sign in &hellip;', loadingBar:10, action: doSignIn, next:{found:'ready', needsWebfinger:'wf1'}},
     wf1: { display:'Checking &hellip;', loadingBar:20, action: checkWebfinger, next:{needSignup: 'needed'}},
-    needed: { display:'', displayBlock:'easyfreedom-signup'},
-    enroll: { display:'Creating account &hellip;', loadingBar:40, displayNone:'easyfreedom-signup', action: enroll, next:{409: 'enroll',201:'pinging'}},
+    needed: { display:'', show:'easyfreedom-signup', hide:'intro'},
+    enroll: { display:'Creating account &hellip;', loadingBar:40, show:'intro', hide:'easyfreedom-signup', action: enroll, next:{409: 'enroll',201:'pinging'}},
     pinging: { display:'Creating account &hellip;', loadingBar:50, action: doPing, next:{200:'squatting1'}},
     squatting1: { display:'Creating account &hellip;', loadingBar:60, action: doSquat1, next:{201:'squatting2'}},
     squatting2: { display:'Creating account &hellip;', loadingBar:63, action: doSquat2, next:{200:'createDb'}},
@@ -54,11 +54,11 @@ var remoteStorageClient = (function() {
     } else {
       document.getElementById('easyfreedom-loading').style.display='none';
     }
-    if(fsmInfo.displayBlock) {
-      document.getElementById(fsmInfo.displayBlock).style.display='block';
+    if(fsmInfo.show) {
+      document.getElementById(fsmInfo.show).style.display='block';
     }
-    if(fsmInfo.displayNone) {
-      document.getElementById(fsmInfo.displayNone).style.display='none';
+    if(fsmInfo.hide) {
+      document.getElementById(fsmInfo.hide).style.display='none';
     }
     if(fsmInfo.action) {
       var t;
@@ -362,7 +362,7 @@ var remoteStorageClient = (function() {
       assertion: assertion
     };
     localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
-    checkLogin();
+    checkForLogin();
   }
   function signOut() {
     localStorage.clear();

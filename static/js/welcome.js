@@ -95,7 +95,8 @@ define(function() {
     document.getElementById('signin-button').onclick = signin;
     document.getElementById('allow-button').onclick = allow;
     document.getElementById('email').onkeyup = checkEmail;
-
+    $('#current-state').on('click', '#agree-button', remoteStorageClient.agree);
+    $('#current-state').on('click', '#allow-button', remoteStorageClient.allow);
     $('#signin').tooltip();
     $('.signin').onmouseover=$('#signin').tooltip('show');
   }
