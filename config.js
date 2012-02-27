@@ -25,7 +25,6 @@ exports.config = {
     'libredocs.org/createDb': './createDb',
     'libredocs.org/setConfig': './setConfig',
     'libredocs.local/users': './users',
-    'libredocs.local/useraddress': './useraddress',
     'libredocs.local/browserid-verifier': './browserid',
     'libredocs.local/provision': './provision',
     'libredocs.local/squat': './squat',
