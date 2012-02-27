@@ -249,7 +249,7 @@ define(function() {
     return 'http://+location.host+/#'+doc.owner+'/'+doc.link;
   }
 
-    checkLogin();
+    if(isLoggedIn()) addSignout();
     showList();
   }
 

@@ -32,14 +32,12 @@ function selectView() {
   if(location.pathname.length > 2) {
     return 'documents';
   }
+  return isLoggedIn() ? 'documents' : 'welcome' ;
+}
 
-  sessionObj = localStorage.sessionObj;
-  if(sessionObj && JSON.parse(sessionObj).state == 'ready'){
-    return 'documents';
-  }
-  else { 
-    return 'welcome';
-  }
+function isLoggedIn() {
+  var sessionObj = localStorage.sessionObj;
+  return (sessionObj && JSON.parse(sessionObj).state == 'ready');
 }
 
 function getScripts(view, cb) {

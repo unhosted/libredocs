@@ -33,13 +33,13 @@
   }
 })();
 
-function checkLogin() {
-  var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
-  if(!sessionObj || sessionObj.state != 'ready') {
-    return;
-  }
-  document.getElementById('signout').innerHTML = (sessionObj.userAddress?' '+sessionObj.userAddress:'');
-  document.getElementById('signout').innerHTML += '<a class="btn btn-danger" href="#" onclick="signOut();"><i class="icon-remove icon-white"></i> Sign out</a>';
+function addSignout() {
+  var sessionObj = localGet('sessionObj') || {};
+  var signout = document.getElementById('signout');
+  signout.innerHTML = (sessionObj.userAddress?' '+sessionObj.userAddress:'');
+  signout.innerHTML += '<a class="btn btn-danger" href="#" "><i class="icon-remove icon-white"></i> Sign out</a>';
+  $('#signout').on('click', '.btn', signOut);
+  $('#signout').show();
 }
 
 function signOut() {
