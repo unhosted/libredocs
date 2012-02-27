@@ -20,7 +20,8 @@ var remoteStorageClient = (function() {
     pop5: { page: 'signin.html', display:'Creating database &hellip;', loadingBar:83, action: pop5, next:{200: 'selfAccess1'}},
     selfAccess1: { page: 'signin.html', display:'Linking &hellip;', loadingBar:86, action: doSelfAccess1, next:{201: 'selfAccess2'}},
     selfAccess2: { page: 'signin.html', display:'Linking &hellip;', loadingBar:90, action: doSelfAccess2, next:{201: 'selfAccess3'}},
-    selfAccess3: { page: 'signin.html', display:'Linking &hellip;', loadingBar:93, action: doSelfAccess3, next:{200: 'storing'}},
+    selfAccess3: { page: 'signin.html', display:'Linking &hellip;', loadingBar:90, action: doSelfAccess3, next:{201: 'selfAccess4'}},
+    selfAccess4: { page: 'signin.html', display:'Linking &hellip;', loadingBar:93, action: doSelfAccess4, next:{200: 'storing'}},
     storing: { page: 'signin.html', display:'Saving &hellip;', loadingBar:96, action: doStore, next:{200: 'ready'}},
     ready: { page: 'documents.html' },
     error: { page: 'signin.html', display:'Error', action: alertError, buttons:['Sign out']}
@@ -280,9 +281,11 @@ var remoteStorageClient = (function() {
   }
   function doSelfAccess2(cb) {
     pimper.createDb(sessionObj.couchHost, sessionObj.userAddress, sessionObj.adminPwd, 'documents', cb);
-    pimper.createDb(sessionObj.couchHost, sessionObj.userAddress, sessionObj.adminPwd, 'public', cb);
   }
   function doSelfAccess3(cb) {
+    pimper.createDb(sessionObj.couchHost, sessionObj.userAddress, sessionObj.adminPwd, 'public', cb);
+  }
+  function doSelfAccess4(cb) {
     pimper.giveAccess(sessionObj.couchHost, sessionObj.userAddress, sessionObj.adminPwd, 'documents', 'http___'+location.host.replace(/\./g, '_'), false, cb);
   }
   function doStore(cb) {
