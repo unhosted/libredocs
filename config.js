@@ -18,6 +18,7 @@ exports.config = {
   pathHandler: {
     'libredocs.org/users': './users',
     'libredocs.org/useraddress': './useraddress',
+    'libredocs.org/userExists': './userExists',
     'libredocs.org/browserid-verifier': './browserid',
     'libredocs.org/provision': './provision',
     'libredocs.org/squat': './squat',
