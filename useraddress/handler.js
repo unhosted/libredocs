@@ -17,42 +17,40 @@ exports.handler = (function() {
     redisClient.auth(userDb.pwd, function() {
        console.log('redis auth done');
        //redisClient.stream.on('connect', cb);
-       cb();
+       if(cb) cb();
     });
   }
   function serveGet(req, res, postData) {
-    initRedis(function() {
-      redisClient.get(postData.userAddress, function(err, data) {
-        redisClient.quit();
-        console.log('this came from redis:');
-        console.log(err);
-        console.log(data);
-        try {
-          data = JSON.parse(data);
-        } catch(e) {
-        }
-        if(!data) {
-          data={};
-        }
-        if((!data.storageInfo) && (data.subdomain && data.proxy)) {
-          data.storageInfo = {
-            api: 'CouchDB',
-            template: 'http://'+data.proxy+data.subdomain+'.iriscouch.com/{category}/',
-            auth: 'http://'+data.subdomain + '.iriscouch.com/cors/auth/modal.html'
-          };
-        }
-        headers = {'Access-Control-Allow-Origin': postData.audience};
-        if(data.storageInfo) {
-          res.writeHead(200, headers);
-          res.write(JSON.stringify(data.storageInfo));
-        } else {
-          res.writeHead(404, headers);
-        }
-        res.end();
-      });
-      console.log('outside redisClient.get');
+    initRedis();
+    redisClient.get(postData.userAddress, function(err, data) {
+      console.log('this came from redis:');
+      console.log(err);
+      console.log(data);
+      try {
+        data = JSON.parse(data);
+      } catch(e) {
+      }
+      if(!data) {
+        data={};
+      }
+      if((!data.storageInfo) && (data.subdomain && data.proxy)) {
+        data.storageInfo = {
+          api: 'CouchDB',
+          template: 'http://'+data.proxy+data.subdomain+'.iriscouch.com/{category}/',
+          auth: 'http://'+data.subdomain + '.iriscouch.com/cors/auth/modal.html'
+        };
+      }
+      headers = {'Access-Control-Allow-Origin': postData.audience};
+      if(data.storageInfo) {
+        res.writeHead(200, headers);
+        res.write(JSON.stringify(data.storageInfo));
+      } else {
+        res.writeHead(404, headers);
+      }
+      res.end();
     });
-    console.log('outside initRedis');
+    console.log('outside redisClient.get');
+    redisClient.quit();
   }
 
   function serve(req, res, baseDir) {

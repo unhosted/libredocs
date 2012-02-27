@@ -17,17 +17,16 @@ exports.handler = (function() {
     redisClient.auth(userDb.pwd, function() {
        console.log('redis auth done');
        //redisClient.stream.on('connect', cb);
-       cb();
+       if(cb) cb();
     });
   }
-          initRedis(function() {
-            redisClient.del('user@host', function(err, data) {
-              console.log('this came from redis:');
-              console.log(err);
-              console.log(data);
-              redisClient.quit();
-            });
-            console.log('outside redisClient.get');
-          });
-          console.log('outside initRedis');
+
+  initRedis();
+  redisClient.del('user@host', function(err, data) {
+    console.log('this came from redis:');
+    console.log(err);
+    console.log(data);
+  });
+  console.log('outside redisClient.get');
+  redisClient.quit();
 })();

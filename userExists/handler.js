@@ -17,29 +17,27 @@ exports.handler = (function() {
     redisClient.auth(userDb.pwd, function() {
        console.log('redis auth done');
        //redisClient.stream.on('connect', cb);
-       cb();
+       if(cb) cb();
     });
   }
   function serveGet(req, res, postData) {
     console.log('serveGet');
     console.log(postData);
-    initRedis(function() {
-      redisClient.get(postData, function(err, data) {
-        console.log('this came from redis:');
-        console.log(err);
-        console.log(data);
-        if(data) {
-          res.writeHead(200);
-          res.end('yes');
-        } else {
-          res.writeHead(404);
-          res.end('no');
-        }
-        redisClient.quit();
-      });
-      console.log('outside redisClient.get');
+    initRedis();
+    redisClient.get(postData, function(err, data) {
+      console.log('this came from redis:');
+      console.log(err);
+      console.log(data);
+      if(data) {
+        res.writeHead(200);
+        res.end('yes');
+      } else {
+        res.writeHead(404);
+        res.end('no');
+      }
     });
-    console.log('outside initRedis');
+    console.log('outside redisClient.get');
+    redisClient.quit();
   }
 
   function serve(req, res, baseDir) {
