@@ -5,26 +5,26 @@ var remoteStorageClient = (function() {
   }
   var sessionObj;
   var sessionStates = {
-    signIn: { page: 'signin.html', display:'Sign in &hellip;', loadingBar:10, action: doSignIn, next:{found:'ready', needsWebfinger:'wf1'}},
-    wf1: { page: 'signin.html', display:'Checking &hellip;', loadingBar:20, action: checkWebfinger, next:{needSignup: 'needed'}},
-    needed: { page: 'signin.html', display:'', displayBlock:'easyfreedom-signup'},
-    enroll: { page: 'signin.html', display:'Creating account &hellip;', loadingBar:40, displayNone:'easyfreedom-signup', action: enroll, next:{409: 'enroll',201:'pinging'}},
-    pinging: { page: 'signin.html', display:'Creating account &hellip;', loadingBar:50, action: doPing, next:{200:'squatting1'}},
-    squatting1: { page: 'signin.html', display:'Creating account &hellip;', loadingBar:60, action: doSquat1, next:{201:'squatting2'}},
-    squatting2: { page: 'signin.html', display:'Creating account &hellip;', loadingBar:63, action: doSquat2, next:{200:'createDb'}},
-    createDb: { page: 'signin.html', display:'Creating database &hellip;', loadingBar:66, action: createDb, next:{201:'pop1', 412:'pop1'}},
-    pop1: { page: 'signin.html', display:'Creating database &hellip;', loadingBar:70, action: pop1, next:{201: 'pop2'}},
-    pop2: { page: 'signin.html', display:'Creating database &hellip;', loadingBar:73, action: pop2, next:{201: 'pop3'}},
-    pop3: { page: 'signin.html', display:'Creating database &hellip;', loadingBar:76, action: pop3, next:{201: 'pop4'}},
-    pop4: { page: 'signin.html', display:'Creating database &hellip;', loadingBar:80, action: pop4, next:{201: 'pop5'}},
-    pop5: { page: 'signin.html', display:'Creating database &hellip;', loadingBar:83, action: pop5, next:{200: 'selfAccess1'}},
-    selfAccess1: { page: 'signin.html', display:'Linking &hellip;', loadingBar:86, action: doSelfAccess1, next:{201: 'selfAccess2'}},
-    selfAccess2: { page: 'signin.html', display:'Linking &hellip;', loadingBar:90, action: doSelfAccess2, next:{201: 'selfAccess3'}},
-    selfAccess3: { page: 'signin.html', display:'Linking &hellip;', loadingBar:90, action: doSelfAccess3, next:{201: 'selfAccess4'}},
-    selfAccess4: { page: 'signin.html', display:'Linking &hellip;', loadingBar:93, action: doSelfAccess4, next:{200: 'storing'}},
-    storing: { page: 'signin.html', display:'Saving &hellip;', loadingBar:96, action: doStore, next:{200: 'ready'}},
-    ready: { page: 'signin.html', action: initApp },
-    error: { page: 'signin.html', display:'Error', action: alertError, buttons:['Sign out']}
+    signIn: { display:'Sign in &hellip;', loadingBar:10, action: doSignIn, next:{found:'ready', needsWebfinger:'wf1'}},
+    wf1: { display:'Checking &hellip;', loadingBar:20, action: checkWebfinger, next:{needSignup: 'needed'}},
+    needed: { display:'', displayBlock:'easyfreedom-signup'},
+    enroll: { display:'Creating account &hellip;', loadingBar:40, displayNone:'easyfreedom-signup', action: enroll, next:{409: 'enroll',201:'pinging'}},
+    pinging: { display:'Creating account &hellip;', loadingBar:50, action: doPing, next:{200:'squatting1'}},
+    squatting1: { display:'Creating account &hellip;', loadingBar:60, action: doSquat1, next:{201:'squatting2'}},
+    squatting2: { display:'Creating account &hellip;', loadingBar:63, action: doSquat2, next:{200:'createDb'}},
+    createDb: { display:'Creating database &hellip;', loadingBar:66, action: createDb, next:{201:'pop1', 412:'pop1'}},
+    pop1: { display:'Creating database &hellip;', loadingBar:70, action: pop1, next:{201: 'pop2'}},
+    pop2: { display:'Creating database &hellip;', loadingBar:73, action: pop2, next:{201: 'pop3'}},
+    pop3: { display:'Creating database &hellip;', loadingBar:76, action: pop3, next:{201: 'pop4'}},
+    pop4: { display:'Creating database &hellip;', loadingBar:80, action: pop4, next:{201: 'pop5'}},
+    pop5: { display:'Creating database &hellip;', loadingBar:83, action: pop5, next:{200: 'selfAccess1'}},
+    selfAccess1: { display:'Linking &hellip;', loadingBar:86, action: doSelfAccess1, next:{201: 'selfAccess2'}},
+    selfAccess2: { display:'Linking &hellip;', loadingBar:90, action: doSelfAccess2, next:{201: 'selfAccess3'}},
+    selfAccess3: { display:'Linking &hellip;', loadingBar:93, action: doSelfAccess3, next:{200: 'selfAccess4'}},
+    selfAccess4: { display:'Linking &hellip;', loadingBar:93, action: doSelfAccess4, next:{200: 'storing'}},
+    storing: { display:'Saving &hellip;', loadingBar:96, action: doStore, next:{200: 'ready'}},
+    ready: { action: initApp },
+    error: { display:'Error', action: alertError, buttons:['Sign out']}
   };
   function checkForLogin() {
     if(!sessionObj) {
@@ -32,9 +32,6 @@ var remoteStorageClient = (function() {
     }
     if(!sessionObj || !sessionStates[sessionObj.state]) return;
     var fsmInfo = sessionStates[sessionObj.state];
-    if(window.location.pathname.split('/').pop() != fsmInfo.page) {
-      window.location = fsmInfo.page;
-    }
     if(handlers['status']) {
       var status = {};
       if(fsmInfo.display) {
@@ -365,6 +362,7 @@ var remoteStorageClient = (function() {
       assertion: assertion
     };
     localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
+    checkLogin();
   }
   function signOut() {
     localStorage.clear();

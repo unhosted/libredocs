@@ -1,7 +1,7 @@
 // define(['http://libredocs.org/js/models/documents.js'], function(docs) {
 
 define(function() {
-  function load() {
+  function loaded() {
 
     var per_page = 5; // TODO: this should be a constant somewhere
 
@@ -254,6 +254,6 @@ define(function() {
   }
 
   return {
-    load: load
+    loaded: loaded
   };
 });

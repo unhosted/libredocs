@@ -15,6 +15,6 @@ function load() {
 function loaded(view) {
   $('#'+view).show();
   getScripts(view, function(script) {
-    if(script.load) script.load();
+    if(script.loaded) script.loaded();
   });
 }

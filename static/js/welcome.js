@@ -7,7 +7,6 @@ define(function() {
     navigator.id.get(function(assertion) {
       if(assertion) {
         remoteStorageClient.signIn('http://'+location.host, assertion);
-        window.location.href = 'signin.html';
       }
     }, {
       requiredEmail: email
@@ -28,16 +27,17 @@ define(function() {
     }
     window.addEventListener('message', function(event) {
       if(event.origin == location.protocol +'//'+ location.host) {
-      if(!sessionObj) {
-        sessionObj = JSON.parse(localStorage.sessionObj);
+        if(!sessionObj) {
+          sessionObj = JSON.parse(localStorage.sessionObj);
+        }
+        sessionObj.bearerToken = event.data;
+        sessionObj.state = 'ready';
+        sessionObj.proxy = '';
+        sessionObj.clientSide = true;//prevents storing with migration fields in account.js
+        localStorage.sessionObj = JSON.stringify(sessionObj);
+        init();
+        load();
       }
-    sessionObj.bearerToken = event.data;
-    sessionObj.state = 'ready';
-    sessionObj.proxy = '';
-    sessionObj.clientSide = true;//prevents storing with migration fields in account.js
-    localStorage.sessionObj = JSON.stringify(sessionObj);
-    window.location = '/signin.html';
-    }
     }, false);
   }
   function couldBeEmail(str) {
@@ -81,8 +81,8 @@ define(function() {
             state: 'allowRemoteStorage'
               };
               localStorage.sessionObj = JSON.stringify(sessionObj);
-              document.getElementById('signin-checking').style.display='none';
-              document.getElementById('allow-button').style.display='inline';
+              $('#signin-checking').css('display','none');
+              $('#allow-button').css('display','inline');
               document.getElementById('signin-button').style.display='none';
             }
           });
@@ -91,7 +91,7 @@ define(function() {
     });
   }
 
-  function load() { 
+  function loaded() { 
     document.getElementById('signin-button').onclick = signin;
     document.getElementById('allow-button').onclick = allow;
     document.getElementById('email').onkeyup = checkEmail;
@@ -101,6 +101,6 @@ define(function() {
   }
 
   return {
-    load: load
+    loaded: loaded
   };
 });

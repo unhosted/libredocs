@@ -19,7 +19,7 @@
     sessionObj.ownPadBackDoor = 'https://'+sessionObj.couchHost+'/documents';
     changed = true;
   }
-  if(sessionObj.proxy.indexOf('yourremotestorage.net') != -1)
+  if(sessionObj.proxy && sessionObj.proxy.indexOf('yourremotestorage.net') != -1)
   {
     sessionObj.proxy = 'proxy.'+location.host+'/';
     sessionObj.storageInfo.template = 
