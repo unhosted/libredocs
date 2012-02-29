@@ -50,7 +50,7 @@ var remoteStorageClient = (function() {
     }
     if(fsmInfo.loadingBar) {
       document.getElementById('easyfreedom-loading').style.display='block';
-      document.getElementById('easyfreedom-loadingbar').style.width=fsmInfo+'%';
+      document.getElementById('easyfreedom-loadingbar').style.width=fsmInfo.loadingBar+'%';
     } else {
       document.getElementById('easyfreedom-loading').style.display='none';
     }
@@ -300,6 +300,7 @@ var remoteStorageClient = (function() {
   function doAlert(heading, message, debug) {
     if(typeof alertMessage === 'function'){
       alertMessage(heading, message, debug);
+      showChat();
     }
     else
     {
