@@ -20,7 +20,7 @@ var remoteStorageClient = (function() {
     pop5: { display:'Creating database &hellip;', loadingBar:83, action: pop5, next:{200: 'selfAccess1'}},
     selfAccess1: { display:'Linking &hellip;', loadingBar:86, action: doSelfAccess1, next:{201: 'selfAccess2'}},
     selfAccess2: { display:'Linking &hellip;', loadingBar:90, action: doSelfAccess2, next:{201: 'selfAccess3'}},
-    selfAccess3: { display:'Linking &hellip;', loadingBar:93, action: doSelfAccess3, next:{200: 'selfAccess4'}},
+    selfAccess3: { display:'Linking &hellip;', loadingBar:93, action: doSelfAccess3, next:{201: 'selfAccess4'}},
     selfAccess4: { display:'Linking &hellip;', loadingBar:93, action: doSelfAccess4, next:{200: 'storing'}},
     storing: { display:'Saving &hellip;', loadingBar:96, action: doStore, next:{200: 'ready'}},
     ready: { action: initApp },
