@@ -7,11 +7,9 @@ function init() {
   window.onpopstate = function(event) {
     // see what is available in the event object
     console.log(event);
-    if(event.state){
-      initView(event.state.view);
-      //onpopstate is called after dom loaded
-      loadView(event.state.view);
-    }
+    initView(selectView(), event.state);
+    //onpopstate is called after dom loaded
+    loaded(selectView(), event.state);
   }
   // make sure we throw no errors in old browsers
   if(!window.localStorage || !history.pushState) {
@@ -21,9 +19,9 @@ function init() {
   initView(selectView());
 }
 
-function initView(view) {
+function initView(view, doc) {
   getScripts(view, function(script) {
-    if(script.init) script.init();
+    if(script.init) script.init(doc);
   });
 }
 

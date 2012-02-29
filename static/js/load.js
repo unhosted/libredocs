@@ -12,9 +12,9 @@ function load() {
   }
 }
 
-function loaded(view) {
+function loaded(view, doc) {
   $('#'+view).show();
   getScripts(view, function(script) {
-    if(script.loaded) script.loaded();
+    if(script.loaded) script.loaded(doc);
   });
 }

@@ -1,7 +1,7 @@
 // define(['http://libredocs.org/js/models/documents.js'], function(docs) {
 
 define(function() {
-  function loaded() {
+  function loaded(doc) {
 
     var per_page = 5; // TODO: this should be a constant somewhere
 
@@ -136,30 +136,29 @@ define(function() {
 
     var showDocument = function(e) {
       var li = $(e.currentTarget);
+      var editor = li.find('.editor');
       var index = $("#doclist li").index(li);
+      if(editor.is(":visible") && index == 0) return;
       var old = $('#doclist li').first();
       var id = li.attr('id');
+      var doc = localGet('documents')[id];
 
-      if(index > 0){
-        old.find('#editor').empty().hide();
-        old.removeClass('active')
-        updateTime(old.attr('id'));
-        li.prependTo("#doclist");
-      } else {
-        // li item is already in the first position
-        // and pad is displayed
-        if(old.find('iframe').length) return;
-      }
-      updateTime(id);
-      li.addClass('active')
-      var time = li.find('time');
-      var editor = li.find('.editor');
+
       editor.pad({
         'padId':encodeURIComponent(id),
         'userName':hyphenify(currentUser() || 'unknown'),
       });
+
+      if(index > 0){
+        old.find('.editor').empty().hide();
+        old.removeClass('active')
+        updateTime(old.attr('id'));
+        li.prependTo("#doclist");
+      }
+      updateTime(id);
+      li.addClass('active')
+      history.pushState(doc, doc.title, doc.owner + '/' + doc.link);
       editor.show();
-      return;
     }
 
     function updateTime(id){
@@ -251,6 +250,12 @@ define(function() {
 
     if(isLoggedIn()) addSignout();
     showList();
+    //TODO: refactor this so we don't get an element to send it to the handler
+    //as a pseudo event
+    if(doc) {
+      var e = {currentTarget: document.getElementById(doc.id)};
+      showDocument(e);
+    }
   }
 
   return {
