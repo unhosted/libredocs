@@ -19,12 +19,12 @@ body#welcome .content, body#signup .content { height:33em; }
 #steps { position:absolute; top:18.5em; }
 .step, .step.done, .step.done:hover { opacity:.5; position:relative; }
 .step.active, .step:hover { opacity:1; }
-.step.signin #email { margin:4em 0 .5em; width:10em; }
-.step.signin #signin-button { position:absolute; margin:4em 0 .5em .5em; background:url('../images/browserid.png') no-repeat; min-width:79px; min-height:22px; cursor:pointer; border:none; box-shadow:none; }
-.step.signin #allow-button { position:absolute; margin:4em 0 .5em; }
-.step.signin #signin-checking { position:absolute; margin:4.5em 0 .5em .5em; background:url('../images/loading.gif') no-repeat; padding-left:1.5em; white-space:nowrap; }
-.step.remotestorage img, .step.write img { position:relative; left:25%; }
-.step.remotestorage img { margin:3em 0 .5em; }
+.step.signin #email { margin:5em 0 .5em; width:10em; }
+.step.signin #signin-button { position:absolute; margin:5em 0 .5em .5em; background:url('../images/browserid.png') no-repeat; min-width:79px; min-height:22px; cursor:pointer; border:none; box-shadow:none; }
+.step.signin #allow-button { position:absolute; margin:5em 0 .5em; }
+.step.signin #signin-checking { position:absolute; margin:5.5em 0 .5em .5em; background:url('../images/loading.gif') no-repeat; padding-left:1.5em; white-space:nowrap; }
+.step.remotestorage img, .step.write img { position:relative; left:20%; }
+.step.remotestorage img { margin:2em 0; width:12em; }
 .step.write img { margin-top:-2.5em; }
 .step>h3 { position:absolute; top:6.5em; }
 .step>p { position:absolute; top:12.5em; }
