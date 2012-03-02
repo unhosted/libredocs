@@ -1,6 +1,6 @@
 html, body { background-color:#eee; }
 .container > footer p { text-align:center; }
-.container { max-width:870px; }
+.container { width:60em; }
 #welcome h3 { margin-top:1em; white-space:nowrap; }
 footer { border:none; margin:1em; }
 #write footer { margin:3em; }
@@ -20,13 +20,16 @@ h1+small:hover a.btn { display:inline; position:absolute; right:0; top:-.4em; }
 #steps { position:absolute; top:22em; }
 .step, .step.done, .step.done:hover { opacity:.5; position:relative; }
 .step.active, .step:hover { opacity:1; }
+.step.signin { position:absolute; width:18em; left:0; }
 .step.signin #email { margin:5em 0 .5em; width:10em; }
 .step.signin #signin-button { position:absolute; margin:5em 0 .5em .5em; background:url('../images/browserid.png') no-repeat; min-width:79px; min-height:22px; cursor:pointer; border:none; box-shadow:none; }
 .step.signin #allow-button { position:absolute; margin:5em 0 .5em; }
 .step.signin #check-button { position:absolute; margin:5em 0 .5em; }
 .step.signin #signin-checking { position:absolute; margin:5.5em 0 .5em .5em; background:url('../images/loading.gif') no-repeat; padding-left:1.5em; white-space:nowrap; }
+.step.remotestorage { position:absolute; width:20em; left:19em; }
 .step.remotestorage img, .step.write img { position:relative; left:20%; }
 .step.remotestorage img { margin:2em 0; width:12em; }
+.step.write { position:absolute; width:20em; left:41em; }
 .step.write img { margin-top:-2.5em; }
 .step>h3 { position:absolute; top:7.3em; }
 .step>p { position:absolute; top:12.5em; }
