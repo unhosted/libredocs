@@ -97,10 +97,10 @@ define(function() {
       return $('<li id="'+doc.id+'" class="mine">'
         + ' <strong class="docTitle">'+doc.title+'</strong>'
         + ' <input class="editTitle" type="text" value="'+doc.title+'" style="display:none;" />'
-        + ' <span class="preview" id="'+doc.id+'-preview"></span>'
+        + ' <span class="preview" id="'+doc.link+'-preview"></span>'
         + ' <time datetime="'+new Date(doc.timestamp).toLocaleString()+'"></time>'
         + ' <a class="btn share" href="#" rel="popover" title="Share this link" data-content="<a href=\''+shareDoc(doc.id)+'\'>'+shareDoc(doc.id)+'</a>"><i class="icon-share-alt"></i> Share</a>'
-        + ' <div class="editor" style="display:none;"></div>'
+        + ' <div class="editor" id="'+doc.link+'-edit" style="display:none;"></div>'
         + '</li>');
     }
 
@@ -156,7 +156,7 @@ define(function() {
       li.addClass('active')
       li.prependTo("#doclist");
       editor.show();
-      li.slideDown();
+      li.slideDown(1000);
       if(index > 0){
         old.find('.editor').slideUp().empty();
         old.find('.editTitle').hide();

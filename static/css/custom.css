@@ -59,10 +59,8 @@ ul#doclist li:hover a.btn { position:absolute; display:inline; right:1em; top:.5
 #docTitleInput { height:1.2em; width:6em; font-size:1em; margin:-.7em -.05em -.5em; padding:0; color:#000; font-weight:bold; }
 
 #previewPad { position:absolute; margin-top:43px; margin-left:-11px; width:73em; height:32em; background:none; border:none; }
-#editorPad { margin:-20px; min-height:35em; height:35em; }
-#write iframe { width:100%; min-height:100%; border:none; }
-#write .content { margin:-20px -20px -25px; }
-#write .page-header { border-bottom:none; }
+.editor { min-height:15em; height:15em; }
+.editor iframe { width:100%; min-height:100%; border:solid 1px lightGray; margin-left: 0.5em; }
 
 #error { z-index:1; position:absolute; width:63em; }
 
