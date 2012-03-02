@@ -5,7 +5,7 @@ html, body { background-color:#eee; }
 footer { border:none; margin:1em; }
 #write footer { margin:3em; }
 
-.page-header { background-color:#f5f5f5; padding:4em 2em 1em; margin:-20px -20px 0; }
+.page-header { background-color:#f5f5f5; padding:5em 1.5em 1em; margin:-20px -20px 0; }
 .page-header img { height:8em; margin:-4em -1em 1em -1em }
 body#write .page-header img { height:3em; margin:-4em 0em 1em 0em }
 h1 { position:relative; font-size:4em; display:inline; color:#000; }
