@@ -143,7 +143,6 @@ define(function() {
       var id = li.attr('id');
       var doc = localGet('documents')[id];
 
-
       editor.pad({
         'padId':encodeURIComponent(id),
         'userName':hyphenify(currentUser() || 'unknown'),
@@ -156,8 +155,8 @@ define(function() {
         li.prependTo("#doclist");
       }
       updateTime(id);
+      updateHistory(doc);
       li.addClass('active')
-      history.pushState(doc, doc.title, doc.owner + '/' + doc.link);
       editor.show();
     }
 
@@ -172,6 +171,13 @@ define(function() {
       time.text(relativeModifiedDate(now));
       time.attr('style', modifiedDateColor(now));
       time.attr('title', now.toLocaleString());
+    }
+
+    function updateHistory(doc){
+      var hash = '#/' + doc.owner + '/' + doc.link;
+      // don't push again if we came here by popstate or reload
+      if(location.hash == hash) return;
+      history.pushState(doc, doc.title, '/' + hash);
     }
 
     var editingDocTitle;

@@ -16,7 +16,9 @@ function init() {
     window.location.href = 'missing.html';
     return;
   }
-  initView(selectView());
+  getDocFromHash(function(doc) {
+    initView(selectView(), doc);
+  });
 }
 
 function initView(view, doc) {
@@ -27,10 +29,28 @@ function initView(view, doc) {
 
 function selectView() {
   // document in the path
-  if(location.pathname.length > 2) {
+  if(location.hash.split('/').length > 2) {
     return 'documents';
   }
   return isLoggedIn() ? 'documents' : 'welcome' ;
+}
+
+function getDocFromHash(cb) {
+  var hashed = location.hash.split('/');
+  hashed.shift();
+  if(hashed.length < 2) {cb(); return;}
+  var owner = hashed.shift();
+  var link = hashed.join('/');
+  fetchDocumentId(owner, link, function(id) {
+    var documents = localGet('documents');
+    if(id && documents[id]) {
+      documents[id].timestamp = new Date().getTime();
+      localSet('documents', documents);
+      cb(documents[id]);
+    } else {
+      cb();
+    }
+  });
 }
 
 function isLoggedIn() {

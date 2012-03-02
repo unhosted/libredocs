@@ -7,14 +7,24 @@
 
 function load() {
   var view = selectView();
+  htmlLoaded(view, function(){loaded(view)});
+}
+
+function htmlLoaded(view, cb){
   if(!$('#'+view).lenght){
-    $('#content').load(view+'.html', function(){loaded(view)});
+    $('#content').load(view+'.html', cb);
+  } else {
+    cb();
   }
 }
 
+// TODO: use async parallel
 function loaded(view, doc) {
   $('#'+view).show();
   getScripts(view, function(script) {
-    if(script.loaded) script.loaded(doc);
+    if(!script.loaded) return;
+    getDocFromHash(function(doc) {
+      script.loaded(doc);
+    });
   });
 }
