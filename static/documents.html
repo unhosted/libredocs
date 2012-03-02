@@ -1,45 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>Libre Docs &ndash; liberate your ideas</title>
-    <!--[if lt IE 9]><script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/bootstrap-responsive.min.css" rel="stylesheet">
-    <link href="css/custom.css" rel="stylesheet">
-    <link rel="shortcut icon" href="../images/libredocs-favicon.png">
-    <link rel="apple-touch-icon" href="../images/libredocs-favicon.png">
-    <script src="js/require.js"></script>
-  </head>
-  <body id="list">
-    <div class="container">
-      <div class="content">
-        <div class="page-header" id="header">
-          <img alt="" src="images/libredocs.png" />
-          <h1>Libre Docs <small>alpha</small></h1><small id="signout"></small>
-        </div>
-        <div id="error" class="alert alert-block alert-error fade in" style="display:none;">
-          <h4 id="error-heading" class="alert-heading"></h4>
-          <p id="error-message">&nbsp;</p>
-        </div>
-         <ul id="doclist">
-          <li onclick="newDoc();"><strong>+ New document</strong></li>
-          <li><strong id="loadingdocs">Loading documents &hellip;</strong></li>
-        </ul>
-      </div>
-
-      <footer>
-        <p><a href="/">Libre Docs</a> is a <a href="https://github.com/unhosted/libredocs">free software</a> app by <a href="http://unhosted.org">Unhosted</a> for a more open web.</p>
-      </footer>
-    </div> <!-- /container -->
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-    <script src="js/ieblock.js"></script>
-    <script src="js/async.js"></script>
-    <script src="js/account.js"></script>
-    <script src="js/models/document.js"></script>
-    <script src="js/sync.js"></script>
-    <script src="js/helpers.js"></script>
-    <script src="js/documents.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-  </body>
-</html>
+<div id="documents">
+  <div id="new-document"><strong>+ New document</strong></div>
+  <ul id="doclist">
+    <li><strong id="loadingdocs">Loading documents &hellip;</strong></li>
+  </ul>
+</div>

@@ -19,7 +19,7 @@
     sessionObj.ownPadBackDoor = 'https://'+sessionObj.couchHost+'/documents';
     changed = true;
   }
-  if(sessionObj.proxy.indexOf('yourremotestorage.net') != -1)
+  if(sessionObj.proxy && sessionObj.proxy.indexOf('yourremotestorage.net') != -1)
   {
     sessionObj.proxy = 'proxy.'+location.host+'/';
     sessionObj.storageInfo.template = 
@@ -33,20 +33,19 @@
   }
 })();
 
-function checkLogin() {
-  var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
-  if(!sessionObj || sessionObj.state != 'ready') {
-    window.location.href = 'welcome.html'
-    return;
-  }
-  document.getElementById('signout').innerHTML = (sessionObj.userAddress?' '+sessionObj.userAddress:'');
-  document.getElementById('signout').innerHTML += '<a class="btn btn-danger" href="#" onclick="signOut();"><i class="icon-remove icon-white"></i> Sign out</a>';
+function addSignout() {
+  var sessionObj = localGet('sessionObj') || {};
+  var signout = document.getElementById('signout');
+  signout.innerHTML = (sessionObj.userAddress?' '+sessionObj.userAddress:'');
+  signout.innerHTML += '<a class="btn btn-danger" href="#" "><i class="icon-remove icon-white"></i> Sign out</a>';
+  $('#signout').on('click', '.btn', signOut);
+  $('#signout').show();
 }
 
 function signOut() {
   // signing a user out means clearing all their personal data off the device:
   localStorage.clear();
-  window.location.href = 'welcome.html';
+  window.location.href = '';
 }
 
 function currentUser() {
