@@ -132,14 +132,17 @@ define(function() {
         timestamp: time
       };
       saveDocument(doc);
-      $('#doclist').prepend(myDocumentRow(doc));
+      docRow = myDocumentRow(doc);
+      $('#doclist').append(docRow);
+      showDocument(docRow);
     }
 
-    var showDocument = function(e) {
-      var li = $(e.currentTarget);
+    var showDocument = function(eventOrElement) {
+      var li = $(eventOrElement.currentTarget || eventOrElement);
       var editor = li.find('.editor');
       var index = $("#doclist li").index(li);
       if(editor.is(":visible") && index == 0) return;
+      if(index != 0) li.hide();
       var old = $('#doclist li').first();
       var id = li.attr('id');
       var doc = localGet('documents')[id];
@@ -149,18 +152,19 @@ define(function() {
         'userName':hyphenify(currentUser() || 'unknown'),
       });
 
+      updateTime(id);
+      li.addClass('active')
+      li.prependTo("#doclist");
+      editor.show();
+      li.slideDown();
       if(index > 0){
-        old.find('.editor').empty().hide();
+        old.find('.editor').slideUp().empty();
         old.find('.editTitle').hide();
         old.find('.docTitle').show();
         old.removeClass('active')
         updateTime(old.attr('id'));
-        li.prependTo("#doclist");
       }
-      updateTime(id);
       updateHistory(doc);
-      li.addClass('active')
-      editor.show();
     }
 
     function updateTime(id){
