@@ -249,7 +249,7 @@ define(function() {
 
   function getDocAddress(doc) {
     // the more beautiful links so far only work for ourselves
-    return 'http://+location.host+/#'+doc.owner+'/'+doc.link;
+    return 'http://'+location.host+'/#'+doc.owner+'/'+doc.link;
   }
 
     if(isLoggedIn()) addSignout();
