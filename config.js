@@ -8,6 +8,7 @@ exports.config = {
   },
   host: {
     'libredocs.org': '/static',
+    'mich.libredocs.org': '/static',
     'libredocs.local': '/static'
   },
   handler: {
