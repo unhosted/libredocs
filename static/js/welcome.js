@@ -2,7 +2,7 @@ define(function() {
   var sessionObj;
   function signin() {
     document.getElementById("signin-button").style.display='none';
-    document.getElementById("signin-checking").style.display='inline';
+    document.getElementById("check-button").style.display='inline';
     var email = document.getElementById('email').value;
     navigator.id.get(function(assertion) {
       if(assertion) {
