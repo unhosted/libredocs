@@ -40,7 +40,7 @@ define(function() {
       $('#next-page').click(nextPage);
       $('#doclist').on('click', 'li', showDocument);
       $('#doclist').on('mouseenter', 'li.active.mine .docTitle', editTitle);
-      $('#doclist').on('blur', 'li.active.mine .docTitle input', saveTitle);
+      $('#doclist').on('blur', 'li.active.mine input.editTitle', saveTitle);
     }
 
     function addPopover() {
@@ -96,6 +96,7 @@ define(function() {
     function myDocumentRow(doc) {
       return $('<li id="'+doc.id+'" class="mine">'
         + ' <strong class="docTitle">'+doc.title+'</strong>'
+        + ' <input class="editTitle" type="text" value="'+doc.title+'" style="display:none;" />'
         + ' <span class="preview" id="'+doc.id+'-preview"></span>'
         + ' <time datetime="'+new Date(doc.timestamp).toLocaleString()+'"></time>'
         + ' <a class="btn share" href="#" rel="popover" title="Share this link" data-content="<a href=\''+shareDoc(doc.id)+'\'>'+shareDoc(doc.id)+'</a>"><i class="icon-share-alt"></i> Share</a>'
@@ -150,6 +151,8 @@ define(function() {
 
       if(index > 0){
         old.find('.editor').empty().hide();
+        old.find('.editTitle').hide();
+        old.find('.docTitle').show();
         old.removeClass('active')
         updateTime(old.attr('id'));
         li.prependTo("#doclist");
@@ -180,30 +183,27 @@ define(function() {
       history.pushState(doc, doc.title, '/' + hash);
     }
 
-    var editingDocTitle;
-
     function editTitle(e) {
       var title = $(e.currentTarget);
-      if(!editingDocTitle) {
-        editingDocTitle = true;
-        var input = $('<input type="text" value="'+title.text()+'" />');
-        title.empty().append(input);
-      }
+      var input = title.parent().find('input');
+      input.show();
+      title.hide();
     }
 
     function saveTitle(e) {
       var input = $(e.currentTarget);
-      var container = input.parent();
       var li = input.parents('#doclist li').first();
-
+      var title = li.find('.docTitle');
       editingDocTitle = false;
       doc = localGet('documents')[li.attr('id')];
       doc.title = input.val();
       doc.link = linkForDoc(doc);
       saveDocument(doc);
-      container.html(doc.title);
       publishDocument(doc, function() {
-        setLocation(doc);
+        history.replaceState(doc, doc.title, '/#/'+doc.owner+'/'+doc.link);
+        title.text(doc.title);
+        title.show();
+        input.hide();
       });
     }
 
@@ -219,10 +219,6 @@ define(function() {
         key = doc.owner +'$'+link;
       }
       return encodeURIComponent(link);
-    }
-
-    function setLocation(doc) {
-      location.hash = '#'+doc.owner+'/'+doc.link;
     }
 
     function shareDoc(id) {
