@@ -59,5 +59,5 @@ function isLoggedIn() {
 }
 
 function getScripts(view, cb) {
-  require(['http://libredocs.org/js/'+view+'.js'], cb);
+  require(['./js/'+view], cb);
 }

@@ -1,5 +1,3 @@
-// define(['http://libredocs.org/js/models/documents.js'], function(docs) {
-
 define(function() {
   function loaded(doc) {
 

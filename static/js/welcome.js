@@ -94,7 +94,7 @@ define(function() {
     });
   }
 
-  function loaded() { 
+  function loaded() {
     document.getElementById('signin-button').onclick = signin;
     document.getElementById('allow-button').onclick = allow;
     document.getElementById('check-button').onclick = check;
