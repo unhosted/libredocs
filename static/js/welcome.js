@@ -53,24 +53,27 @@ define(function() {
     }
     xhr.send(email);
   }
-  function checkEmail() {
+  function showCheckButton() {
     document.getElementById('allow-button').style.display='none';
     document.getElementById('signin-button').style.display='none';
+    document.getElementById('check-button').style.display='inline';
+  }
+  function check() {
     var email = document.getElementById('email').value;
     if(!couldBeEmail(email)) {
       return;
     }
-    document.getElementById('signin-checking').style.display='inline';
+    document.getElementById('check-button').style.display='none';
     checkResumableSession(email, function(isResumable) {
       if(isResumable) {
-        document.getElementById('signin-checking').style.display='none';
+        document.getElementById('check-button').style.display='none';
         document.getElementById('signin-button').style.display='inline';
         document.getElementById('allow-button').style.display='none';
       } else {
-        require(['http://unhosted.org/remoteStorage-0.4.3.js'], function(remoteStorage) {
+        require(['./js/remoteStorage-0.4.4'], function(remoteStorage) {
           remoteStorage.getStorageInfo(email, function(err, storageInfo) {
             if(err) {
-              document.getElementById('signin-checking').style.display='none';
+              document.getElementById('check-button').style.display='none';
               document.getElementById('signin-button').style.display='inline';
               document.getElementById('allow-button').style.display='none';
             } else {
@@ -81,12 +84,12 @@ define(function() {
             state: 'allowRemoteStorage'
               };
               localStorage.sessionObj = JSON.stringify(sessionObj);
-              $('#signin-checking').css('display','none');
+              $('#check-button').css('display','none');
               $('#allow-button').css('display','inline');
               document.getElementById('signin-button').style.display='none';
             }
           });
-          });
+        });
       }
     });
   }
@@ -94,7 +97,8 @@ define(function() {
   function loaded() { 
     document.getElementById('signin-button').onclick = signin;
     document.getElementById('allow-button').onclick = allow;
-    document.getElementById('email').onkeyup = checkEmail;
+    document.getElementById('check-button').onclick = check;
+    document.getElementById('email').onkeyup = showCheckButton;
     $('#current-state').on('click', '#agree-button', remoteStorageClient.agree);
     $('#current-state').on('click', '#allow-button', remoteStorageClient.allow);
     $('#signin').tooltip();
