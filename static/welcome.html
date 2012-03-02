@@ -1,69 +1,42 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>Libre Docs &ndash; liberate your ideas</title>
-    <!--[if lt IE 9]><script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/bootstrap-responsive.min.css" rel="stylesheet">
-    <link href="css/custom.css" rel="stylesheet">
-    <link rel="shortcut icon" href="images/cheerleader.svg">
-    <link rel="apple-touch-icon" href="images/cheerleader.svg">
-    <script src="js/remoteStorageClient.js"></script>
-  </head>
-  <body id="welcome">
-    <div class="container">
-      <div class="content">
-        <div class="page-header">
-          <img alt="" src="images/brain.svg" />
-          <img alt="" src="images/document.svg" />
-          <img alt="" src="images/cheerleader.svg" />
-          <h1>Libre Docs <small>alpha</small></h1>
-        </div>
+<div id="current-state">
+  <div id="intro">
+    <h2>Liberate your ideas</h2>
+    <p><strong>Write online, from anywhere, with your friends.</strong> Easily keep track of your documents instead of being tracked and trapped by the web&apos;s monopolies. We neither store your data nor track you. Libre Docs is only the application &ndash; your data is stored where you want it to be, using the open <a href="http://www.w3.org/community/unhosted/wiki/RemoteStorage">remoteStorage protocol</a>.</p>
+  </div>
+  <div id="allow">
+    <div id="easyfreedom-signup" style="display:none;">
+      <h2>Get remoteStorage</h2>
+      <p>You don&apos;t seem to have remoteStorage yet. We can automatically get you an <a href="http://www.iriscouch.com/">Iris Couch</a> account and connect it to your user address. Then you have a remoteStorage you can also use with other applications. Signing up is easy:</p>
+      <p>You, <input id="firstName" placeholder="first name"> <input id="lastName" placeholder="last name">, <input type="submit" value="Agree" id="agree-button"> with the <a href="http://www.iriscouch.com/policy#tos">Terms of Service of IrisCouch.com</a></p>
+    </div>
+  </div>
+  <div id="easyfreedom-loading" class="progress progress-info progress-striped active" style="display:none;">
+    <div id="easyfreedom-loadingbar" class="bar" style="width:5%;">
+      <p id="easyfreedom-loadingtext"></p>
+    </div>
+  </div>
+</div>
 
-        <div id="current-state">
-          <h2>Liberate your ideas</h2>
-          <p><strong>Write online, from anywhere, with your friends.</strong> Easily keep track of your documents instead of being tracked and trapped by the web&apos;s monopolies. We neither store your data nor track you. Libre Docs is only the application &ndash; your data is stored where you want it to be, using the open <a href="http://www.w3.org/community/unhosted/wiki/RemoteStorage">remoteStorage protocol</a>.</p>
+<div id="steps" class="row">
+  <div class="checkmark" style="display:none;">&#10004;</div>
+  <div class="span3 step signin active">
+    <input id="email" placeholder="your user address"/><br>
+    <input type="submit" id="signin-button" value="" style="display:none;" />
+    <input type="submit" id="allow-button" value="allow" style="display:none;" />
+    <input type="submit" id="check-button" value="check" style="display:none;" />
+    <h3>1. sign in with BrowserID</h3>
+    <p style="display:none">We use <a href="http://browserid.org">BrowserID</a>, a great new technology to ease sign in, driven by our friends at <a href="http://mozilla.org">Mozilla</a>. <a href="http://support.mozilla.com/en-US/kb/what-browserid-and-how-does-it-work">Find out more</a>.</p>
+  </div>
 
-          <div id="error" class="alert alert-block alert-error fade in" style="display:none;">
-            <h4 id="error-heading" class="alert-heading"></h4>
-            <p id="error-message">&nbsp;</p>
-          </div>
-        </div>
-        <div id="steps" class="row">
-          <div class="span3 step signin active">
-            <div id="signin" data-original-title="click &amp; follow the popup instructions">
-              <input type="submit" id="signin-button" value="" style="display:none;" />
-          	  <p id="signin-loading">Loading BrowserID &hellip;</p>
-            </div>
-        	<h3>1. sign in with BrowserID</h3>
-        	<p>We use <a href="http://browserid.org">BrowserID</a>, a great new technology to ease sign in, driven by our friends at <a href="http://mozilla.org">Mozilla</a>. <a href="http://support.mozilla.com/en-US/kb/what-browserid-and-how-does-it-work">Find out more</a>.</p>
-          </div>
+  <div class="span3 step remotestorage">
+    <img alt="" src="images/remoteSTorage.png" />
+    <h3>2. get remoteStorage</h3>
+    <p>You&apos;ll get an account at <a href="http://iriscouch.com">Iris Couch</a> to use as your &raquo;<em>home folder for the web</em>&laquo;. We work on making other <a href="https://github.com/unhosted/website/wiki/remoteStorage-providers">storage providers</a> compatible.</p>
+  </div>
 
-          <div class="span3 step remotestorage">
-            <img alt="" src="images/iriscouch.png" />
-            <h3>2. get remoteStorage</h3>
-            <p>You&apos;ll get an account at <a href="http://iriscouch.com">Iris Couch</a> to use as your &raquo;<em>home folder for the web</em>&laquo;. We work on making other <a href="https://github.com/unhosted/website/wiki/remoteStorage-providers">storage providers</a> compatible.</p>
-          </div>
-
-          <div class="span3 step write">
-            <img alt="" src="images/cheerleader.svg" />
-        	<h3>3. write freely!</h3>
-        	<p>Apps are existing open web technologies. Starting out with <a href="http://etherpad.org">Etherpad</a>, soon adding <a href="http://webodf.org">WebODF</a>, <a href="http://code.google.com/p/svg-edit/">SVG-edit</a> and more.</p>
-          </div>
-        </div>
-
-      </div>
-
-      <footer>
-        <p><a href="http://libredocs.org">Libre Docs</a> is a <a href="https://github.com/unhosted/libredocs">free software</a> app by <a href="http://unhosted.org">Unhosted</a> for a more open web.</p>
-      </footer>
-    </div> <!-- /container -->
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-    <script src="js/ieblock.js"></script>
-    <script src="js/features.js"></script>
-    <script src="http://browserid.org/include.js"></script>
-    <script src="js/welcome.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-  </body>
-</html>
+  <div class="span3 step write">
+    <img alt="" src="images/libredocs.png" />
+    <h3>3. write freely!</h3>
+    <p>Apps are existing open web technologies. Starting out with <a href="http://etherpad.org">Etherpad</a>, soon adding <a href="http://webodf.org">WebODF</a>, <a href="http://code.google.com/p/svg-edit/">SVG-edit</a> and more.</p>
+  </div>
+</div>

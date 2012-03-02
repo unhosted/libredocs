@@ -20,27 +20,38 @@ exports.handler = (function() {
        if(cb) cb();
     });
   }
-  initRedis();
-  redisClient.keys('*', function(err, keys) {
-    redisClient.mget(keys, function(err, data) {
-      var states = {}, problems = {}, oks = {}, userNameTries = {};
-      console.log('err:'+err);
-      for(i in data) {
-        d = JSON.parse(data[i]);
-        states[d.state] = (states[d.state] || 0) + 1;
-        problems[d.problem] = (problems[d.problem] || 0) + 1;
-        oks[d.ok] = (oks[d.ok] || 0) + 1;
-        userNameTries[d.userNameTry] = (userNameTries[d.userNameTry] || 0) + 1;
+  function serveGet(req, res, postData) {
+    console.log('serveGet');
+    console.log(postData);
+    initRedis();
+    redisClient.get(postData, function(err, data) {
+      console.log('this came from redis:');
+      console.log(err);
+      console.log(data);
+      if(data) {
+        res.writeHead(200);
+        res.end('yes');
+      } else {
+        res.writeHead(404);
+        res.end('no');
       }
-      var res = {
-        states: states,
-      problems: problems,
-      oks: oks,
-      userNameTries: userNameTries
-      }
-      console.log(JSON.stringify(res, null, 2));
     });
+    console.log('outside redisClient.get');
     redisClient.quit();
-  });
-  console.log('outside redisClient.keys');
+  }
+
+  function serve(req, res, baseDir) {
+    console.log('serve');
+    var dataStr = '';
+    req.on('data', function(chunk) {
+      dataStr += chunk;
+    });
+    req.on('end', function() {
+      serveGet(req, res, dataStr);
+    });
+  }
+
+  return {
+    serve: serve
+  };
 })();

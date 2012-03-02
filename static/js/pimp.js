@@ -22,21 +22,21 @@ var pimper = (function() {
     }
   }
   function createAdminUser1(hostToSquat, adminUsr, adminPwd, cb) {
-    var putHost = 'http://proxy.libredocs.org/'+hostToSquat+'/_users/org.couchdb.user:'+adminUsr;
+    var putHost = 'http://proxy.'+location.host+'/'+hostToSquat+'/_users/org.couchdb.user:'+adminUsr;
     var userObj = genUser(adminUsr, adminPwd);
     userObj.browserid=true;
     userObj.roles=['admin', 'browserid'];
     httpPut(putHost, JSON.stringify(userObj), null, null, cb);
   }
   function createAdminUser2(hostToSquat, adminUsr, adminPwd, cb) {
-    httpPut('http://libredocs.org/squat', JSON.stringify({
+    httpPut('/squat', JSON.stringify({
       host: hostToSquat,
       usr: adminUsr,
       pwd: adminPwd
     }), null, null, cb);
   }
   function createDb(hostToSquat, adminUsr, adminPwd, dbName, cb) {
-    httpPut('http://libredocs.org/createDb', JSON.stringify({
+    httpPut('/createDb', JSON.stringify({
       host: hostToSquat,
       dbName: dbName,
       usr: adminUsr,
@@ -44,7 +44,7 @@ var pimper = (function() {
     }), null, null, cb);
   }
   function setConfig(hostToSquat, adminUsr, adminPwd, section, key, value, cb) {
-    httpPut('http://libredocs.org/setConfig', JSON.stringify({
+    httpPut('/setConfig', JSON.stringify({
       host: hostToSquat,
       section: section,
       key: key,
@@ -74,7 +74,7 @@ var pimper = (function() {
     };
   }
   function couchPut(couchAddress, masterUser, masterPass, dbName, key, value, cb) {
-    var putHost = 'http://proxy.libredocs.org/'+couchAddress;
+    var putHost = 'http://proxy.'+location.host+'/'+couchAddress;
     var authStr = {
       usr:masterUser,
       pwd:masterPass

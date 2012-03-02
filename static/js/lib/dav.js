@@ -1,5 +1,4 @@
-
-define(['/js/lib/ajax-0.4.2.js'], function(ajax) {
+define(['./ajax'], function(ajax) {
     function normalizeKey(key) {
       var i = 0;
       while(i < key.length && key[i] =='u') {
@@ -19,7 +18,8 @@ define(['/js/lib/ajax-0.4.2.js'], function(ajax) {
         },
         success: function(data) {
           cb(null, data);
-        }
+        },
+        timeout: 3000
       }
       ajaxObj.headers= {Authorization: 'Bearer '+token};
       ajaxObj.fields={withCredentials: 'true'};

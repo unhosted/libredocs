@@ -46,3 +46,25 @@ function lengthOf(obj) {
   }
   return length;
 }
+
+function alertMessage(heading, message, debug) {
+  var pretty;
+  document.getElementById('error-heading').innerHTML = heading;
+  document.getElementById('error-message').innerHTML = message;
+  if(debug){
+    if (typeof debug === 'object'){
+      pretty = JSON.stringify(debug,null, 2)
+    }
+    document.getElementById('error-debug').innerHTML = pretty || debug;
+  }
+  document.getElementById('error').style.display = 'block';
+}
+
+function showDebug() {
+  document.getElementById('error-debug').style.display = 'block';
+}
+
+function showChat() {
+  $('#error-chat').html('<iframe src="http://webchat.freenode.net?nick=helpme-LibreDocs&channels=unhosted&uio=Mz1mYWxzZSY5PXRydWUmMTA9dHJ1ZQ09" width="647" height="400"></iframe>');
+  $('#error-chat').show();
+}

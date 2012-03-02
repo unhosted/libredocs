@@ -10,5 +10,6 @@ function alertFeature(feature) {
   $(document).ready(function() {
     if(!$.support.cors) alertFeature('CORS');
     if(!window.localStorage) alertFeature('Local Storage');
+    if(!history.pushState) alertFeature('push State');
   });
 })(jQuery);

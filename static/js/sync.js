@@ -56,14 +56,14 @@ function isRecent(key, time){
 function getMyRemoteClient(category, cb){
   if(!currentUser()) return;
   var sessionObj = localGet('sessionObj');
-  require(['http://libredocs.org/js/remoteStorage-0.4.3.js'], function(remoteStorage) {
+  require(['/js/remoteStorage-0.4.3.js'], function(remoteStorage) {
     var client = remoteStorage.createClient(sessionObj.storageInfo, category, sessionObj.bearerToken);
     cb(client)
   });
 }
 
 function getRemoteClient(owner, cb){
-  require(['http://libredocs.org/js/remoteStorage-0.4.3.js'], function(remoteStorage) {
+  require(['/js/remoteStorage-0.4.3.js'], function(remoteStorage) {
     getOrFetchStorageInfo(owner, function(err, ownerStorageInfo) {
       if(err) return; //TODO: might want to record this for debugging
       var client = remoteStorage.createClient(ownerStorageInfo, 'public');
@@ -79,7 +79,7 @@ function getOrFetchStorageInfo(user, cb) {
     cb(null, storageOwners[user]);
     return;
   }
-  require(['http://libredocs.org/js/remoteStorage-0.4.3.js'], function(remoteStorage) {
+  require(['/js/remoteStorage-0.4.3.js'], function(remoteStorage) {
     remoteStorage.getStorageInfo(user, function(err, storageInfo){
       storageOwners[user] = storageInfo;
       localStorage.setItem('storageOwners', JSON.stringify(storageOwners));

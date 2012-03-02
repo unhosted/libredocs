@@ -5,96 +5,89 @@ var remoteStorageClient = (function() {
   }
   var sessionObj;
   var sessionStates = {
-    signIn: { page: 'signin.html', display:'Sign in &hellip;', loadingBar:10, action: doSignIn, next:{found:'ready', needsWebfinger:'wf1', needsAllow:'allowRemoteStorage'}},
-    wf1: { page: 'signin.html', display:'Checking &hellip;', loadingBar:20, action: checkWebfinger, next:{needSignup: 'needed', ok: 'allowRemoteStorage'}},
-    needed: { page: 'signin.html', display:'', displayBlock:'easyfreedom-signup'},
-    enroll: { page: 'signin.html', display:'Creating account &hellip;', loadingBar:40, displayNone:'easyfreedom-signup', action: enroll, next:{409: 'enroll',201:'pinging'}},
-    pinging: { page: 'signin.html', display:'Creating account &hellip;', loadingBar:50, action: doPing, next:{200:'squatting1'}},
-    squatting1: { page: 'signin.html', display:'Creating account &hellip;', loadingBar:60, action: doSquat1, next:{201:'squatting2'}},
-    squatting2: { page: 'signin.html', display:'Creating account &hellip;', loadingBar:63, action: doSquat2, next:{200:'createDb'}},
-    createDb: { page: 'signin.html', display:'Creating database &hellip;', loadingBar:66, action: createDb, next:{201:'pop1', 412:'pop1'}},
-    pop1: { page: 'signin.html', display:'Creating database &hellip;', loadingBar:70, action: pop1, next:{201: 'pop2'}},
-    pop2: { page: 'signin.html', display:'Creating database &hellip;', loadingBar:73, action: pop2, next:{201: 'pop3'}},
-    pop3: { page: 'signin.html', display:'Creating database &hellip;', loadingBar:76, action: pop3, next:{201: 'pop4'}},
-    pop4: { page: 'signin.html', display:'Creating database &hellip;', loadingBar:80, action: pop4, next:{201: 'pop5'}},
-    pop5: { page: 'signin.html', display:'Creating database &hellip;', loadingBar:83, action: pop5, next:{200: 'selfAccess1'}},
-    selfAccess1: { page: 'signin.html', display:'Linking &hellip;', loadingBar:86, action: doSelfAccess1, next:{201: 'selfAccess2'}},
-    selfAccess2: { page: 'signin.html', display:'Linking &hellip;', loadingBar:90, action: doSelfAccess2, next:{201: 'selfAccess3'}},
-    selfAccess3: { page: 'signin.html', display:'Linking &hellip;', loadingBar:93, action: doSelfAccess3, next:{200: 'storing'}},
-    storing: { page: 'signin.html', display:'Saving &hellip;', loadingBar:96, action: doStore, next:{200: 'ready'}},
-    allowRemoteStorage: { page: 'signin.html', loadingBar:60, displayBlock:'allowButton'},
-    ready: { page: 'documents.html' },
-    error: { page: 'signin.html', display:'Error', action: alertError, buttons:['Sign out']}
+    signIn: { display:'Sign in &hellip;', loadingBar:10, action: doSignIn, next:{found:'ready', needsWebfinger:'wf1'}},
+    wf1: { display:'Checking &hellip;', loadingBar:20, action: checkWebfinger, next:{needSignup: 'needed'}},
+    needed: { display:'', show:'easyfreedom-signup', hide:'intro'},
+    enroll: { display:'Creating account &hellip;', loadingBar:40, show:'intro', hide:'easyfreedom-signup', action: enroll, next:{409: 'enroll',201:'pinging'}},
+    pinging: { display:'Creating account &hellip;', loadingBar:50, action: doPing, next:{200:'squatting1'}},
+    squatting1: { display:'Creating account &hellip;', loadingBar:60, action: doSquat1, next:{201:'squatting2'}},
+    squatting2: { display:'Creating account &hellip;', loadingBar:63, action: doSquat2, next:{200:'createDb'}},
+    createDb: { display:'Creating database &hellip;', loadingBar:66, action: createDb, next:{201:'pop1', 412:'pop1'}},
+    pop1: { display:'Creating database &hellip;', loadingBar:70, action: pop1, next:{201: 'pop2'}},
+    pop2: { display:'Creating database &hellip;', loadingBar:73, action: pop2, next:{201: 'pop3'}},
+    pop3: { display:'Creating database &hellip;', loadingBar:76, action: pop3, next:{201: 'pop4'}},
+    pop4: { display:'Creating database &hellip;', loadingBar:80, action: pop4, next:{201: 'pop5'}},
+    pop5: { display:'Creating database &hellip;', loadingBar:83, action: pop5, next:{200: 'selfAccess1'}},
+    selfAccess1: { display:'Linking &hellip;', loadingBar:86, action: doSelfAccess1, next:{201: 'selfAccess2'}},
+    selfAccess2: { display:'Linking &hellip;', loadingBar:90, action: doSelfAccess2, next:{201: 'selfAccess3'}},
+    selfAccess3: { display:'Linking &hellip;', loadingBar:93, action: doSelfAccess3, next:{201: 'selfAccess4'}},
+    selfAccess4: { display:'Linking &hellip;', loadingBar:93, action: doSelfAccess4, next:{200: 'storing'}},
+    storing: { display:'Saving &hellip;', loadingBar:96, action: doStore, next:{200: 'ready'}},
+    ready: { action: initApp },
+    error: { display:'Error', action: alertError, buttons:['Sign out']}
   };
   function checkForLogin() {
     if(!sessionObj) {
       sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
     }
-    if(sessionObj) {
-      if(sessionStates[sessionObj.state]) {
-        var fsmInfo = sessionStates[sessionObj.state];
-        if(window.location.pathname.split('/').pop() != fsmInfo.page) {
-          window.location = fsmInfo.page;
-        }
-        if(handlers['status']) {
-          var status = {};
-          if(fsmInfo.display) {
-            status.step = fsmInfo.display;
-          }
-          if(fsmInfo.buttons) {
-            status.buttons = fsmInfo.buttons;
-          }
-          if(fsmInfo.loadingBar) {
-            status.loadingBar = fsmInfo.loadingBar;
-          }
-          if(sessionObj.userAddress) {
-            status.userAddress = sessionObj.userAddress;
-          }
-          handlers['status'](status);
-        }
-        if(fsmInfo.loadingBar) {
-          document.getElementById('easyfreedom-loading').style.display='block';
-          document.getElementById('easyfreedom-loadingbar').style.width=fsmInfo+'%';
-        } else {
-          document.getElementById('easyfreedom-loading').style.display='none';
-        }
-        if(fsmInfo.displayBlock) {
-          document.getElementById(fsmInfo.displayBlock).style.display='block';
-        }
-        if(fsmInfo.displayNone) {
-          document.getElementById(fsmInfo.displayNone).style.display='none';
-        }
-        if(fsmInfo.action) {
-           var t;
-           if(sessionObj.state != 'ready' && sessionObj.state != 'error') {
-             stepToTimeout = sessionObj.state;
-             t = setTimeout(stepTimeout, 20000);
-           }
-           fsmInfo.action(function(result) {
-            if(t) {
-              clearTimeout(t);
-            }
-            console.log('got result "'+result+'" in step "'+sessionObj.state+'".');
-            if(fsmInfo.next && fsmInfo.next[result]) {
-              sessionObj.state = fsmInfo.next[result];
-              localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
-              checkForLogin();
-            } else {
-              if(sessionObj.state != 'ready') {
-                sessionObj.problem = 'no handler for result "'+result+'" in step "'+sessionObj.state+'"';
-                sessionObj.step = sessionObj.state;
-                sessionObj.state = 'error';
-                localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
-                checkForLogin();
-              }
-            }
-          });
-        }
+    if(!sessionObj || !sessionStates[sessionObj.state]) return;
+    var fsmInfo = sessionStates[sessionObj.state];
+    if(handlers['status']) {
+      var status = {};
+      if(fsmInfo.display) {
+        status.step = fsmInfo.display;
       }
+      if(fsmInfo.buttons) {
+        status.buttons = fsmInfo.buttons;
+      }
+      if(fsmInfo.loadingBar) {
+        status.loadingBar = fsmInfo.loadingBar;
+      }
+      if(sessionObj.userAddress) {
+        status.userAddress = sessionObj.userAddress;
+      }
+      handlers['status'](status);
+    }
+    if(fsmInfo.loadingBar) {
+      document.getElementById('easyfreedom-loading').style.display='block';
+      document.getElementById('easyfreedom-loadingbar').style.width=fsmInfo.loadingBar+'%';
     } else {
-      window.location.href = 'welcome.html';
+      document.getElementById('easyfreedom-loading').style.display='none';
+    }
+    if(fsmInfo.show) {
+      document.getElementById(fsmInfo.show).style.display='block';
+    }
+    if(fsmInfo.hide) {
+      document.getElementById(fsmInfo.hide).style.display='none';
+    }
+    if(fsmInfo.action) {
+      var t;
+      if(sessionObj.state != 'ready' && sessionObj.state != 'error') {
+        stepToTimeout = sessionObj.state;
+        t = setTimeout(stepTimeout, 20000);
+      }
+      fsmInfo.action(function(result) {
+        if(t) {
+          clearTimeout(t);
+        }
+        console.log('got result "'+result+'" in step "'+sessionObj.state+'".');
+        if(fsmInfo.next && fsmInfo.next[result]) {
+          sessionObj.state = fsmInfo.next[result];
+          localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
+          checkForLogin();
+        } else {
+          if(sessionObj.state != 'ready') {
+            sessionObj.problem = 'no handler for result "'+result+'" in step "'+sessionObj.state+'"';
+            sessionObj.step = sessionObj.state;
+            sessionObj.state = 'error';
+            localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
+            checkForLogin();
+          }
+        }
+      });
     }
   }
+
   function stepTimeout() {
     if(stepToTimeout) {
       var message = 'Step took to long for "'+sessionObj.userAddress+'".';
@@ -103,7 +96,7 @@ var remoteStorageClient = (function() {
   }
   function doSignIn(cb) {
     var xhr=new XMLHttpRequest();
-    xhr.open('POST', 'http://libredocs.org/users', true);
+    xhr.open('POST', '/users', true);
     xhr.onreadystatechange = function() {
       if(xhr.readyState == 4) {
         var newSessionObj = {};
@@ -116,7 +109,7 @@ var remoteStorageClient = (function() {
         }
         if(sessionObj.ok) {
           //this happens if we have a UserAddress record stored (for webfingerless user addresses)
-          if(oldSessionObj.audience=='http://libredocs.org') {//then the bearerToken is also directly stored in there
+          if(oldSessionObj.audience=='http://'+location.host) {//then the bearerToken is also directly stored in there
             cb('found');
           } else {
             cb('needsAllow');
@@ -128,7 +121,7 @@ var remoteStorageClient = (function() {
           doAlert('Failed fetching user data from database.',
              'This should not have happened.', xhr);
           localStorage.clear();
-          window.location.href = 'welcome.html';
+          window.location.href = '';
         }
       }
     };
@@ -138,7 +131,7 @@ var remoteStorageClient = (function() {
     }));
   }
   function checkWebfinger(cb) {
-    require(['http://libredocs.org/js/remoteStorage-0.4.3.js'], function(remoteStorage) {
+    require(['/js/remoteStorage-0.4.3.js'], function(remoteStorage) {
       remoteStorage.getStorageInfo(sessionObj.userAddress, function(err, storageInfo) {
         if(err) {
           cb('needSignup');
@@ -158,7 +151,7 @@ var remoteStorageClient = (function() {
         localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
       } else if(result==201) {
         sessionObj.couchHost = userName+'.iriscouch.com';
-        sessionObj.proxy = 'proxy.libredocs.org/';
+        sessionObj.proxy = 'proxy.'+location.host+'/';
         localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
       }
       cb(result);
@@ -172,7 +165,7 @@ var remoteStorageClient = (function() {
       cb('error');
     } else {
       pimper.ping(couchHost, proxy, function(result) {
-        if(result==404) {
+        if(result==404 || result=='error') {
           console.log('ping '+counter+'...');
           ping(couchHost, proxy, counter+1, cb);
         } else {
@@ -242,7 +235,7 @@ var remoteStorageClient = (function() {
       usr:sessionObj.userAddress,
       pwd:sessionObj.adminPwd
     };
-    pimper.uploadAttachment(putHost, 'cors', 'auth', authStr, 'modal.html', 'http://libredocs.org/modal.html', 'text/html', cb);
+    pimper.uploadAttachment(putHost, 'cors', 'auth', authStr, 'modal.html', '/modal.html', 'text/html', cb);
   }
   function pop3(cb) {
     var couchAddress = sessionObj.couchHost;
@@ -251,7 +244,7 @@ var remoteStorageClient = (function() {
       usr:sessionObj.userAddress,
       pwd:sessionObj.adminPwd
     };
-    pimper.uploadAttachment(putHost, 'cors', 'base64', authStr, 'base64.js', 'http://libredocs.org/js/base64.js', 'application/javascript', cb);
+    pimper.uploadAttachment(putHost, 'cors', 'base64', authStr, 'base64.js', '/js/base64.js', 'application/javascript', cb);
   }
   function pop4(cb) {
     var couchAddress = sessionObj.couchHost;
@@ -260,14 +253,14 @@ var remoteStorageClient = (function() {
       usr:sessionObj.userAddress,
       pwd:sessionObj.adminPwd
     };
-    pimper.uploadAttachment(putHost, 'cors', 'sha1', authStr, 'sha1.js', 'http://libredocs.org/js/sha1.js', 'application/javascript', cb);
+    pimper.uploadAttachment(putHost, 'cors', 'sha1', authStr, 'sha1.js', '/js/sha1.js', 'application/javascript', cb);
   }
   function pop5(cb) {
     var couchAddress = sessionObj.couchHost;
     pimper.setConfig(couchAddress, sessionObj.userAddress, sessionObj.adminPwd, 'browserid', 'enabled', 'true', cb);
   }
   function doSelfAccess1(cb) {
-    pimper.createUser(sessionObj.couchHost, sessionObj.userAddress, sessionObj.adminPwd, 'http___libredocs_org', function(result, token) {
+    pimper.createUser(sessionObj.couchHost, sessionObj.userAddress, sessionObj.adminPwd, 'http___'+location.host.replace(/\./g, '_'), function(result, token) {
       sessionObj.bearerToken = token;
       sessionObj.storageInfo = {
         api: 'CouchDB',
@@ -281,16 +274,18 @@ var remoteStorageClient = (function() {
   }
   function doSelfAccess2(cb) {
     pimper.createDb(sessionObj.couchHost, sessionObj.userAddress, sessionObj.adminPwd, 'documents', cb);
-    pimper.createDb(sessionObj.couchHost, sessionObj.userAddress, sessionObj.adminPwd, 'public', cb);
   }
   function doSelfAccess3(cb) {
-    pimper.giveAccess(sessionObj.couchHost, sessionObj.userAddress, sessionObj.adminPwd, 'documents', 'http___libredocs_org', false, cb);
+    pimper.createDb(sessionObj.couchHost, sessionObj.userAddress, sessionObj.adminPwd, 'public', cb);
+  }
+  function doSelfAccess4(cb) {
+    pimper.giveAccess(sessionObj.couchHost, sessionObj.userAddress, sessionObj.adminPwd, 'documents', 'http___'+location.host.replace(/\./g, '_'), false, cb);
   }
   function doStore(cb) {
     sessionObj.action='set';
     sessionObj.ok=true;
     var xhr = new XMLHttpRequest();
-    xhr.open('PUT', 'http://libredocs.org/users', true);
+    xhr.open('PUT', '/users', true);
     xhr.onreadystatechange = function() {
       if(xhr.readyState == 4) {
         cb(xhr.status);
@@ -298,9 +293,14 @@ var remoteStorageClient = (function() {
     };
     xhr.send(JSON.stringify(sessionObj));
   }
+  function initApp(cb) {
+    init();
+    load();
+  }
   function doAlert(heading, message, debug) {
     if(typeof alertMessage === 'function'){
       alertMessage(heading, message, debug);
+      showChat();
     }
     else
     {
@@ -318,7 +318,7 @@ var remoteStorageClient = (function() {
     var saveMe = sessionObj;
     saveMe.action='set';
     var xhr = new XMLHttpRequest();
-    xhr.open('PUT', 'http://libredocs.org/users', true);
+    xhr.open('PUT', '/users', true);
     xhr.onreadystatechange = function() {
       // no callback handlers in error yet
     };
@@ -342,32 +342,6 @@ var remoteStorageClient = (function() {
     sessionObj=reset;
     checkForLogin();
   }
-  function allow() {
-    if(!sessionObj) {
-      sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
-    }
-    if(sessionObj.storageInfo.auth.indexOf('?') == -1) {
-      window.open(sessionObj.storageInfo.auth
-        +'?redirect_uri='+encodeURIComponent('http://libredocs.org/rcvToken.html')
-        +'&scope='+encodeURIComponent('documents'));
-    } else {
-      window.open(sessionObj.storageInfo.auth+'&redirect_uri=http://libredocs.org/rcvToken.html&scope=documents');
-    }
-    window.addEventListener('message', function(event) {
-      if(event.origin == location.protocol +'//'+ location.host) {
-        if(!sessionObj) {
-          sessionObj = JSON.parse(localStorage.sessionObj);
-        }
-        sessionObj.bearerToken = event.data;
-        sessionObj.state = 'ready';
-        sessionObj.proxy = '';
-        sessionObj.clientSide = true;//prevents storing with migration fields in account.js
-        localStorage.sessionObj = JSON.stringify(sessionObj);
-        document.getElementById('allowButton').style.display='none';
-        checkForLogin();
-      }
-    }, false);
-  }
   function agree() {
     if(!sessionObj) {
       sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
@@ -389,16 +363,16 @@ var remoteStorageClient = (function() {
       assertion: assertion
     };
     localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
+    checkForLogin();
   }
   function signOut() {
     localStorage.clear();
-    indow.location.href = 'welcome.html';
+    window.location.href = '';
   }
   return {
     on: on,
     signIn: signIn,
     checkForLogin: checkForLogin,
-    allow: allow,
     agree: agree,
     signOut: signOut,
     retryStep: retryStep,

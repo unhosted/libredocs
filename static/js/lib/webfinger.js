@@ -1,4 +1,4 @@
-define(['/js/lib/ajax-0.4.2.js'], function(ajax) {
+define(['./ajax'], function(ajax) {
 
     ///////////////
    // Webfinger //
@@ -23,14 +23,14 @@ define(['/js/lib/ajax-0.4.2.js'], function(ajax) {
         host = parts[1];
         //error('So far so good. Looking up https host-meta for '+host);
         ajax.ajax({
-          //url: 'https://'+host+'/.well-known/host-meta',
-          url: 'http://'+host+'/.well-known/host-meta',
+          url: 'https://'+host+'/.well-known/host-meta',
           success: function(data) {
             afterHostmetaSuccess(data, error, cb);
           },
           error: function(data) {
             afterHttpsHostmetaError(error, cb);
-          }
+          },
+          timeout: 3000
         })
       }
     }
@@ -38,7 +38,7 @@ define(['/js/lib/ajax-0.4.2.js'], function(ajax) {
 
   function afterHttpsHostmetaError(error, cb) {
     if(options.allowHttpWebfinger) {
-      console.log('Https Host-meta error. Trying http.');
+      //console.log('Https Host-meta error. Trying http.');
       ajax.ajax({
         url: 'http://'+host+'/.well-known/host-meta',
         success: function(data) {
@@ -46,7 +46,8 @@ define(['/js/lib/ajax-0.4.2.js'], function(ajax) {
         },
         error: function(err) {
           afterHttpHostmetaError(error, cb);
-        }
+        },
+        timeout: 3000
       })
     } else {
        afterHttpHostmetaError(error, cb);
@@ -55,15 +56,16 @@ define(['/js/lib/ajax-0.4.2.js'], function(ajax) {
 
   function afterHttpHostmetaError(error, cb) {
     if(options.allowSingleOriginWebfinger) {
-      console.log('Trying single origin webfinger through proxy');
+      //console.log('Trying single origin webfinger through proxy');
       ajax.ajax({
-        url: 'http://proxy.'+location.host+'/'+host+'/.well-known/host-meta',
+        url: 'http://yourremotestorage.net/CouchDB/proxy/'+host+'/.well-known/host-meta',
         success: function(data) {
           afterHostmetaSuccess(data, error, cb);
         },
         error: function(err) {
           afterProxyError(error, cb);
-        }
+        },
+        timeout: 3000
       });
     } else {
       afterProxyError(error, cb);
@@ -72,9 +74,9 @@ define(['/js/lib/ajax-0.4.2.js'], function(ajax) {
     
   function afterProxyError(error, cb) {
     if(options.allowFakefinger) {
-      console.log('Trying Fakefinger');
+      //console.log('Trying Fakefinger');
       ajax.ajax({
-        url: '/useraddress',
+        url: 'http://useraddress.net/fakefinger',
         method: 'POST',
         data: JSON.stringify({
           audience: location.protocol+'//'+location.host,
@@ -85,7 +87,8 @@ define(['/js/lib/ajax-0.4.2.js'], function(ajax) {
         },
         error: function(err) {
           afterFakefingerError(error, cb);
-        }
+        },
+        timeout: 3000
       });
     } else {
       afterFakefingerError(error, cb);
@@ -95,33 +98,29 @@ define(['/js/lib/ajax-0.4.2.js'], function(ajax) {
     error(5, 'user address "'+userAddress+'" doesn\'t seem to have remoteStorage linked to it');
   }
   function continueWithTemplate(template, error, cb) {
-    templateParts = template.split('{uri}');
+    var templateParts = template.split('{uri}');
     if(templateParts.length == 2) {
       ajax.ajax({
         url: templateParts[0]+'acct:'+userAddress+templateParts[1],
         success: function(data) {afterLrddSuccess(data, error, cb);},
         error: function(err){
-          console.log('trying single-origin lrdd');
-          ajax.ajax({
-            url: 'http://proxy.'+location.host+'/'+templateParts[0].substring(7)+'acct:'+userAddress+templateParts[1],
-            success: function(data) {afterLrddSuccess(data, error, cb);},
-            error: function(err){afterLrddNoAcctError(error, cb);}
-          });
-        }
+          afterLrddNoAcctError(error, cb);
+        },
+        timeout: 3000
       });
     } else {
       errorStr = 'the template doesn\'t contain "{uri}"';
     }
   }
   function afterHostmetaSuccess(data, error, cb) {
-    dataXml = (new DOMParser()).parseFromString(data, 'text/xml');
+    var dataXml = (new DOMParser()).parseFromString(data, 'text/xml');
     if(!dataXml.getElementsByTagName) {
       error('Host-meta is not an XML document, or doesnt have xml mimetype.');
       return;
     }
     var linkTags = dataXml.getElementsByTagName('Link');
     if(linkTags.length == 0) {
-      console.log('no Link tags found in host-meta, trying as JSON');
+      //console.log('no Link tags found in host-meta, trying as JSON');
       try{
         continueWithTemplate(JSON.parse(data).links.lrdd[0].template, error, cb);
       } catch(e) {
@@ -155,18 +154,18 @@ define(['/js/lib/ajax-0.4.2.js'], function(ajax) {
       }
     }
   }
-  function afterLrddNoAcctError() {
+  function afterLrddNoAcctError(error, cb) {
     error('the template doesn\'t contain "{uri}"');
   }
   function afterLrddSuccess(data, error, cb) {
-    dataXml = (new DOMParser()).parseFromString(data, 'text/xml');
+    var dataXml = (new DOMParser()).parseFromString(data, 'text/xml');
     if(!dataXml.getElementsByTagName) {
       error('Lrdd is not an XML document, or doesnt have xml mimetype.');
       return;
     }
     var linkTags = dataXml.getElementsByTagName('Link');
     if(linkTags.length == 0) {
-      console.log('trying to pars lrdd as jrd');
+      //console.log('trying to pars lrdd as jrd');
       try {
         cb(JSON.parse(data).links.remoteStorage[0]);
       } catch(e) {
