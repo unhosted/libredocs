@@ -6,7 +6,7 @@ footer { border:none; margin:1em; }
 #write footer { margin:3em; }
 
 .page-header { background-color:#f5f5f5; padding:5em 1.5em 1em; margin:-20px -20px 0; }
-.page-header img { height:8em; margin:-4em -1em 1em -1em }
+.page-header img { height:5em; margin:-3em -1em 1.5em -1em; }
 body#write .page-header img { height:3em; margin:-4em 0em 1em 0em }
 h1 { position:relative; font-size:4em; display:inline; color:#000; }
 h1 span#docTitle { position:absolute; left:.08em; width:11em; white-space:nowrap; text-overflow:ellipsis; overflow:hidden; }
@@ -16,7 +16,7 @@ h1+small:hover a.btn { display:inline; position:absolute; right:0; top:-.4em; }
 
 #signin { margin-top:5.5em; padding:0 8em 1em 7em; white-space:nowrap; height:2.6em; }
 #write #signin { position:relative; float:right; top:1em; margin:0; }
-.content { height:27em; }
+.content { height:29em; }
 #steps { position:absolute; top:22em; }
 .step, .step.done, .step.done:hover { opacity:.5; position:relative; }
 .step.active, .step:hover { opacity:1; }
@@ -30,8 +30,8 @@ h1+small:hover a.btn { display:inline; position:absolute; right:0; top:-.4em; }
 .step.remotestorage img, .step.write img { position:relative; left:20%; }
 .step.remotestorage img { margin:2em 0; width:12em; }
 .step.write { position:absolute; width:20em; left:41em; }
-.step.write img { margin-top:-2.5em; }
-.step>h3 { position:absolute; top:7.3em; }
+.step.write img { margin-top:-1em; }
+.step>h3 { position:absolute; top:7.3em; white-space:nowrap; }
 .step>p { position:absolute; top:12.5em; }
 
 .checkmark { position:absolute; font-size:15em; left:.15em; top:.6em; color:#005580; opacity: 0.5 }
