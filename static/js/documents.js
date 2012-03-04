@@ -4,9 +4,9 @@ define(function() {
     var per_page = 5; // TODO: this should be a constant somewhere
 
     function listDocuments(docs, synced, page) {
-      emptyDocuments();
+      if(!page) emptyDocuments();
       sortedByTimestamp(docs, page, renderDocument);
-      appendPagination(page, lengthOf(docs));
+      displayMore(page, lengthOf(docs));
       setSyncState(synced);
     }
 
@@ -22,20 +22,20 @@ define(function() {
       time.text(relativeModifiedDate(doc.timestamp));
       time.attr('style', modifiedDateColor(doc.timestamp));
       time.attr('title',new Date(doc.timestamp).toLocaleString());
-    }
-
-    function appendPagination(page, total) {
-      $('#doclist').append(paginationRow(page, total));
+      row.show();
     }
 
     function setSyncState(synced) {
-      if(!synced) $('#doclist').append(loadingRow());
+      if(!synced) {
+        $('#documents .sync').show();
+      } else {
+        $('#documents .sync').hide();
+      }
     }
 
     function addClickHandlers() {
       $('#new-document').click(newDocument);
-      $('#previous-page').click(previousPage);
-      $('#next-page').click(nextPage);
+      $('#documents').on('click', '.more', nextPage);
       $('#doclist').on('click', 'li', showDocument);
       $('#doclist').on('mouseenter', 'li.active.mine .docTitle', editTitle);
       $('#doclist').on('blur', 'li.active.mine input.editTitle', saveTitle);
@@ -54,9 +54,9 @@ define(function() {
     }
     
     var nextPage = function(e) {
-      var parent_id = $(e.target).parent().attr('id');
-      var current = parseInt(parent_id.substr(5));
-      showList(current+1);
+      var next = $(e.target).attr('data-page');
+      showList(next);
+      $(e.target).attr('data-page', next + 1);
     }
 
     function showList(page) {
@@ -74,25 +74,17 @@ define(function() {
       return (doc.owner == currentUser()) ? myDocumentRow(doc) : sharedDocumentRow(doc);
     }
 
-    function loadingRow() {
-      return $('<li><strong id="loadingdocs">Loading documents &hellip;</strong></li>');
-    }
-
-    function paginationRow(page, total) {
+    function displayMore(page, total) {
       page = page || 1;
-      if(total < per_page) return '';
-      var li = $('<li id="page-'+page+'">\n</li>');
-      if(page != 1) {
-        li.append('<span id="previous-page">newer documents</span>\n');
+      if(total > page*per_page){
+       $('#documents .more').show();
+      } else {
+       $('#documents .more').hide();
       }
-      if(page*per_page < total) {
-        li.append('<span id="next-page">older documents</span>\n');
-      }
-      return li;
     }
 
     function myDocumentRow(doc) {
-      return $('<li id="'+doc.id+'" class="mine">'
+      return $('<li id="'+doc.id+'" class="mine" style="display:none">'
         + ' <strong class="docTitle">'+doc.title+'</strong>'
         + ' <input class="editTitle" type="text" value="'+doc.title+'" style="display:none;" />'
         + ' <span class="preview" id="'+doc.link+'-preview"></span>'
@@ -103,7 +95,7 @@ define(function() {
     }
 
     function sharedDocumentRow(doc) {
-      return $('<li id="'+doc.id+'" class="shared">'
+      return $('<li id="'+doc.id+'" class="shared" style="display:none">'
         + ' <strong class="docTitle">'+doc.title+'</strong>'
         + ' <span class="owner" id="'+doc.id+'-owner">'+doc.owner+'</span>'
         + ' <time datetime="'+new Date(doc.timestamp).toLocaleString()+'"></time>'
