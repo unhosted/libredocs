@@ -34,7 +34,7 @@ define(function() {
     }
 
     function addClickHandlers() {
-      $('#new-document').click(newDocument);
+      $('#documents').on('click', '#new-document', newDocument);
       $('#documents').on('click', '.more', nextPage);
       $('#doclist').on('click', 'li', showDocument);
       $('#doclist').on('mouseenter', 'li.active.mine .docTitle', editTitle);
@@ -61,7 +61,6 @@ define(function() {
 
     function showList(page) {
       listDocuments(localGet('documents'), isRecent('documents'), page);
-      addClickHandlers();
       addPopover();
       if(!isRecent('documents')) {
         pullRemote('documents', function(err){
@@ -239,18 +238,17 @@ define(function() {
       }
     }
 
-  function getDocAddress(doc) {
-    // the more beautiful links so far only work for ourselves
-    return 'http://'+location.host+'/#'+doc.owner+'/'+doc.link;
-  }
+    function getDocAddress(doc) {
+      // the more beautiful links so far only work for ourselves
+      return 'http://'+location.host+'/#'+doc.owner+'/'+doc.link;
+    }
 
     if(isLoggedIn()) addSignout();
     showList();
+    addClickHandlers();
     //TODO: refactor this so we don't get an element to send it to the handler
-    //as a pseudo event
     if(doc) {
-      var e = {currentTarget: document.getElementById(doc.id)};
-      showDocument(e);
+      showDocument(document.getElementById(doc.id));
     }
   }
 
