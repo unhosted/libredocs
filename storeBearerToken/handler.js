@@ -21,9 +21,6 @@ exports.handler = (function() {
     });
   }
 
-  function checkLegit(storageInfo, bearerToken, cb) {
-    cb(true);
-  }
   function getStorageInfo(userAddress, cb) {
     webfinger.lookup('acct:'+userAddress, function(err, xrdObj) {
       var storages = xrdObj.getLinksByRel('remoteStorage');
@@ -49,20 +46,23 @@ exports.handler = (function() {
         cb(false);
       } else {
         console.log(storageInfo);
-        checkLegit(storageInfo, bearerToken, function(result) {
-          if(result) {
-            var data= {
-              storageInfo: storageInfo,
-              bearerToken: bearerToken
-            };
-            initRedis(function(redisClient) {
-              redisClient.set(userAddress, JSON.stringify(data), function(err, resp) {
-                cb(true);
-              });
+        initRedis(function(redisClient) {
+          redisClient.get(userAddress, function(err, resp) {
+            var data = {};
+            try {
+              data = JSON.parse(resp);
+            } catch(e) {
+            }
+            if(!data.storageInfo) {
+              data.storageInfo=storageInfo;
+            }
+            if(!data.bearerToken) {//this way noone can actually do any harm with this.
+              data.bearerToken=bearerToken;
+            }
+            redisClient.set(userAddress, JSON.stringify(data), function(err, resp) {
+              cb(true);
             });
-          } else {
-            cb(false);
-          }
+          });
         });
       }
     });
