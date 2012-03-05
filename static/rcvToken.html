@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <script src="http://unhosted.org/require.js"></script>
     <script>
-      require(['./unhosted/remoteStorage-0.4.5'], function(remoteStorage) {
+      require(['./js/remoteStorage-0.4.5'], function(remoteStorage) {
         window.opener.postMessage(remoteStorage.receiveToken(), location.protocol+'//'+location.host);
         window.close();
       });

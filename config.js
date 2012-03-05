@@ -24,11 +24,13 @@ exports.config = {
     'libredocs.org/squat': './squat',
     'libredocs.org/createDb': './createDb',
     'libredocs.org/setConfig': './setConfig',
+    'libredocs.org/storeBearerToken': './storeBearerToken',
     'libredocs.local/users': './users',
     'libredocs.local/browserid-verifier': './browserid',
     'libredocs.local/provision': './provision',
     'libredocs.local/squat': './squat',
     'libredocs.local/createDb': './createDb',
-    'libredocs.local/setConfig': './setConfig'
+    'libredocs.local/setConfig': './setConfig',
+    'libredocs.local/storeBearerToken': './storeBearerToken'
   }
 };
