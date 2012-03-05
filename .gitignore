@@ -15,7 +15,8 @@ CVS/*
 RCS/*
 
 # config files
-userDb.js
+irisCouchCredentials.js
+userDbCredentials.js
 createDb/config.js
 provision/config.js
 squat/config.js
