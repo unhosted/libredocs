@@ -48,11 +48,12 @@ exports.handler = (function() {
         console.log(storageInfo);
         initRedis(function(redisClient) {
           redisClient.get(userAddress, function(err, resp) {
-            var data = {};
+            var data;
             try {
               data = JSON.parse(resp);
             } catch(e) {
             }
+            data = data || {};
             if(!data.storageInfo) {
               data.storageInfo=storageInfo;
             }
