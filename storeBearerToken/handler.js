@@ -6,6 +6,7 @@ exports.handler = (function() {
     fs = require('fs'),
     userDb = require('../userDbCredentials').userDbCredentials,
     redis = require('redis'),
+    webfinger = require('./webfinger'),
     redisClient;
   
   function initRedis(cb) {
@@ -25,7 +26,23 @@ exports.handler = (function() {
     cb(true);
   }
   function getStorageInfo(userAddress, cb) {
-    cb(0, {});
+    new webfinger.WebFingerClient().finger('acct:'+userAddress).addCallback(function(xrdObj) {
+      var storages = xrdObj.getLinksByRel('remoteStorage');
+      if(storages.length == 1) {
+        var apis= storages[0].getAttrValues('api');
+        var templates= storages[0].getAttrValues('template');
+        var auths= storages[0].getAttrValues('auth');
+        if(apis.length == 1 && templates.length == 1 && auths.length == 1) {
+          cb(0, {
+            api: apis[0],
+            template: templates[0],
+            auth: auths[0]
+          });
+          return;
+        }
+      }
+      cb(422, {});
+    })};
   }
   function maybeStore(userAddress, bearerToken, cb) {
     getStorageInfo(userAddress, function(err, storageInfo) {
