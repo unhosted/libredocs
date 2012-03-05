@@ -43,7 +43,7 @@ WebFingerClient.prototype.fetchFingerData_ = function(urlStr, callback) {
         });
     });
   });
-  request.close();
+  request.end();
 };
 
 WebFingerClient.prototype.fetchHostMeta_ = function(host, callback) {
@@ -81,7 +81,7 @@ WebFingerClient.prototype.fetchHostMetaCookedUrl_ = function(urlStr, callback) {
         });
     });
   });
-  request.close();
+  request.end();
 };
 
 WebFingerClient.prototype.finger = function(userUri, callback) {
