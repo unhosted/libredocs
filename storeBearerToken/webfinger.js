@@ -25,17 +25,23 @@ var WebFingerClient = function() {};
 
 WebFingerClient.prototype.fetchFingerData_ = function(urlStr, callback) {
   var fingerUrl = url.parse(urlStr);
-  
-  var httpClient = http.createClient(80, fingerUrl.hostname);
-  var request = httpClient.request("GET", fingerUrl.pathname + fingerUrl.search, {"host": fingerUrl.hostname});
   var wf = this;
-  request.addListener('response', function (response) {
+  
+  var request = http.request({
+    host: fingerUrl.hostname,
+    port: 80,
+    method: 'GET',
+    path:fingerUrl.pathname + fingerUrl.search,
+    headers: {
+      "host": fingerUrl.hostname
+    }
+  }, function(response) {
     response.setBodyEncoding("utf8");
     var body = "";
-    response.addListener("data", function (chunk) {
+    response.on("data", function (chunk) {
       body += chunk;
     });
-    response.addListener("end", function() {
+    response.on("end", function() {
       var xrdParser = new xrd.XRDParser(false);
       xrdParser.parse(body,
         function(xrdObj) {
@@ -53,13 +59,19 @@ WebFingerClient.prototype.fetchHostMeta_ = function(host, callback) {
 WebFingerClient.prototype.fetchHostMetaCookedUrl_ = function(urlStr, callback) {
   var hostMetaUrl = url.parse(urlStr);
   var wf = this;
-  var httpClient = http.createClient(80, hostMetaUrl.host);
   var path = hostMetaUrl.pathname;
   if (hostMetaUrl.search) {
     path += hostMetaUrl.search;
   }
-  var request = httpClient.request("GET", path, {"host": hostMetaUrl.host});
-  request.addListener('response', function (response) {
+  var request = http.request({
+    host: hostMetaUrl.hostname,
+    port: hostMetaUrl.port,
+    method: 'GET',
+    path: path,
+    headers: {
+      "host": hostMetaUrl.hostname
+    }
+  }, function(response) {
     console.log("status: " + response.statusCode);
     if (response.statusCode == 301 || response.statusCode == 302) {
       // Do a redirect.  Yahoo does this with @yahoo.com addresses
@@ -69,10 +81,10 @@ WebFingerClient.prototype.fetchHostMetaCookedUrl_ = function(urlStr, callback) {
     }
     response.setBodyEncoding("utf8");
     var body = "";
-    response.addListener("data", function (chunk) {
+    response.on("data", function (chunk) {
       body += chunk;
     });
-    response.addListener("end", function() {
+    response.on("end", function() {
       console.log(body);
       var xrdParser = new xrd.XRDParser(false);
       xrdParser.parse(body,
@@ -92,6 +104,7 @@ WebFingerClient.prototype.finger = function(userUri, callback) {
   var hostName = userUri.split("@")[1];
   this.fetchHostMeta_(hostName, 
     function(xrdObj) {
+      console.log(xrdObj);
       var webfingerTemplates = xrdObj.getLinksByRel("lrdd");
       var webfingerTemplateStr = webfingerTemplates[0].getAttrValues('template')[0];
       var webfingerTemplate = new uriTemplate.UriTemplate(webfingerTemplateStr);

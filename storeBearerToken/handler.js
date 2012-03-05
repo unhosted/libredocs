@@ -26,7 +26,8 @@ exports.handler = (function() {
     cb(true);
   }
   function getStorageInfo(userAddress, cb) {
-    new webfinger.WebFingerClient().finger('acct:'+userAddress).addCallback(function(xrdObj) {
+    var wf = new webfinger.WebFingerClient().finger('acct:'+userAddress);
+    wf.addCallback(function(xrdObj) {
       var storages = xrdObj.getLinksByRel('remoteStorage');
       if(storages.length == 1) {
         var apis= storages[0].getAttrValues('api');
