@@ -70,7 +70,7 @@ define(function() {
         document.getElementById('signin-button').style.display='inline';
         document.getElementById('allow-button').style.display='none';
       } else {
-        require(['./js/remoteStorage-0.4.4'], function(remoteStorage) {
+        require(['./js/remoteStorage-0.4.5'], function(remoteStorage) {
           remoteStorage.getStorageInfo(email, function(err, storageInfo) {
             if(err) {
               document.getElementById('check-button').style.display='none';
