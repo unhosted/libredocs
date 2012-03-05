@@ -4,7 +4,7 @@ exports.handler = (function() {
     querystring = require('querystring'),
     //browseridVerify = require('browserid-verifier'),
     fs = require('fs'),
-    userDb = require('./config').config,
+    userDb = require('../userDbCredentials').userDbCredentials,
     redis = require('redis'),
     redisClient;
   
