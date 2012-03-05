@@ -12,6 +12,23 @@ define(function() {
       requiredEmail: email
     });
   }
+  function storeBearerToken(userAddress, bearerToken, cb) {
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', '/storeBearerToken', true);
+    xhr.onreadystatechange = function() {
+      if(xhr.readyState==4) {
+        if(xhr.status==201) {
+          cb(true);
+        } else {
+          cb(false);
+        }
+      }
+    };
+    xhr.send(JSON.stringify({
+      userAddress: userAddress,
+      bearerToken: bearerToken
+    }));
+  }
   function allow() {
     if(!sessionObj) {
       sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
@@ -35,8 +52,14 @@ define(function() {
         sessionObj.proxy = '';
         sessionObj.clientSide = true;//prevents storing with migration fields in account.js
         localStorage.sessionObj = JSON.stringify(sessionObj);
-        init();
-        load();
+        storeBearerToken(sessionObj.userAddress, sessionObj.bearerToken, function(result) {
+          if(result) {
+            init();
+            load();
+          } else {
+            alert('no, that didn\'t work, sorry');
+          }
+        });
       }
     }, false);
   }
@@ -80,8 +103,8 @@ define(function() {
               var email = document.getElementById('email').value;
               var sessionObj = { 
                 userAddress: email,
-            storageInfo: storageInfo,
-            state: 'allowRemoteStorage'
+                storageInfo: storageInfo,
+                state: 'allowRemoteStorage'
               };
               localStorage.sessionObj = JSON.stringify(sessionObj);
               $('#check-button').css('display','none');
