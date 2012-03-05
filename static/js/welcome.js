@@ -118,10 +118,12 @@ define(function() {
   }
 
   function loaded() {
-    document.getElementById('signin-button').onclick = signin;
-    document.getElementById('allow-button').onclick = allow;
-    document.getElementById('check-button').onclick = check;
-    document.getElementById('email').onkeyup = showCheckButton;
+    setTimeout(function() {
+      document.getElementById('signin-button').onclick = signin;
+      document.getElementById('allow-button').onclick = allow;
+      document.getElementById('check-button').onclick = check;
+      document.getElementById('email').onkeyup = showCheckButton;
+    }, 10);//TODO: Gotta find a way, a better way, I'd better wait(x2)
     $('#current-state').on('click', '#agree-button', remoteStorageClient.agree);
     $('#current-state').on('click', '#allow-button', remoteStorageClient.allow);
     $('#signin').tooltip();

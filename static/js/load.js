@@ -11,7 +11,7 @@ function load() {
 }
 
 function htmlLoaded(view, cb){
-  if(!$('#'+view).lenght){
+  if(!$('#'+view).length){
     $('#content').load(view+'.html', cb);
   } else {
     cb();
