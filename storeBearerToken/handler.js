@@ -42,7 +42,7 @@ exports.handler = (function() {
         }
       }
       cb(422, {});
-    })};
+    });
   }
   function maybeStore(userAddress, bearerToken, cb) {
     getStorageInfo(userAddress, function(err, storageInfo) {
