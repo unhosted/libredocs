@@ -1,3 +1,4 @@
+//TODO: handle JSON
 var http = require("http"),
   url = require("url"),
   xrd = require("./xrd"),
@@ -27,15 +28,17 @@ WebFingerClient.prototype.fetchFingerData_ = function(urlStr, callback) {
   var fingerUrl = url.parse(urlStr);
   var wf = this;
   
-  var request = http.request({
+  var options = {
     host: fingerUrl.hostname,
-    port: 80,
+    port: fingerUrl.port || 80,
     method: 'GET',
     path:fingerUrl.pathname + fingerUrl.search,
     headers: {
       "host": fingerUrl.hostname
     }
-  }, function(response) {
+  };
+  console.log(options);
+  var request = http.request(options, function(response) {
     response.setBodyEncoding("utf8");
     var body = "";
     response.on("data", function (chunk) {
@@ -45,14 +48,20 @@ WebFingerClient.prototype.fetchFingerData_ = function(urlStr, callback) {
       var xrdParser = new xrd.XRDParser(false);
       xrdParser.parse(body,
         function(xrdObj) {
+          console.log(xrdObj);
           callback(xrdObj);
         });
     });
   });
+  request.on('error', function(e) {
+    console.log('problem with request: ' + e.message);
+  });
+  console.log('sending request for lrdd');
   request.end();
 };
 
 WebFingerClient.prototype.fetchHostMeta_ = function(host, callback) {
+  //TODO: try https first
   return this.fetchHostMetaCookedUrl_("http://" + host + "/.well-known/host-meta", callback)
 }
 
@@ -63,15 +72,18 @@ WebFingerClient.prototype.fetchHostMetaCookedUrl_ = function(urlStr, callback) {
   if (hostMetaUrl.search) {
     path += hostMetaUrl.search;
   }
-  var request = http.request({
+  //TODO: handle https
+  var options = {
     host: hostMetaUrl.hostname,
-    port: hostMetaUrl.port,
+    port: 80,
     method: 'GET',
     path: path,
     headers: {
       "host": hostMetaUrl.hostname
     }
-  }, function(response) {
+  };
+  console.log(options);
+  var request = http.request(options, function(response) {
     console.log("status: " + response.statusCode);
     if (response.statusCode == 301 || response.statusCode == 302) {
       // Do a redirect.  Yahoo does this with @yahoo.com addresses
@@ -82,9 +94,11 @@ WebFingerClient.prototype.fetchHostMetaCookedUrl_ = function(urlStr, callback) {
     response.setBodyEncoding("utf8");
     var body = "";
     response.on("data", function (chunk) {
+      console.log('got data:'+chunk);
       body += chunk;
     });
     response.on("end", function() {
+      console.log('got response:');
       console.log(body);
       var xrdParser = new xrd.XRDParser(false);
       xrdParser.parse(body,
@@ -93,6 +107,10 @@ WebFingerClient.prototype.fetchHostMetaCookedUrl_ = function(urlStr, callback) {
         });
     });
   });
+  request.on('error', function(e) {
+    console.log('problem with request: ' + e.message);
+  });
+  console.log('sending request for host-meta');
   request.end();
 };
 
