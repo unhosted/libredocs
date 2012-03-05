@@ -2,7 +2,7 @@ exports.handler = (function() {
   var url = require('url'),
     https = require('https'),
     querystring = require('querystring'),
-    irisCouchProvisioning = require('./config').irisCouchProvisioning;
+    irisCouchProvisioning = require('../irisCouchCredentials').irisCouchCredentials;
   function checkToken(userAddress, token, cb) {
     cb();
   }
