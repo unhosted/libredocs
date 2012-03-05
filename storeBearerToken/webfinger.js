@@ -27,7 +27,7 @@ exports.webfinger = (function() {
       lib = https;
       options.port = options.port || 443;
     } else {
-      cb('unknown protocol '+urlObj.protocol, '');
+      cb('unknown protocol '+urlObj.protocol);
       return;
     }
     console.log(options);
@@ -49,8 +49,8 @@ exports.webfinger = (function() {
         xrdParser.parse(body,
           function(xrdObj) {
             console.log(xrdObj);
-            cb(xrdObj);
-           });
+            cb(0, xrdObj);
+          });
       });
     });
     request.on('error', function(e) {
@@ -76,9 +76,7 @@ exports.webfinger = (function() {
         var lrddTemplate = new uriTemplate.UriTemplate(lrddTemplateStr);
         var urlStr = lrddTemplate.expand({uri:userUri});
         console.log("webfinger uri: " + urlStr);
-        fetchXrd(urlStr, function(err, xrdObj) {
-          callback(err, xrdObj);
-        });
+        fetchXrd(urlStr, cb);
       }
     });
   };

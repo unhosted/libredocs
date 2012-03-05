@@ -6,19 +6,18 @@ exports.handler = (function() {
     fs = require('fs'),
     userDb = require('../userDbCredentials').userDbCredentials,
     redis = require('redis'),
-    webfinger = require('./webfinger').webfinger,
-    redisClient;
+    webfinger = require('./webfinger').webfinger;
   
   function initRedis(cb) {
     console.log('initing redis');
-    redisClient = redis.createClient(userDb.port, userDb.host);
+    var redisClient = redis.createClient(userDb.port, userDb.host);
     redisClient.on("error", function (err) {
       console.log("error event - " + redisClient.host + ":" + redisClient.port + " - " + err);
     });
     redisClient.auth(userDb.pwd, function() {
        console.log('redis auth done');
        //redisClient.stream.on('connect', cb);
-       cb();
+       cb(redisClient);
     });
   }
 
@@ -49,14 +48,17 @@ exports.handler = (function() {
       if(err) {
         cb(false);
       } else {
+        console.log(storageInfo);
         checkLegit(storageInfo, bearerToken, function(result) {
           if(result) {
             var data= {
               storageInfo: storageInfo,
               bearerToken: bearerToken
             };
-            redisClient.set(userAddress, JSON.stringify(data), function(err, resp) {
-              cb(true);
+            initRedis(function(redisClient) {
+              redisClient.set(userAddress, JSON.stringify(data), function(err, resp) {
+                cb(true);
+              });
             });
           } else {
             cb(false);
