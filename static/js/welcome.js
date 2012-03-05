@@ -36,11 +36,11 @@ define(function() {
     if(sessionObj.storageInfo.auth.indexOf('?') == -1) {
       window.open(sessionObj.storageInfo.auth
         +'?redirect_uri='+encodeURIComponent('http://'+location.host+'/rcvToken.html')
-        +'&scope='+encodeURIComponent('documents'));
+        +'&scope='+encodeURIComponent('documents,public,contacts'));
     } else {
       window.open(sessionObj.storageInfo.auth
           +'&redirect_uri='+encodeURIComponent('http://'+location.host+'/rcvToken.html')
-          +'&scope='+encodeURIComponent('documents'));
+          +'&scope='+encodeURIComponent('documents,public,contacts'));
     }
     window.addEventListener('message', function(event) {
       if(event.origin == location.protocol +'//'+ location.host) {
