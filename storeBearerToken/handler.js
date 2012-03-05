@@ -6,7 +6,7 @@ exports.handler = (function() {
     fs = require('fs'),
     userDb = require('../userDbCredentials').userDbCredentials,
     redis = require('redis'),
-    webfinger = require('./webfinger'),
+    webfinger = require('./webfinger').webfinger,
     redisClient;
   
   function initRedis(cb) {
@@ -26,7 +26,7 @@ exports.handler = (function() {
     cb(true);
   }
   function getStorageInfo(userAddress, cb) {
-    var wf = new webfinger.WebFingerClient().finger('acct:'+userAddress, function(xrdObj) {
+    webfinger.lookup('acct:'+userAddress, function(err, xrdObj) {
       var storages = xrdObj.getLinksByRel('remoteStorage');
       if(storages.length == 1) {
         var apis= storages[0].getAttrValues('api');
