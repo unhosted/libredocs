@@ -93,13 +93,16 @@ exports.handler = (function() {
                 if(legit) {
                   data.bearerToken=bearerToken;
                   redisClient.set(userAddress, JSON.stringify(data), function(err, resp) {
+                    redisClient.quit();
                     cb(true);
                   });
                 } else {
+                  redisClient.quit();
                   cb(false);
                 }
               });
             } else {
+              redisClient.quit();
               cb(false);
             }
           }); 
@@ -121,6 +124,7 @@ exports.handler = (function() {
               data.bearerToken=bearerToken;
             }
             redisClient.set(userAddress, JSON.stringify(data), function(err, resp) {
+              redisClient.quit();
               cb(true);
             });
           });
