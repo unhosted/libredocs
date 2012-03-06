@@ -1,7 +1,6 @@
 html, body { background-color:#eee; }
 .container > footer p { text-align:center; }
 .container { width:60em; }
-#welcome h3 { margin-top:1em; white-space:nowrap; }
 footer { border:none; margin:1em; }
 #write footer { margin:3em; }
 
