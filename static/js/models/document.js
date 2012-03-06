@@ -36,8 +36,9 @@ function fetchDocumentId(owner, link, cb){
       if(err) {//the callback should deal with a null
         cb(null);
       } else {
-        saveDocument(data);
-        cb(data.id);
+        var doc = (typeof(data)=="string") ? JSON.parse(data) : data;
+        saveDocument(doc);
+        cb(doc.id);
       }
     });
   });
