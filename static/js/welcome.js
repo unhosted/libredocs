@@ -1,6 +1,8 @@
 define(function() {
   var sessionObj;
   function signin() {
+    alert('Sorry! we\'re updating this part of Libre Docs right now. Come to our chatroom and we\'ll sign you up: http://webchat.freenode.net/?channels=unhosted');
+    return;
     document.getElementById("signin-button").style.display='none';
     document.getElementById("check-button").style.display='inline';
     var email = document.getElementById('email').value;
@@ -105,7 +107,7 @@ define(function() {
       document.getElementById('allow-button').onclick = allow;
       document.getElementById('check-button').onclick = check;
       document.getElementById('email').onkeyup = showCheckButton;
-    }, 10);//TODO: Gotta find a way, a better way, I'd better wait(x2)
+    }, 100);//TODO: Gotta find a way, a better way, I'd better wait(x2)
     $('#current-state').on('click', '#agree-button', remoteStorageClient.agree);
     $('#current-state').on('click', '#allow-button', remoteStorageClient.allow);
     $('#signin').tooltip();
