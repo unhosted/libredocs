@@ -15,8 +15,8 @@ exports.handler = (function() {
     redisClient.auth(userDb.pwd, function() {
        console.log('redis auth done');
        //redisClient.stream.on('connect', cb);
-       cb(redisClient);
     });
+    cb(redisClient);
   }
 
   function getStorageInfo(userAddress, cb) {
@@ -93,9 +93,9 @@ exports.handler = (function() {
                 if(legit) {
                   data.bearerToken=bearerToken;
                   redisClient.set(userAddress, JSON.stringify(data), function(err, resp) {
-                    redisClient.quit();
                     cb(true);
                   });
+                  redisClient.quit();
                 } else {
                   redisClient.quit();
                   cb(false);
@@ -124,9 +124,9 @@ exports.handler = (function() {
               data.bearerToken=bearerToken;
             }
             redisClient.set(userAddress, JSON.stringify(data), function(err, resp) {
-              redisClient.quit();
               cb(true);
             });
+            redisClient.quit();
           });
         });
       }
