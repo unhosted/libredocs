@@ -53,7 +53,7 @@ function publishDocument(doc, cb) {
   }
   var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
   getMyRemoteClient('public', function(client) {
-    client.put('padInfo:'+doc.link, info, function(err, data) {
+    client.put('padInfo:'+doc.link, JSON.stringify(info), function(err, data) {
       console.log('pushed info '+info+' for docLink "'+doc.link+'" - '+err+':"'+data+'"');
       cb();
     });
