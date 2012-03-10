@@ -17,7 +17,7 @@ define(function() {
     }));
   }
   function allow() {
-    var email=document.getElementById('email').value.split('@');
+    var email=document.getElementById('email').value;
     var userAddressParts=email.split('@');
     if(userAddressParts.length!=2) {
       alert('Your user address should have an \'@\'-sign in it, like e.g. peter@pan.com');
@@ -32,6 +32,8 @@ define(function() {
       if(err) {
         alert('Sorry, that didn\'t work. Try signing up at 5apps.com or owncube.com, and then come back here and log in with [user]@[provider]');
       } else {
+        document.getElementById('login').style.display='none';
+        document.getElementById('logging-you-in').style.display='inline';
         var sessionObj;
         try {
           sessionObj = JSON.parse(localStorage.sessionObj);
@@ -50,7 +52,9 @@ define(function() {
             init();
             load();
           } else {
-            alert('Sorry, that didn\'t work. Try signing up at 5apps.com or owncube.com, and then come back here and log in with [user]@[provider]');
+            document.getElementById('login').style.display='inline';
+            document.getElementById('logging-you-in').style.display='none';
+            alert('Sorry, that looks like a bug. Please come to http://webchat.freenode.net/?channels=unhosted and tell us about it');
           }
         });
       }

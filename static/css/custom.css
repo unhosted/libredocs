@@ -20,7 +20,7 @@ h1+small:hover a.btn { display:inline; position:absolute; right:0; top:-.4em; }
 .step, .step.done, .step.done:hover { opacity:.5; position:relative; }
 .step.active, .step:hover { opacity:1; }
 .step.signin { position:absolute; width:18em; left:0; }
-.step.signin #email { margin:5em 0 .5em; width:10em; }
+.step.signin #email { margin:5em 0 .5em; width:11em; }
 .step.signin #signin-button { position:absolute; margin:5em 0 .5em .5em; background:url('../images/browserid.png') no-repeat; min-width:79px; min-height:22px; cursor:pointer; border:none; box-shadow:none; }
 .step.signin #allow-button { position:absolute; margin:5em 0 .5em; }
 .step.signin #check-button { position:absolute; margin:5em 0 .5em; }
