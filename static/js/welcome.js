@@ -42,13 +42,14 @@ define(function() {
         if(!sessionObj) {
           sessionObj={};
         }
+        sessionObj.userAddress=email;
         sessionObj.bearerToken = token;
         sessionObj.state = 'ready';
         sessionObj.proxy = '';
         sessionObj.clientSide = true;//prevents storing with migration fields in account.js
-        localStorage.sessionObj = JSON.stringify(sessionObj);
         storeBearerToken(sessionObj.userAddress, sessionObj.bearerToken, function(result) {
           if(result) {
+            localStorage.sessionObj = JSON.stringify(sessionObj);
             init();
             load();
           } else {
