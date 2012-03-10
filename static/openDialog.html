@@ -25,7 +25,8 @@
           }), location.protocol+'//'+location.host);
           window.close();
         } else {
-          var oauthAddress = remoteStorage.createOAuthAddress(storageInfo, categories, location.protocol+'//'+location.host+libPath+'/closeDialog.html?storageInfo='+encodeURIComponent(JSON.stringify(storageInfo)));
+          localStorage.setItem('_juggleStorageInfo', JSON.stringify(storageInfo));
+          var oauthAddress = remoteStorage.createOAuthAddress(storageInfo, categories, location.protocol+'//'+location.host+libPath+'/closeDialog.html');
           window.location = oauthAddress;
         }
       });
