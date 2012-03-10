@@ -131,16 +131,14 @@ var remoteStorageClient = (function() {
     }));
   }
   function checkWebfinger(cb) {
-    require(['./js/remoteStorage-0.4.5'], function(remoteStorage) {
-      remoteStorage.getStorageInfo(sessionObj.userAddress, function(err, storageInfo) {
-        if(err) {
-          cb('needSignup');
-        } else {
-          sessionObj.storageInfo = storageInfo;
-          localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
-          cb('ok');
-        }
-      });
+    remoteStorage.getStorageInfo(sessionObj.userAddress, function(err, storageInfo) {
+      if(err) {
+        cb('needSignup');
+      } else {
+        sessionObj.storageInfo = storageInfo;
+        localStorage.setItem('sessionObj', JSON.stringify(sessionObj));
+        cb('ok');
+      }
     });
   }
   function enroll(cb) {

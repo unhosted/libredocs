@@ -2,7 +2,7 @@
 
   $.fn.pad = function( options ) {
     var settings = {
-      'host'		 : 'http://ownpad.nodejitsu.com',
+      'host'		 : 'http://surf.unhosted.org:82',
       'baseUrl'		 : '/p/',
       'showControls'     : true,
       'showChat'	 : false,
