@@ -33,7 +33,7 @@ function pullRemote(key, cb){
 
 function pushRemote(key, cb){
   getMyRemoteClient('documents', function (client) {
-    client.put(key, localGet(key), function(err, data) {
+    client.put(key, localStorage.getItem(key), function(err, data) {
       if(err==409){
         console.log('outdated rev for '+key+' getting new one');
         async.series([
