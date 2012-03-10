@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+  <head>
+    <title>Closing dialog...</title>
+    <meta charset="utf-8">
+    <script src="./require.js"></script>
+    <script>
+      function gup(name) {
+        name = name.replace(/[\[]/,'\\\[').replace(/[\]]/,'\\\]');
+        var regexS = '[\\?&]'+name+'=([^&#]*)';
+        var regex = new RegExp(regexS);
+        var results = regex.exec(window.location.href);
+        if(results == null) {
+          return "";
+        } else {
+          return results[1];
+        }
+      }
+      require(['./remoteStorage-0.4.5'], function(remoteStorage) {
+        var storageInfo = JSON.parse(decodeURIComponent(gup('storageInfo')));
+        window.opener.postMessage('conn:'+JSON.stringify({
+          storageInfo: storageInfo,
+          bearerToken: remoteStorage.receiveToken()
+        }), location.protocol+'//'+location.host);
+        window.close();
+      });
+    </script>
+  </head>
+  <body>
+    Closing dialog...
+  </body>
+</html>

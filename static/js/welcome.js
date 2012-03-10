@@ -1,19 +1,4 @@
 define(function() {
-  var sessionObj;
-  function signin() {
-    alert('Sorry! we\'re updating this part of Libre Docs right now. Come to our chatroom and we\'ll sign you up: http://webchat.freenode.net/?channels=unhosted');
-    return;
-    document.getElementById("signin-button").style.display='none';
-    document.getElementById("check-button").style.display='inline';
-    var email = document.getElementById('email').value;
-    navigator.id.get(function(assertion) {
-      if(assertion) {
-        remoteStorageClient.signIn('http://'+location.host, assertion);
-      }
-    }, {
-      requiredEmail: email
-    });
-  }
   function storeBearerToken(userAddress, bearerToken, cb) {
     var xhr = new XMLHttpRequest();
     xhr.open('POST', '/storeBearerToken', true);
@@ -32,24 +17,30 @@ define(function() {
     }));
   }
   function allow() {
-    if(!sessionObj) {
-      sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
+    var email=document.getElementById('email').value.split('@');
+    var userAddressParts=email.split('@');
+    if(userAddressParts.length!=2) {
+      alert('Your user address should have an \'@\'-sign in it, like e.g. peter@pan.com');
+      return;
     }
-    if(sessionObj.storageInfo.auth.indexOf('?') == -1) {
-      window.open(sessionObj.storageInfo.auth
-        +'?redirect_uri='+encodeURIComponent('http://'+location.host+'/rcvToken.html')
-        +'&scope='+encodeURIComponent('documents,public,contacts'));
-    } else {
-      window.open(sessionObj.storageInfo.auth
-          +'&redirect_uri='+encodeURIComponent('http://'+location.host+'/rcvToken.html')
-          +'&scope='+encodeURIComponent('documents,public,contacts'));
+    if(userAddressParts[0].indexOf('+') != -1) {
+      email = userAddressParts[0].substring(0,userAddressParts[0].indexOf('+'));
+      alert('Using \''+email+'\' as your user address, the part behind the \'+\' is irrelevant here.');
     }
-    window.addEventListener('message', function(event) {
-      if(event.origin == location.protocol +'//'+ location.host) {
-        if(!sessionObj) {
+    connect(email, ['documents', 'contacts', 'public'], function(err, storageInfo, token) {
+      var emailParts
+      if(err) {
+        alert('Sorry, that didn\'t work. Try signing up at 5apps.com or owncube.com, and then come back here and log in with [user]@[provider]');
+      } else {
+        var sessionObj;
+        try {
           sessionObj = JSON.parse(localStorage.sessionObj);
+        } catch(e) {
         }
-        sessionObj.bearerToken = event.data;
+        if(!sessionObj) {
+          sessionObj={};
+        }
+        sessionObj.bearerToken = token;
         sessionObj.state = 'ready';
         sessionObj.proxy = '';
         sessionObj.clientSide = true;//prevents storing with migration fields in account.js
@@ -59,54 +50,30 @@ define(function() {
             init();
             load();
           } else {
-            alert('no, that didn\'t work, sorry');
+            alert('Sorry, that didn\'t work. Try signing up at 5apps.com or owncube.com, and then come back here and log in with [user]@[provider]');
           }
         });
       }
     }, false);
   }
-  function couldBeEmail(str) {
-    return /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/.test(str);
-  }
-  function showCheckButton() {
-    document.getElementById('allow-button').style.display='none';
-    document.getElementById('signin-button').style.display='none';
-    document.getElementById('check-button').style.display='inline';
-  }
-  function check() {
-    var email = document.getElementById('email').value;
-    if(!couldBeEmail(email)) {
-      return;
-    }
-    document.getElementById('check-button').style.display='none';
-    require(['./js/remoteStorage-0.4.5'], function(remoteStorage) {
-      remoteStorage.getStorageInfo(email, function(err, storageInfo) {
-        if(err) {
-          document.getElementById('check-button').style.display='none';
-          document.getElementById('signin-button').style.display='inline';
-          document.getElementById('allow-button').style.display='none';
-        } else {
-          var email = document.getElementById('email').value;
-          var sessionObj = { 
-            userAddress: email,
-            storageInfo: storageInfo,
-            state: 'allowRemoteStorage'
-          };
-          localStorage.sessionObj = JSON.stringify(sessionObj);
-          $('#check-button').css('display','none');
-          $('#allow-button').css('display','inline');
-          document.getElementById('signin-button').style.display='none';
+  function connect(userAddress, categories, cb) {
+    var libPath = '';
+    window.open(libPath+'/openDialog.html'
+      +'?userAddress='+encodeURIComponent(userAddress)
+      +'&categories='+encodeURIComponent(JSON.stringify(categories))
+      +'&libPath='+encodeURIComponent(libPath));
+    window.addEventListener('message', function(event) {
+      if(event.origin == location.protocol +'//'+ location.host) {
+        if(event.data.substring(0, 5) == 'conn:') {
+          var data = JSON.parse(event.data.substring(5));
+          cb(data.storageInfo, data.bearerToken);
         }
-      });
-    });
+      }
+    }, false);
   }
-
   function loaded() {
     setTimeout(function() {
-      document.getElementById('signin-button').onclick = signin;
       document.getElementById('allow-button').onclick = allow;
-      document.getElementById('check-button').onclick = check;
-      document.getElementById('email').onkeyup = showCheckButton;
     }, 100);//TODO: Gotta find a way, a better way, I'd better wait(x2)
     $('#current-state').on('click', '#agree-button', remoteStorageClient.agree);
     $('#current-state').on('click', '#allow-button', remoteStorageClient.allow);

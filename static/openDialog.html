@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+  <head>
+    <title>Opening dialog...</title>
+    <meta charset="utf-8">
+    <script src="require.js"></script>
+    <script>
+      function gup(name) {
+        name = name.replace(/[\[]/,'\\\[').replace(/[\]]/,'\\\]');
+        var regexS = '[\\?&]'+name+'=([^&#]*)';
+        var regex = new RegExp(regexS);
+        var results = regex.exec(window.location.href);
+        if(results == null) {
+          return "";
+        } else {
+          return results[1];
+        }
+      }
+      require(['./remoteStorage-0.4.5'], function(remoteStorage) {
+        var userAddress = decodeURIComponent(gup('userAddress'));
+        var categories = JSON.parse(decodeURIComponent(gup('categories')));
+        var libPath = decodeURIComponent(gup('libPath'));
+        remoteStorage.getStorageInfo(userAddress, function(err, storageInfo) {
+          var oauthAddress = remoteStorage.createOAuthAddress(storageInfo, categories, location.protocol+'//'+location.host+libPath+'/closeDialog.html?storageInfo='+encodeURIComponent(JSON.stringify(storageInfo)));
+          window.location = oauthAddress;
+        });
+      });
+    </script>
+  </head>
+  <body>
+    Opening dialog...
+  </body>
+</html>
