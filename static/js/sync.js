@@ -17,10 +17,10 @@ function pullRemote(key, cb){
   getMyRemoteClient('documents', function (client) {
     client.get(key, function(err, data) {
       console.log('fetched '+key+' - '+err+':"'+data+'"');
-      // 404 - no remote record - nothing to pull
       // 500 - ups - can't do anything about that
       if(err) { cb(err); return; }
-      if(!data) { cb(null); return; }
+      // err=null, data=undefined - no remote record - nothing to pull
+      if(!data) { cb(404); return; }
       if(typeof(data)=="string") data = JSON.parse(data);
       // merge both records
       var local = localGet(key);

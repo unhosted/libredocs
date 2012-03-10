@@ -64,7 +64,7 @@ define(function() {
       addPopover();
       if(!isRecent('documents')) {
         pullRemote('documents', function(err){
-          if(err==404 || !err) listDocuments(localGet('documents'), true, page);
+          if(!err) listDocuments(localGet('documents'), true, page);
         });
       }
     }
