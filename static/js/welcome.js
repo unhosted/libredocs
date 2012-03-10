@@ -43,6 +43,7 @@ define(function() {
           sessionObj={};
         }
         sessionObj.userAddress=email;
+        sessionObj.storageInfo=storageInfo;
         sessionObj.bearerToken = token;
         sessionObj.state = 'ready';
         sessionObj.proxy = '';
