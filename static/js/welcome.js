@@ -66,7 +66,7 @@ define(function() {
       if(event.origin == location.protocol +'//'+ location.host) {
         if(event.data.substring(0, 5) == 'conn:') {
           var data = JSON.parse(event.data.substring(5));
-          cb(data.storageInfo, data.bearerToken);
+          cb(data.err, data.storageInfo, data.bearerToken);
         }
       }
     }, false);
