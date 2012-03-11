@@ -4,11 +4,7 @@ exports.handler = (function() {
     https = require('https'),
     userDb = require('../userDbCredentials').userDbCredentials,
     redis = require('redis'),
-    requirejs = require('requirejs');
-
-    requirejs.config({
-      nodeRequire: require
-    });
+    remoteStorage = require('../../../experiments/nodejitsu/unhosted-nodejitsu-com/remoteStorage.js/src/index').remoteStorage;
 
   function initRedis(cb) {
     console.log('initing redis');
@@ -64,59 +60,57 @@ exports.handler = (function() {
     cb(false);
   }
   function maybeStore(userAddress, bearerToken, cb) {
-    requirejs(['remoteStorage'], function(remoteStorage) {
-      remoteStorage.getStorageInfo(userAddress, function(err, storageInfo) {
-        if(err) {//might be updating a bearer token, but in that case we need to check it:
-          initRedis(function(redisClient) {
-            redisClient.get(userAddress, function(err, resp) {
-              var data;
-              try {
-                data = JSON.parse(resp);
-              } catch(e) {
-              }
-              if(data && data.storageInfo) {
-                checkLegit(bearerToken, data.storageInfo, function(legit) {
-                  if(legit) {
-                    data.bearerToken=bearerToken;
-                    redisClient.set(userAddress, JSON.stringify(data), function(err, resp) {
-                      cb(true);
-                    });
-                    redisClient.quit();
-                  } else {
-                    redisClient.quit();
-                    cb(false);
-                  }
-                });
-              } else {
-                redisClient.quit();
-                cb(false);
-              }
-            }); 
-          });
-        } else {
-          console.log(storageInfo);
-          initRedis(function(redisClient) {
-            redisClient.get(userAddress, function(err, resp) {
-              var data;
-              try {
-                data = JSON.parse(resp);
-              } catch(e) {
-              }
-              data = data || {};
-              if(!data.storageInfo) {
-                data.storageInfo=storageInfo;
-              }
-              if(!data.bearerToken) {//this way noone can actually do any harm with this.
-                data.bearerToken=bearerToken;
-              }
-              redisClient.set(userAddress, JSON.stringify(data), function(err, resp) {
-                cb(true);
+    remoteStorage.getStorageInfo(userAddress, function(err, storageInfo) {
+      if(err) {//might be updating a bearer token, but in that case we need to check it:
+        initRedis(function(redisClient) {
+          redisClient.get(userAddress, function(err, resp) {
+            var data;
+            try {
+              data = JSON.parse(resp);
+            } catch(e) {
+            }
+            if(data && data.storageInfo) {
+              checkLegit(bearerToken, data.storageInfo, function(legit) {
+                if(legit) {
+                  data.bearerToken=bearerToken;
+                  redisClient.set(userAddress, JSON.stringify(data), function(err, resp) {
+                    cb(true);
+                  });
+                  redisClient.quit();
+                } else {
+                  redisClient.quit();
+                  cb(false);
+                }
               });
+            } else {
               redisClient.quit();
+              cb(false);
+            }
+          }); 
+        });
+      } else {
+        console.log(storageInfo);
+        initRedis(function(redisClient) {
+          redisClient.get(userAddress, function(err, resp) {
+            var data;
+            try {
+              data = JSON.parse(resp);
+            } catch(e) {
+            }
+            data = data || {};
+            if(!data.storageInfo) {
+              data.storageInfo=storageInfo;
+            }
+            if(!data.bearerToken) {//this way noone can actually do any harm with this.
+              data.bearerToken=bearerToken;
+            }
+            redisClient.set(userAddress, JSON.stringify(data), function(err, resp) {
+              cb(true);
             });
+            redisClient.quit();
           });
-        }
-      });
+        });
+      }
     });
   }
   function serve(req, res) {
