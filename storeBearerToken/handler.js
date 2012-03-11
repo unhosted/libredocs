@@ -4,8 +4,12 @@ exports.handler = (function() {
     https = require('https'),
     userDb = require('../userDbCredentials').userDbCredentials,
     redis = require('redis'),
-    webfinger = require('./webfinger').webfinger;
-  
+    requirejs = require('requirejs');
+
+    requirejs.config({
+      nodeRequire: require
+    });
+
   function initRedis(cb) {
     console.log('initing redis');
     var redisClient = redis.createClient(userDb.port, userDb.host);
@@ -19,25 +23,6 @@ exports.handler = (function() {
     cb(redisClient);
   }
 
-  function getStorageInfo(userAddress, cb) {
-    webfinger.lookup('acct:'+userAddress, function(err, xrdObj) {
-      var storages = xrdObj.getLinksByRel('remoteStorage');
-      if(storages.length == 1) {
-        var apis= storages[0].getAttrValues('api');
-        var templates= storages[0].getAttrValues('template');
-        var auths= storages[0].getAttrValues('auth');
-        if(apis.length == 1 && templates.length == 1 && auths.length == 1) {
-          cb(0, {
-            api: apis[0],
-            template: templates[0],
-            auth: auths[0]
-          });
-          return;
-        }
-      }
-      cb(422, {});
-    });
-  }
   function checkLegit(bearerToken, storageInfo, cb) {
     if(storageInfo.template) {
       //upgrade hack:
@@ -79,57 +64,59 @@ exports.handler = (function() {
     cb(false);
   }
   function maybeStore(userAddress, bearerToken, cb) {
-    getStorageInfo(userAddress, function(err, storageInfo) {
-      if(err) {//might be updating a bearer token, but in that case we need to check it:
-        initRedis(function(redisClient) {
-          redisClient.get(userAddress, function(err, resp) {
-            var data;
-            try {
-              data = JSON.parse(resp);
-            } catch(e) {
-            }
-            if(data && data.storageInfo) {
-              checkLegit(bearerToken, data.storageInfo, function(legit) {
-                if(legit) {
-                  data.bearerToken=bearerToken;
-                  redisClient.set(userAddress, JSON.stringify(data), function(err, resp) {
-                    cb(true);
-                  });
-                  redisClient.quit();
-                } else {
-                  redisClient.quit();
-                  cb(false);
-                }
-              });
-            } else {
-              redisClient.quit();
-              cb(false);
-            }
-          }); 
-        });
-      } else {
-        console.log(storageInfo);
-        initRedis(function(redisClient) {
-          redisClient.get(userAddress, function(err, resp) {
-            var data;
-            try {
-              data = JSON.parse(resp);
-            } catch(e) {
-            }
-            data = data || {};
-            if(!data.storageInfo) {
-              data.storageInfo=storageInfo;
-            }
-            if(!data.bearerToken) {//this way noone can actually do any harm with this.
-              data.bearerToken=bearerToken;
-            }
-            redisClient.set(userAddress, JSON.stringify(data), function(err, resp) {
-              cb(true);
-            });
-            redisClient.quit();
+    requirejs(['remoteStorage'], function(remoteStorage) {
+      remoteStorage.getStorageInfo(userAddress, function(err, storageInfo) {
+        if(err) {//might be updating a bearer token, but in that case we need to check it:
+          initRedis(function(redisClient) {
+            redisClient.get(userAddress, function(err, resp) {
+              var data;
+              try {
+                data = JSON.parse(resp);
+              } catch(e) {
+              }
+              if(data && data.storageInfo) {
+                checkLegit(bearerToken, data.storageInfo, function(legit) {
+                  if(legit) {
+                    data.bearerToken=bearerToken;
+                    redisClient.set(userAddress, JSON.stringify(data), function(err, resp) {
+                      cb(true);
+                    });
+                    redisClient.quit();
+                  } else {
+                    redisClient.quit();
+                    cb(false);
+                  }
+                });
+              } else {
+                redisClient.quit();
+                cb(false);
+              }
+            }); 
           });
-        });
-      }
+        } else {
+          console.log(storageInfo);
+          initRedis(function(redisClient) {
+            redisClient.get(userAddress, function(err, resp) {
+              var data;
+              try {
+                data = JSON.parse(resp);
+              } catch(e) {
+              }
+              data = data || {};
+              if(!data.storageInfo) {
+                data.storageInfo=storageInfo;
+              }
+              if(!data.bearerToken) {//this way noone can actually do any harm with this.
+                data.bearerToken=bearerToken;
+              }
+              redisClient.set(userAddress, JSON.stringify(data), function(err, resp) {
+                cb(true);
+              });
+              redisClient.quit();
+            });
+          });
+        }
+      });
     });
   }
   function serve(req, res) {
