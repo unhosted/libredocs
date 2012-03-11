@@ -4,7 +4,7 @@ exports.handler = (function() {
     https = require('https'),
     userDb = require('../userDbCredentials').userDbCredentials,
     redis = require('redis'),
-    remoteStorage = require('../../../experiments/nodejitsu/unhosted-nodejitsu-com/remoteStorage.js/src/index').remoteStorage;
+    remoteStorage = require('./remoteStorage-node');
 
   function initRedis(cb) {
     console.log('initing redis');
