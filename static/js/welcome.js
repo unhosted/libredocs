@@ -81,10 +81,6 @@ define(function() {
     setTimeout(function() {
       document.getElementById('allow-button').onclick = allow;
     }, 100);//TODO: Gotta find a way, a better way, I'd better wait(x2)
-    $('#current-state').on('click', '#agree-button', remoteStorageClient.agree);
-    $('#current-state').on('click', '#allow-button', remoteStorageClient.allow);
-    $('#signin').tooltip();
-    $('.signin').onmouseover=$('#signin').tooltip('show');
   }
 
   return {
