@@ -115,7 +115,7 @@ define(function() {
       id = owner+'$'+time;
       var doc = {
         id: id,
-        title: 'New document',
+        title: 'Document title',
         link: time,
         owner: owner,
         timestamp: time
