@@ -4,6 +4,7 @@ exports.handler = (function() {
     https = require('https'),
     userDb = require('../userDbCredentials').userDbCredentials,
     redis = require('redis'),
+    xml2js = require('xml2js'),
     remoteStorage = require('./remoteStorage-node');
 
   function initRedis(cb) {
