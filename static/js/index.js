@@ -48,7 +48,7 @@ function signupStatus() {
   if(sessionObj == null || !sessionObj.userAddress) {
     return '<input type="submit" value="Sign in" onclick="location=\'welcome.html\';">';
   } else {
-    return sessionObj.userAddress+'<a class="btn btn-danger" href="#" onclick="localStorage.clear();location=\'welcome.html\';"><i class="icon-remove icon-white"></i> Sign out</a>'
+    return sessionObj.userAddress+' <a href="#" rel="tooltip" title="Sign out" onclick="localStorage.clear();location=\'welcome.html\';"><i class="icon-off"></i></a>';
   }
 }
 
