@@ -46,9 +46,9 @@ function signupStatus() {
   var sessionObj = JSON.parse(localStorage.getItem('sessionObj'));
   // not signed in
   if(sessionObj == null || !sessionObj.userAddress) {
-    return '<input type="submit" value="Sign in" onclick="location=\'welcome.html\';">';
+    return '<input type="submit" value="Connect" onclick="location=\'welcome.html\';">';
   } else {
-    return sessionObj.userAddress+' <a href="#" rel="tooltip" title="Sign out" onclick="localStorage.clear();location=\'welcome.html\';"><i class="icon-off"></i></a>';
+    return sessionObj.userAddress+' <a href="#" rel="tooltip" title="Disconnect" onclick="localStorage.clear();location=\'welcome.html\';"><i class="icon-off"></i></a>';
   }
 }
 

@@ -37,7 +37,7 @@ function addSignout() {
   var sessionObj = localGet('sessionObj') || {};
   var signout = document.getElementById('signout');
   signout.innerHTML = (sessionObj.userAddress?' '+sessionObj.userAddress:'');
-  signout.innerHTML += ' <a href="#" rel="tooltip" title="Sign out"><i class="icon-off"></i></a>';
+  signout.innerHTML += ' <a href="#" rel="tooltip" title="Disconnect"><i class="icon-off"></i></a>';
   $('#signout').on('click', 'a', signOut);
   $('#signout').show();
   $('#signout a').tooltip({placement:'bottom'});
