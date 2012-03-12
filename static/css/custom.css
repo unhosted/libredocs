@@ -21,11 +21,9 @@ h1+small { float:right; position:relative; top:-2em; right:0em; }
 .step.remotestorage img, .step.write img { position:relative; left:20%; }
 .step.remotestorage img { margin:2em 0; width:12em; }
 .step.signin { position:absolute; width:18em; left:21em; }
-.step.signin #email { margin:5em 0 .5em; width:10em; }
-.step.signin #signin-button { position:absolute; margin:5em 0 .5em .5em; background:url('../images/browserid.png') no-repeat; min-width:79px; min-height:22px; cursor:pointer; border:none; box-shadow:none; }
-.step.signin #allow-button { position:absolute; margin:5em 0 .5em; }
-.step.signin #check-button { position:absolute; margin:5em 0 .5em; }
-.step.signin #signin-checking { position:absolute; margin:5.5em 0 .5em .5em; background:url('../images/loading.gif') no-repeat; padding-left:1.5em; white-space:nowrap; }
+.step.signin #login { position:absolute; width:15em; }
+.step.signin #email { position:absolute; margin:4em 0 .5em; width:15em; height:2em; }
+.step.signin #allow-button { position:absolute; margin:4.35em -.5em 0 0; right:0; }
 .step.write { position:absolute; width:20em; left:41em; }
 .step.write img { margin-top:-1em; }
 .step>h3 { position:absolute; top:7.3em; white-space:nowrap; }
