@@ -45,7 +45,7 @@ h1+small:hover a.btn { display:inline; position:absolute; right:0; top:-.4em; }
 #new-document { font-size: 1.3em;  } 
 ul#doclist { margin-left:-20px; font-size:1.3em; list-style:none; }
 ul#doclist #loadingdocs { background:url('../images/loading.gif') no-repeat left; margin-left:.7em; padding-left:1.2em; }
-ul#doclist li { padding:.7em 0; border:none; white-space:nowrap; position:relative; }
+ul#doclist li { width:102.4%; padding:.7em 0; border:none; white-space:nowrap; position:relative; }
 ul#doclist li:hover { background:#f8f8f8; }
 ul#doclist li:last-child { height:1.5em; }
 ul#doclist li .doclink { cursor:pointer; text-decoration:none; }
@@ -61,8 +61,9 @@ ul#doclist li:hover a.btn { position:absolute; display:inline; right:1em; top:.5
 #docTitleInput { height:1.2em; width:6em; font-size:1em; margin:-.7em -.05em -.5em; padding:0; color:#000; font-weight:bold; }
 
 #previewPad { position:absolute; margin-top:43px; margin-left:-11px; width:73em; height:32em; background:none; border:none; }
-.editor { min-height:15em; height:15em; }
-.editor iframe { width:100%; min-height:100%; border:solid 1px lightGray; margin-left: 0.5em; }
+.editor { min-height:30em; height:30em; }
+.editor iframe { width:100%; min-height:100%; border:1px solid #bbb; }
+#editorcontainer { margin:1em 0; }
 
 #error { z-index:1; position:absolute; width:63em; }
 
