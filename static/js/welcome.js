@@ -17,10 +17,10 @@ define(function() {
     }));
   }
   function allow() {
-    var email=document.getElementById('email').value;
+    var email=document.getElementById('connect-address').value;
     var userAddressParts=email.split('@');
     if(userAddressParts.length!=2) {
-      alert('Your user address should have an \'@\'-sign in it, like e.g. peter@pan.com');
+      alert('Your user address should have an \'@\'-sign in it, like peter@pan.com');
       return;
     }
     if(userAddressParts[0].indexOf('+') != -1) {
@@ -30,10 +30,12 @@ define(function() {
     connect(email, ['documents', 'contacts', 'public'], function(err, storageInfo, token) {
       var emailParts
       if(err) {
-        alert('Sorry, that didn\'t work. Try signing up at 5apps.com or owncube.com, and then come back here and log in with [user]@[provider]');
+        alert('Sorry, that didn\'t work. Try signing up at 5apps.com or owncube.com, and then come back here and connect with [user]@[provider]');
       } else {
-        document.getElementById('login').style.display='none';
-        document.getElementById('logging-you-in').style.display='inline';
+        document.getElementById('connect-address').disabled=true;
+        document.getElementById('connect-address').style.background='url("../images/loading.gif") no-repeat right';
+        document.getElementById('connect-button').style.display='none';
+
         var sessionObj;
         try {
           sessionObj = JSON.parse(localStorage.sessionObj);
@@ -54,9 +56,10 @@ define(function() {
             init();
             load();
           } else {
-            document.getElementById('login').style.display='inline';
-            document.getElementById('logging-you-in').style.display='none';
-            alert('Sorry, that looks like a bug. Please come to http://webchat.freenode.net/?channels=unhosted and tell us about it');
+            document.getElementById('connect-address').disabled=false;
+            document.getElementById('connect-address').style.background='none';
+            document.getElementById('connect-button').style.display='inline';
+            alert('Sorry, that looks like an issue. Please come to http://webchat.freenode.net/?channels=unhosted and tell us about it');
           }
         });
       }
@@ -79,7 +82,7 @@ define(function() {
   }
   function loaded() {
     setTimeout(function() {
-      document.getElementById('allow-button').onclick = allow;
+      document.getElementById('connect-button').onclick = allow;
     }, 100);//TODO: Gotta find a way, a better way, I'd better wait(x2)
   }
 
