@@ -22,8 +22,8 @@ h1+small { float:right; position:relative; top:-2em; right:0em; }
 .step.remotestorage img { margin:2em 0; width:12em; }
 .step.connect { position:absolute; width:18em; left:21em; }
 .step.connect #connect { position:absolute; width:15em; }
-.step.connect #connect-address { position:absolute; margin:4em 0 .5em; width:9.35em; padding-right:6em; height:2em; }
-.step.connect #connect-button { position:absolute; margin:4.35em -.5em 0 0; right:0; }
+.step.connect #connect-address { position:absolute; margin:4em 0 .5em; width:9.35em; padding-right:6em; height:2.5em; padding-left:3em; background:url('../images/remoteStorage-icon.png') no-repeat .3em center; }
+.step.connect #connect-button { position:absolute; margin:4.6em -3em 0 0; right:0; }
 .step.write { position:absolute; width:20em; left:41em; }
 .step.write img { margin-top:-1em; }
 .step>h3 { position:absolute; top:7.3em; white-space:nowrap; }
