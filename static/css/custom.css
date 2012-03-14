@@ -38,26 +38,27 @@ h1+small { float:right; position:relative; top:-2em; right:0em; }
 .progress .bar { height:3.5em; }
 .progress .bar p { padding:.7em; display:inline; position:absolute; }
 
-#new-document { font-size: 1.3em;  } 
-ul#doclist { margin-left:-20px; font-size:1.3em; list-style:none; }
+ul#doclist, #new-document { margin-left:-20px; font-size:1.3em; cursor:pointer; list-style:none; }
+#new-document { padding:1em; margin-top:-20px; width:101.1%; }
 ul#doclist #loadingdocs { background:url('../images/loading.gif') no-repeat left; margin-left:.7em; padding-left:1.2em; }
-ul#doclist li { width:102.4%; padding:.7em 0; border:none; white-space:nowrap; position:relative; }
-ul#doclist li:hover { background:#f8f8f8; }
+ul#doclist li { width:102.5%; padding:.7em 0; border:none; white-space:nowrap; position:relative; }
+ul#doclist li:hover, #new-document:hover { background:#f8f8f8; }
 ul#doclist li:last-child { height:1.5em; }
 ul#doclist li .doclink { cursor:pointer; text-decoration:none; }
 ul#doclist strong { color:#000; padding:.7em 0 .7em 1.8em; }
 ul#doclist span { font-size:.75em; }
 ul#doclist .preview { position:absolute; top:0; padding:1em 2em 1em .5em; overflow:hidden; white-space:nowrap; color:#555; }
-ul#doclist time { position:absolute; right:1.2em; }
+ul#doclist time { position:absolute; right:1.2em; font-size:.75em; }
 ul#doclist li a.btn { display:none; }
 ul#doclist li:hover .preview { color:#000; }
 ul#doclist li:hover .date { display:none; }
 ul#doclist li:hover a.btn { position:absolute; display:inline; right:1em; top:.5em; }
 
 #docTitleInput { height:1.2em; width:6em; font-size:1em; margin:-.7em -.05em -.5em; padding:0; color:#000; font-weight:bold; }
+.editTitle { margin:0; }
 
 #previewPad { position:absolute; margin-top:43px; margin-left:-11px; width:73em; height:32em; background:none; border:none; }
-.editor { min-height:30em; height:30em; }
+.editor { min-height:30em; height:30em; margin-top:1em; }
 .editor iframe { width:100%; min-height:100%; border:1px solid #bbb; }
 #editorcontainer { margin:1em 0; }
 
