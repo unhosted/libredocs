@@ -33,7 +33,7 @@ define(function() {
         alert('Sorry, that didn\'t work. Try signing up at 5apps.com or owncube.com, and then come back here and connect with [user]@[provider]');
       } else {
         document.getElementById('connect-address').disabled=true;
-        document.getElementById('connect-address').style.background='url("../images/loading.gif") no-repeat right';
+        document.getElementById('connect-address').style.background='url("../images/loading.gif") no-repeat 1em center';
         document.getElementById('connect-button').style.display='none';
 
         var sessionObj;
