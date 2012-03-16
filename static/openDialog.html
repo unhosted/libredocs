@@ -25,6 +25,9 @@
           }), location.protocol+'//'+location.host);
           window.close();
         } else {
+          if(storageInfo.template.substring(0, 'http://owncube.com/'.length)=='http://owncube.com/') {
+            storageInfo.template= 'https://owncube.com/'+storageInfo.template.substring('http://owncube.com/'.length);
+          }
           if(storageInfo.auth.substring(0, 'http://owncube.com/'.length)=='http://owncube.com/') {
             storageInfo.auth= 'https://owncube.com/'+storageInfo.auth.substring('http://owncube.com/'.length);
           }
