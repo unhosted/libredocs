@@ -34,12 +34,14 @@ define(function() {
     }
 
     function addClickHandlers() {
+      if( $('#documents').attr('data-handlers') === 'active') return;
       $('#documents').on('click', '#new-document', newDocument);
       $('#documents').on('click', '.more', nextPage);
       $('#doclist').on('click', 'li', showDocument);
       $('#doclist').on('mouseenter', 'li.active.mine .docTitle', editTitle);
       $('#doclist').on('blur', 'li.active.mine input.editTitle', saveTitle);
       $('#documents').on('change', '#upload-document', uploadFiles);
+      $('#documents').attr('data-handlers', 'active');
     }
 
     function addPopover() {
@@ -142,7 +144,7 @@ define(function() {
         setTimeout(function() {
           async.forEach(files, uploadToDocument, function(err) {
             chooser.files = [];
-            showList(1);
+            listDocuments(localGet('documents'), true);
           });
         },100);
       }
