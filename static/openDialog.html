@@ -2,7 +2,7 @@
   <head>
     <title>Opening dialog...</title>
     <meta charset="utf-8">
-    <script src="js/remoteStorage-0.5.js"></script>
+    <script src="js/src/require.js"></script>
     <script>
       function gup(name) {
         name = name.replace(/[\[]/,'\\\[').replace(/[\]]/,'\\\]');
@@ -15,6 +15,7 @@
           return results[1];
         }
       }
+require(['./js/src/remoteStorage'], function(remoteStorage) {
       var userAddress = decodeURIComponent(gup('userAddress'));
       var categories = JSON.parse(decodeURIComponent(gup('categories')));
       var libPath = decodeURIComponent(gup('libPath'));
@@ -36,6 +37,7 @@
           window.location = oauthAddress;
         }
       });
+});
     </script>
   </head>
   <body>

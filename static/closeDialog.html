@@ -2,15 +2,17 @@
   <head>
     <title>Closing dialog...</title>
     <meta charset="utf-8">
-    <script src="js/remoteStorage-0.5.js"></script>
+    <script src="js/require.js"></script>
     <script>
-      var storageInfo = JSON.parse(localStorage.getItem('_juggleStorageInfo'));
-      localStorage.removeItem('_juggleStorageInfo');
-      window.opener.postMessage('conn:'+JSON.stringify({
-        storageInfo: storageInfo,
-        bearerToken: remoteStorage.receiveToken()
-      }), location.protocol+'//'+location.host);
-      window.close();
+      require(['js/src/remoteStorage'], function(remoteStorage) {
+        var storageInfo = JSON.parse(localStorage.getItem('_juggleStorageInfo'));
+        localStorage.removeItem('_juggleStorageInfo');
+        window.opener.postMessage('conn:'+JSON.stringify({
+          storageInfo: storageInfo,
+          bearerToken: remoteStorage.receiveToken()
+        }), location.protocol+'//'+location.host);
+        window.close();
+      });
     </script>
   </head>
   <body>
