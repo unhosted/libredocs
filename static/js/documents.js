@@ -39,6 +39,7 @@ define(function() {
       $('#doclist').on('click', 'li', showDocument);
       $('#doclist').on('mouseenter', 'li.active.mine .docTitle', editTitle);
       $('#doclist').on('blur', 'li.active.mine input.editTitle', saveTitle);
+      $('#documents').on('change', '#upload-document', uploadFiles);
     }
 
     function addPopover() {
@@ -132,6 +133,19 @@ define(function() {
       docRow = myDocumentRow(doc);
       $('#doclist').append(docRow);
       showDocument(docRow);
+    }
+
+    var uploadFiles = function(e) {
+      var chooser = e.currentTarget;
+      var files = chooser.files;
+      if(files.length > 0) {
+        setTimeout(function() {
+          async.forEach(files, uploadToDocument, function(err) {
+            chooser.files = [];
+            showList(1);
+          });
+        },100);
+      }
     }
 
     var showDocument = function(eventOrElement) {
