@@ -184,7 +184,7 @@ define(function() {
         editor.addClass('small');
         editor.addClass(MIME_TYPE_CLASSES[doc.type]);
         editor.html("This is an uploaded document. <br/>");
-        editor.append('<a class="preview_action" href="#">show</a>');
+        editor.append('<a class="preview_action" >show</a>');
       }
       editor.show();
       updateTime(id);
@@ -198,29 +198,33 @@ define(function() {
       var doc = localGet('documents')[id];
       var editor = li.find(".editor");
       var data = doc.data;
-      data = data.substr(data.indexOf(",") + 1);
-      data = Base64.decode(data);
       runtime.loadClass('odf.OdfCanvas');
       globalreadfunction = runtime.read;
       globalfilesizefunction = runtime.getFileSize;
       runtime.getFileSize = function (path, callback) {
-        if (path.indexOf("data:" == -1)) {
+        if (path.indexOf("data:") == -1) {
           globalfilesizefunction.apply(runtime, [path, callback]);
         } else {
+          var b = new core.Base64();
+          var data = path.substr(path.indexOf(",") + 1);
+          data = b.convertBase64ToUTF8Array(data);
           callback(data.length);
         }
       }
       runtime.read = function(path, offset, length, callback) { 
-        if (path.indexOf("data:" == -1)) {
+        if (path.indexOf("data:") == -1) {
           globalreadfunction.apply(runtime,
             [path, offset, length, callback]);
         } else {
+          var b = new core.Base64();
+          var data = path.substr(path.indexOf(",") + 1);
+          data = b.convertBase64ToUTF8Array(data);
           callback(null, data.slice(offset, offset + length))
         }
       }
       var odfDiv = $('<div class="odf"></div>');
       editor.append(odfDiv);
-      var odfcanvas = new odf.OdfCanvas(odfDiv);
+      var odfcanvas = new odf.OdfCanvas(odfDiv[0]);
       odfcanvas.load(doc.data);
     }
 
