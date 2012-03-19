@@ -1,7 +1,11 @@
 define(function() {
   function loaded(doc) {
 
-    var per_page = 5; // TODO: this should be a constant somewhere
+    // TODO: these should probably be defined elsewhere
+    var PER_PAGE = 5; 
+    var MIME_TYPE_CLASSES = {
+      "application/vnd.oasis.opendocument.text": "odf"
+    }
 
     function listDocuments(docs, synced, page) {
       if(!page) emptyDocuments();
@@ -34,14 +38,20 @@ define(function() {
     }
 
     function addClickHandlers() {
-      if( $('#documents').attr('data-handlers') === 'active') return;
-      $('#documents').on('click', '#new-document', newDocument);
-      $('#documents').on('click', '.more', nextPage);
-      $('#doclist').on('click', 'li', activateLi);
-      $('#doclist').on('mouseenter', 'li.active.mine .docTitle', editTitle);
-      $('#doclist').on('blur', 'li.active.mine input.editTitle', saveTitle);
-      $('#documents').on('change', '#upload-document', uploadFiles);
-      $('#documents').attr('data-handlers', 'active');
+      var docs = $('#documents');
+      if( docs.attr('data-handlers') === 'active') return;
+
+      docs.on('click', '#new-document', newDocument);
+      docs.on('click', '.more', nextPage);
+      docs.on('change', '#upload-document', uploadFiles);
+      docs.on('click', '.editor.odf .preview_action', previewOdf);
+
+      var list = $('#doclist');
+      list.on('click', 'li', activateLi);
+      list.on('mouseenter', 'li.active.mine .docTitle', editTitle);
+      list.on('blur', 'li.active.mine input.editTitle', saveTitle);
+
+      docs.attr('data-handlers', 'active');
     }
 
     function addPopover() {
@@ -78,7 +88,7 @@ define(function() {
 
     function displayMore(page, total) {
       page = page || 1;
-      if(total > page*per_page){
+      if(total > page*PER_PAGE){
        $('#documents .more').show();
       } else {
        $('#documents .more').hide();
@@ -172,11 +182,22 @@ define(function() {
         editor.addClass('big');
       } else {
         editor.addClass('small');
-        editor.html("This is an uploaded document");
+        editor.addClass(MIME_TYPE_CLASSES[doc.type]);
+        editor.html("This is an uploaded document. <br/>");
+        editor.append('<a class="preview_action" href="#">show</a>');
       }
       editor.show();
       updateTime(id);
       updateHistory(doc);
+    }
+
+    var previewOdf = function(eventOrElement) {
+      var el = $(eventOrElement.currentTarget || eventOrElement);
+      var li = el.is("a") ? el.parent().parent() : el;
+      var id = li.attr('id');
+      var doc = localGet('documents')[id];
+      alert("about to display ..." + doc.title);
+
     }
 
     var raiseLi = function(li) {
@@ -268,8 +289,8 @@ define(function() {
         return b[1].timestamp - a[1].timestamp;
       });
 
-      var first = (page-1)*per_page;
-      var last = Math.min(first+per_page, tuples.length);
+      var first = (page-1)*PER_PAGE;
+      var last = Math.min(first+PER_PAGE, tuples.length);
       for(var i = first; i < last; i++) {
         cb(tuples[i][1]);
       }
