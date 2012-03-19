@@ -63,7 +63,8 @@ ul#doclist li:hover a.btn { position:absolute; display:inline; right:1em; top:.5
 .editTitle { margin:0; }
 
 #previewPad { position:absolute; margin-top:43px; margin-left:-11px; width:73em; height:32em; background:none; border:none; }
-.editor { min-height:30em; height:30em; margin-top:1em; }
+.editor.big { min-height:30em; height:30em; margin-top:1em; }
+.editor.small { min-height:3em; height:3em; margin-top:1em; }
 .editor iframe { width:100%; min-height:100%; border:1px solid #bbb; }
 #editorcontainer { margin:1em 0; }
 

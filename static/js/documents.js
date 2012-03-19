@@ -37,7 +37,7 @@ define(function() {
       if( $('#documents').attr('data-handlers') === 'active') return;
       $('#documents').on('click', '#new-document', newDocument);
       $('#documents').on('click', '.more', nextPage);
-      $('#doclist').on('click', 'li', showDocument);
+      $('#doclist').on('click', 'li', activateLi);
       $('#doclist').on('mouseenter', 'li.active.mine .docTitle', editTitle);
       $('#doclist').on('blur', 'li.active.mine input.editTitle', saveTitle);
       $('#documents').on('change', '#upload-document', uploadFiles);
@@ -134,7 +134,7 @@ define(function() {
       saveDocument(doc);
       docRow = myDocumentRow(doc);
       $('#doclist').append(docRow);
-      showDocument(docRow);
+      activateLi(docRow);
     }
 
     var uploadFiles = function(e) {
@@ -150,34 +150,47 @@ define(function() {
       }
     }
 
-    var showDocument = function(eventOrElement) {
+    var activateLi = function(eventOrElement) {
       var li = $(eventOrElement.currentTarget || eventOrElement);
-      var editor = li.find('.editor');
       var index = $("#doclist li").index(li);
-      if(editor.is(":visible") && index == 0) return;
+      if(li.is(".active") && index == 0) return;
+      if(index != 0) deactivateLi($('#doclist li').first());
       if(index != 0) li.hide();
-      var old = $('#doclist li').first();
+      displayDocument(li);
+      raiseLi(li);
+    }
+
+    var displayDocument = function(li) {
+      var editor = li.find('.editor');
       var id = li.attr('id');
       var doc = localGet('documents')[id];
-
-      editor.pad({
-        'padId':encodeURIComponent(id),
-        'userName':hyphenify(currentUser() || 'unknown'),
-      });
-
-      updateTime(id);
-      li.addClass('active')
-      li.prependTo("#doclist");
-      editor.show();
-      li.slideDown(1000);
-      if(index > 0){
-        old.find('.editor').slideUp().empty();
-        old.find('.editTitle').hide();
-        old.find('.docTitle').show();
-        old.removeClass('active')
-        updateTime(old.attr('id'));
+      if (!doc.data) {
+        editor.pad({
+          'padId':encodeURIComponent(id),
+          'userName':hyphenify(currentUser() || 'unknown'),
+        });
+        editor.addClass('big');
+      } else {
+        editor.addClass('small');
+        editor.html("This is an uploaded document");
       }
+      editor.show();
+      updateTime(id);
       updateHistory(doc);
+    }
+
+    var raiseLi = function(li) {
+      li.addClass('active');
+      li.prependTo("#doclist");
+      li.slideDown(1000);
+    }
+
+    var deactivateLi = function(li) {
+      li.find('.editor').slideUp().empty();
+      li.find('.editTitle').hide();
+      li.find('.docTitle').show();
+      li.removeClass('active')
+      updateTime(li.attr('id'));
     }
 
     function updateTime(id){
@@ -272,7 +285,7 @@ define(function() {
     addClickHandlers();
     //TODO: refactor this so we don't get an element to send it to the handler
     if(doc) {
-      showDocument(document.getElementById(doc.id));
+      activateLi(document.getElementById(doc.id));
     }
   }
 
