@@ -196,8 +196,32 @@ define(function() {
       var li = el.is("a") ? el.parent().parent() : el;
       var id = li.attr('id');
       var doc = localGet('documents')[id];
-      alert("about to display ..." + doc.title);
-
+      var editor = li.find(".editor");
+      var data = doc.data;
+      data = data.substr(data.indexOf(",") + 1);
+      data = Base64.decode(data);
+      runtime.loadClass('odf.OdfCanvas');
+      globalreadfunction = runtime.read;
+      globalfilesizefunction = runtime.getFileSize;
+      runtime.getFileSize = function (path, callback) {
+        if (path.indexOf("data:" == -1)) {
+          globalfilesizefunction.apply(runtime, [path, callback]);
+        } else {
+          callback(data.length);
+        }
+      }
+      runtime.read = function function (path, offset, length, callback) { 
+        if (path.indexOf("data:" == -1)) {
+          globalreadfunction.apply(runtime,
+            [path, offset, length, callback]);
+        } else {
+          callback(null, data.slice(offset, offset + length))
+        }
+      }
+      var odfDiv = $('<div class="odf"></div>');
+      editor.append(odfDiv);
+      var odfcanvas = new odf.OdfCanvas(odfDiv);
+      odfcanvas.load(doc.data);
     }
 
     var raiseLi = function(li) {
