@@ -210,7 +210,7 @@ define(function() {
           callback(data.length);
         }
       }
-      runtime.read = function function (path, offset, length, callback) { 
+      runtime.read = function(path, offset, length, callback) { 
         if (path.indexOf("data:" == -1)) {
           globalreadfunction.apply(runtime,
             [path, offset, length, callback]);
