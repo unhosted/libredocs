@@ -222,10 +222,10 @@ define(function() {
           callback(null, data.slice(offset, offset + length))
         }
       }
-      var odfDiv = $('<div class="odf"></div>');
-      editor.append(odfDiv);
+      var odfDiv = $('<div class="odf modal container"></div>');
       var odfcanvas = new odf.OdfCanvas(odfDiv[0]);
       odfcanvas.load(doc.data);
+      odfDiv.modal();
     }
 
     var raiseLi = function(li) {
