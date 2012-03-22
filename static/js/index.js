@@ -72,13 +72,13 @@ function changeDocTitle() {
 }
 function saveDocTitle() {
   editingDocTitle = false;
-  getPad(function (pad){
-    pad.title = document.getElementById('docTitleInput').value;
-    pad.link = getLinkForPad(pad);
-    saveDocument(pad);
-    publishDocument(pad, function() {
-      location.hash = '#'+getCurrDocOwner()+'/'+pad.link;
-      document.getElementById('docTitle').innerHTML = pad.title;
+  getPad(function (doc){
+    doc.title = document.getElementById('docTitleInput').value;
+    doc.link = getLinkForDocument(doc);
+    saveDocument(doc);
+    publishDocument(doc, function() {
+      location.hash = '#'+getCurrDocOwner()+'/'+doc.link;
+      document.getElementById('docTitle').innerHTML = doc.title;
     });
   });
 }
@@ -95,22 +95,6 @@ function getCurrDocLink() {
   } else {
     window.location.href = 'welcome.html';
   }
-}
-
-function getLinkForPad(pad) {
-  var link = pad.title.replace(/\s+/g, '-');
-  // unchanged...
-  if(link==getCurrDocLink()) return(link);
-  var main = link;
-  var postfix = 0;
-  var key = getCurrDocOwner()+'$'+link;
-  var index = localGet('index');
-  while(index[key] && index[key] != pad.id) {
-    postfix++;
-    link = main + '-' + postfix;
-    key = getCurrDocOwner()+'$'+link;
-  }
-  return encodeURIComponent(link);
 }
 
 function hyphenify(userAddress) {

@@ -23,6 +23,18 @@ function saveDocument(doc, cb){
   ], cb);
 }
 
+function saveDocumentContent(doc, cb){
+  if(!doc.type.match(/^text/)) return;
+  var content;
+  if(doc.data){
+    var encoded = doc.data.split(',')[1];
+    content = Base64.decode(encoded);
+  }
+  if(!content) return;
+  localSet('pad:'+doc.id, {text: content});
+  pushRemote('pad:'+doc.id, cb);
+}
+
 function fetchDocumentId(owner, link, cb){
   var key = owner + '$' + link;
   var done = false;
@@ -59,3 +71,45 @@ function publishDocument(doc, cb) {
     });
   });
 }
+
+function uploadToDocument(file, cb) {
+  var reader = new FileReader();
+  reader.onload = (function(file) {
+    return function(e) {
+      var time = new Date().getTime();
+      var owner = currentUser();
+      id = owner+'$'+time;
+      var doc = {
+        id: id,
+        title: file.name,
+        data: e.target.result,
+        type: file.type,
+        owner: owner,
+        timestamp: time
+      };
+      doc.link = getLinkForDocument(doc);
+      saveDocument(doc, cb);
+      // TODO make sure this happens before cb...
+      saveDocumentContent(doc);
+    }
+  })(file);
+  reader.readAsDataURL(file);
+}
+
+function getLinkForDocument(doc) {
+  var link = doc.title.replace(/\s+/g, '-');
+  // unchanged...
+  if(window.getCurrDocLink && link==getCurrDocLink()) return(link);
+  var main = link;
+  var postfix = 0;
+  var key = currentUser()+'$'+link;
+  var index = localGet('index');
+  while(index[key] && index[key] != doc.id) {
+    postfix++;
+    link = main + '-' + postfix;
+    key = currentUser()+'$'+link;
+  }
+  return encodeURIComponent(link);
+}
+
+

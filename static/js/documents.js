@@ -1,7 +1,11 @@
 define(function() {
   function loaded(doc) {
 
-    var per_page = 5; // TODO: this should be a constant somewhere
+    // TODO: these should probably be defined elsewhere
+    var PER_PAGE = 5; 
+    var MIME_TYPE_CLASSES = {
+      "application/vnd.oasis.opendocument.text": "odf"
+    }
 
     function listDocuments(docs, synced, page) {
       if(!page) emptyDocuments();
@@ -18,7 +22,7 @@ define(function() {
       var row = documentRow(doc);
       var time = row.find('time');
       row.appendTo('#doclist');
-      fetchDocument(doc.id, renderDocumentPreview);
+      if (!doc.data) fetchDocument(doc.id, renderDocumentPreview);
       time.text(relativeModifiedDate(doc.timestamp));
       time.attr('style', modifiedDateColor(doc.timestamp));
       time.attr('title',new Date(doc.timestamp).toLocaleString());
@@ -34,11 +38,20 @@ define(function() {
     }
 
     function addClickHandlers() {
-      $('#documents').on('click', '#new-document', newDocument);
-      $('#documents').on('click', '.more', nextPage);
-      $('#doclist').on('click', 'li', showDocument);
-      $('#doclist').on('mouseenter', 'li.active.mine .docTitle', editTitle);
-      $('#doclist').on('blur', 'li.active.mine input.editTitle', saveTitle);
+      var docs = $('#documents');
+      if( docs.attr('data-handlers') === 'active') return;
+
+      docs.on('click', '#new-document', newDocument);
+      docs.on('click', '.more', nextPage);
+      docs.on('change', '#upload-document', uploadFiles);
+      docs.on('click', 'li.odf .preview.btn', previewOdf);
+
+      var list = $('#doclist');
+      list.on('click', 'li', activateLi);
+      list.on('mouseenter', 'li.active.mine .docTitle', editTitle);
+      list.on('blur', 'li.active.mine input.editTitle', saveTitle);
+
+      docs.attr('data-handlers', 'active');
     }
 
     function addPopover() {
@@ -70,17 +83,21 @@ define(function() {
     }
 
     function documentRow(doc) {
-      return (doc.owner == currentUser()) ? myDocumentRow(doc) : sharedDocumentRow(doc);
+      var row = (doc.owner == currentUser()) ? myDocumentRow(doc) : sharedDocumentRow(doc);
+      decorateDocumentRow(row, doc);
+      return row;
     }
 
     function displayMore(page, total) {
       page = page || 1;
-      if(total > page*per_page){
+      if(total > page*PER_PAGE){
        $('#documents .more').show();
       } else {
        $('#documents .more').hide();
       }
     }
+
+
 
     function myDocumentRow(doc) {
       return $('<li id="'+doc.id+'" class="mine" style="display:none">'
@@ -88,8 +105,12 @@ define(function() {
         + ' <input class="editTitle" type="text" value="'+doc.title+'" style="display:none;" />'
         + ' <span class="preview" id="'+doc.link+'-preview"></span>'
         + ' <time datetime="'+new Date(doc.timestamp).toLocaleString()+'"></time>'
-        + ' <a class="btn share" href="#" rel="popover" title="Share this link" data-content="<a href=\''+shareDoc(doc.id)+'\'>'+shareDoc(doc.id)+'</a>"><i class="icon-share-alt"></i> Share</a>'
-        + ' <div class="editor" id="'+doc.link+'-edit" style="display:none;"></div>'
+        + ' <div class="buttons" >'
+        + previewLink(doc)
+        + downloadLink(doc)
+        + shareLink(doc)
+        + ' </div>'
+        + ' <div class="editor" id="'+doc.link+'-edit"></div>'
         + '</li>');
     }
 
@@ -98,9 +119,38 @@ define(function() {
         + ' <strong class="docTitle">'+doc.title+'</strong>'
         + ' <span class="owner" id="'+doc.id+'-owner">'+doc.owner+'</span>'
         + ' <time datetime="'+new Date(doc.timestamp).toLocaleString()+'"></time>'
-        + ' <a class="btn share" href="#" rel="popover" title="Share this link" data-content="<a href=\''+shareDoc(doc.id)+'\'>'+shareDoc(doc.id)+'</a>"><i class="icon-share-alt"></i> Share</a>'
-        + ' <div class="editor" style="display:none;"></div>'
+        + ' <div class="buttons" style="display:none;">'
+        + shareLink(doc)
+        + ' </div>'
+        + ' <div class="editor"></div>'
         + '</li>');
+    }
+
+    function decorateDocumentRow(li, doc) {
+      li.attr('data-type', doc.type);
+      if(!doc.type || doc.type == "") {
+        li.addClass('pad');
+      }
+      if(MIME_TYPE_CLASSES[doc.type]) {
+        li.addClass(MIME_TYPE_CLASSES[doc.type]);
+        // li.css('background', 'url("/images/mime/'+doc.type+'.png") no-repeat left');
+        // li.css('padding-left', '6em');
+      }
+    }
+
+    function previewLink(doc) {
+      if(!doc.data || !MIME_TYPE_CLASSES[doc.type]) return "";
+      return '<a class="btn preview" title="Preview the content of this document in the browser">show</a>';
+    }
+
+    function downloadLink(doc) {
+      if(!doc.data) return "";
+      return '<a class="btn download" title="Download this document" href="'+doc.data+'">download</a>';
+    }
+
+    function shareLink(doc) {
+      if(doc.data) return "";
+      return ' <a class="btn share" href="#" rel="popover" title="Share this link" data-content="<a href=\''+shareDoc(doc.id)+'\'>'+shareDoc(doc.id)+'</a>"><i class="icon-share-alt"></i> Share</a>'
     }
 
     function renderDocumentPreview(doc) {
@@ -123,37 +173,92 @@ define(function() {
       saveDocument(doc);
       docRow = myDocumentRow(doc);
       $('#doclist').append(docRow);
-      showDocument(docRow);
+      activateLi(docRow);
     }
 
-    var showDocument = function(eventOrElement) {
+    var uploadFiles = function(e) {
+      var chooser = e.currentTarget;
+      var files = chooser.files;
+      if(files.length > 0) {
+        setTimeout(function() {
+          async.forEach(files, uploadToDocument, function(err) {
+            chooser.files = [];
+            listDocuments(localGet('documents'), true);
+          });
+        },100);
+      }
+    }
+
+    var activateLi = function(eventOrElement) {
       var li = $(eventOrElement.currentTarget || eventOrElement);
-      var editor = li.find('.editor');
       var index = $("#doclist li").index(li);
-      if(editor.is(":visible") && index == 0) return;
-      if(index != 0) li.hide();
-      var old = $('#doclist li').first();
+      if(li.is(".active") && index == 0) return;
+      if(index != 0) deactivateLi($('#doclist li').first());
+      displayDocument(li);
+      raiseLi(li);
+    }
+
+    var displayDocument = function(li) {
+      var editor = li.find('.editor');
       var id = li.attr('id');
       var doc = localGet('documents')[id];
-
-      editor.pad({
-        'padId':encodeURIComponent(id),
-        'userName':hyphenify(currentUser() || 'unknown'),
-      });
-
-      updateTime(id);
-      li.addClass('active')
-      li.prependTo("#doclist");
-      editor.show();
-      li.slideDown(1000);
-      if(index > 0){
-        old.find('.editor').slideUp().empty();
-        old.find('.editTitle').hide();
-        old.find('.docTitle').show();
-        old.removeClass('active')
-        updateTime(old.attr('id'));
+      if (!doc.data) {
+        editor.pad({
+          'padId':encodeURIComponent(id),
+          'userName':hyphenify(currentUser() || 'unknown'),
+        });
       }
+      updateTime(id);
       updateHistory(doc);
+    }
+
+    var previewOdf = function(eventOrElement) {
+      var el = $(eventOrElement.currentTarget || eventOrElement);
+      var li = el.is("a") ? el.parent().parent() : el;
+      var id = li.attr('id');
+      var doc = localGet('documents')[id];
+      var data = doc.data;
+      runtime.loadClass('odf.OdfCanvas');
+      globalreadfunction = runtime.read;
+      globalfilesizefunction = runtime.getFileSize;
+      runtime.getFileSize = function (path, callback) {
+        if (path.indexOf("data:") == -1) {
+          globalfilesizefunction.apply(runtime, [path, callback]);
+        } else {
+          var b = new core.Base64();
+          var data = path.substr(path.indexOf(",") + 1);
+          data = b.convertBase64ToUTF8Array(data);
+          callback(data.length);
+        }
+      }
+      runtime.read = function(path, offset, length, callback) { 
+        if (path.indexOf("data:") == -1) {
+          globalreadfunction.apply(runtime,
+            [path, offset, length, callback]);
+        } else {
+          var b = new core.Base64();
+          var data = path.substr(path.indexOf(",") + 1);
+          data = b.convertBase64ToUTF8Array(data);
+          callback(null, data.slice(offset, offset + length))
+        }
+      }
+      var odfDiv = $('<div class="odf modal container"></div>');
+      var odfcanvas = new odf.OdfCanvas(odfDiv[0]);
+      odfcanvas.load(doc.data);
+      odfDiv.modal();
+    }
+
+    var raiseLi = function(li) {
+      li.addClass('active');
+      li.prependTo("#doclist");
+    }
+
+    var deactivateLi = function(li) {
+      li.find('.editor').empty();
+      li.find('.editTitle').hide();
+      li.find('.docTitle').show();
+      li.removeClass('active')
+      updateTime(li.attr('id'));
     }
 
     function updateTime(id){
@@ -231,8 +336,8 @@ define(function() {
         return b[1].timestamp - a[1].timestamp;
       });
 
-      var first = (page-1)*per_page;
-      var last = Math.min(first+per_page, tuples.length);
+      var first = (page-1)*PER_PAGE;
+      var last = Math.min(first+PER_PAGE, tuples.length);
       for(var i = first; i < last; i++) {
         cb(tuples[i][1]);
       }
@@ -248,7 +353,7 @@ define(function() {
     addClickHandlers();
     //TODO: refactor this so we don't get an element to send it to the handler
     if(doc) {
-      showDocument(document.getElementById(doc.id));
+      activateLi(document.getElementById(doc.id));
     }
   }
 
