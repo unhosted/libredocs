@@ -44,7 +44,7 @@ define(function() {
       docs.on('click', '#new-document', newDocument);
       docs.on('click', '.more', nextPage);
       docs.on('change', '#upload-document', uploadFiles);
-      docs.on('click', '.editor.odf .preview_action', previewOdf);
+      docs.on('click', 'li.odf .preview.btn', previewOdf);
 
       var list = $('#doclist');
       list.on('click', 'li', activateLi);
@@ -83,7 +83,9 @@ define(function() {
     }
 
     function documentRow(doc) {
-      return (doc.owner == currentUser()) ? myDocumentRow(doc) : sharedDocumentRow(doc);
+      var row = (doc.owner == currentUser()) ? myDocumentRow(doc) : sharedDocumentRow(doc);
+      decorateDocumentRow(row, doc);
+      return row;
     }
 
     function displayMore(page, total) {
@@ -102,10 +104,13 @@ define(function() {
         + ' <strong class="docTitle">'+doc.title+'</strong>'
         + ' <input class="editTitle" type="text" value="'+doc.title+'" style="display:none;" />'
         + ' <span class="preview" id="'+doc.link+'-preview"></span>'
-        + downloadLink(doc)
         + ' <time datetime="'+new Date(doc.timestamp).toLocaleString()+'"></time>'
-        + ' <a class="btn share" href="#" rel="popover" title="Share this link" data-content="<a href=\''+shareDoc(doc.id)+'\'>'+shareDoc(doc.id)+'</a>"><i class="icon-share-alt"></i> Share</a>'
-        + ' <div class="editor" id="'+doc.link+'-edit" style="display:none;"></div>'
+        + ' <div class="buttons" >'
+        + previewLink(doc)
+        + downloadLink(doc)
+        + shareLink(doc)
+        + ' </div>'
+        + ' <div class="editor" id="'+doc.link+'-edit"></div>'
         + '</li>');
     }
 
@@ -114,14 +119,38 @@ define(function() {
         + ' <strong class="docTitle">'+doc.title+'</strong>'
         + ' <span class="owner" id="'+doc.id+'-owner">'+doc.owner+'</span>'
         + ' <time datetime="'+new Date(doc.timestamp).toLocaleString()+'"></time>'
-        + ' <a class="btn share" href="#" rel="popover" title="Share this link" data-content="<a href=\''+shareDoc(doc.id)+'\'>'+shareDoc(doc.id)+'</a>"><i class="icon-share-alt"></i> Share</a>'
-        + ' <div class="editor" style="display:none;"></div>'
+        + ' <div class="buttons" style="display:none;">'
+        + shareLink(doc)
+        + ' </div>'
+        + ' <div class="editor"></div>'
         + '</li>');
+    }
+
+    function decorateDocumentRow(li, doc) {
+      li.attr('data-type', doc.type);
+      if(!doc.type || doc.type == "") {
+        li.addClass('pad');
+      }
+      if(MIME_TYPE_CLASSES[doc.type]) {
+        li.addClass(MIME_TYPE_CLASSES[doc.type]);
+        // li.css('background', 'url("/images/mime/'+doc.type+'.png") no-repeat left');
+        // li.css('padding-left', '6em');
+      }
+    }
+
+    function previewLink(doc) {
+      if(!doc.data || !MIME_TYPE_CLASSES[doc.type]) return "";
+      return '<a class="btn preview" title="Preview the content of this document in the browser">show</a>';
     }
 
     function downloadLink(doc) {
       if(!doc.data) return "";
-      return '<a href="'+doc.data+'">download</a>';
+      return '<a class="btn download" title="Download this document" href="'+doc.data+'">download</a>';
+    }
+
+    function shareLink(doc) {
+      if(doc.data) return "";
+      return ' <a class="btn share" href="#" rel="popover" title="Share this link" data-content="<a href=\''+shareDoc(doc.id)+'\'>'+shareDoc(doc.id)+'</a>"><i class="icon-share-alt"></i> Share</a>'
     }
 
     function renderDocumentPreview(doc) {
@@ -165,7 +194,6 @@ define(function() {
       var index = $("#doclist li").index(li);
       if(li.is(".active") && index == 0) return;
       if(index != 0) deactivateLi($('#doclist li').first());
-      if(index != 0) li.hide();
       displayDocument(li);
       raiseLi(li);
     }
@@ -179,14 +207,7 @@ define(function() {
           'padId':encodeURIComponent(id),
           'userName':hyphenify(currentUser() || 'unknown'),
         });
-        editor.addClass('big');
-      } else {
-        editor.addClass('small');
-        editor.addClass(MIME_TYPE_CLASSES[doc.type]);
-        editor.html("This is an uploaded document. <br/>");
-        editor.append('<a class="preview_action" >show</a>');
       }
-      editor.show();
       updateTime(id);
       updateHistory(doc);
     }
@@ -196,7 +217,6 @@ define(function() {
       var li = el.is("a") ? el.parent().parent() : el;
       var id = li.attr('id');
       var doc = localGet('documents')[id];
-      var editor = li.find(".editor");
       var data = doc.data;
       runtime.loadClass('odf.OdfCanvas');
       globalreadfunction = runtime.read;
@@ -231,11 +251,10 @@ define(function() {
     var raiseLi = function(li) {
       li.addClass('active');
       li.prependTo("#doclist");
-      li.slideDown(1000);
     }
 
     var deactivateLi = function(li) {
-      li.find('.editor').slideUp().empty();
+      li.find('.editor').empty();
       li.find('.editTitle').hide();
       li.find('.docTitle').show();
       li.removeClass('active')

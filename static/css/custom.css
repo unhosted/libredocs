@@ -52,21 +52,28 @@ ul#doclist li:last-child { height:1.5em; }
 ul#doclist li .doclink { cursor:pointer; text-decoration:none; }
 ul#doclist strong { color:#000; padding:.7em 0 .7em 1.8em; }
 ul#doclist span { font-size:.75em; }
-ul#doclist .preview { position:absolute; top:0; padding:1em 2em 1em .5em; overflow:hidden; white-space:nowrap; color:#555; }
+ul#doclist span.preview { position:absolute; top:0; padding:1em 2em 1em .5em; overflow:hidden; white-space:nowrap; color:#555; }
 ul#doclist time { position:absolute; right:1.2em; font-size:.75em; }
-ul#doclist li a.btn { display:none; }
+/* 
+ul#doclist li a.btn { display:none; } 
+ul#doclist li:hover a.btn { position:absolute; display:inline; right:1em; top:.5em; }
+ */
 ul#doclist li:hover .preview { color:#000; }
 ul#doclist li:hover .date { display:none; }
-ul#doclist li:hover a.btn { position:absolute; display:inline; right:1em; top:.5em; }
+ul#doclist li .buttons { display:none; }
+ul#doclist li.active .buttons { margin-left: 2em; display:block; }
+ul#doclist li a.btn { margin: 1em; } 
 
 #docTitleInput { height:1.2em; width:6em; font-size:1em; margin:-.7em -.05em -.5em; padding:0; color:#000; font-weight:bold; }
 .editTitle { margin:0; }
 
 #previewPad { position:absolute; margin-top:43px; margin-left:-11px; width:73em; height:32em; background:none; border:none; }
-.editor.big { min-height:30em; height:30em; margin-top:1em; }
-.editor.small { min-height:3em; height:3em; margin-top:1em; }
+li .editor { display:none; }
+li.pad.active .editor { min-height:30em; height:30em; margin-top:1em; display:block; }
+li.odf.active .editor { display:none; }
 .editor iframe { width:100%; min-height:100%; border:1px solid #bbb; }
 #editorcontainer { margin:1em 0; }
+.more { margin-top: 2em; cursor: pointer; display: block;}
 
 #error { z-index:1; position:absolute; width:63em; }
 
