@@ -8,14 +8,11 @@ exports.handler = (function() {
     remoteStorage = require('./remoteStorage-node');
 
   function initRedis(cb) {
-    console.log('initing redis');
     var redisClient = redis.createClient(userDb.port, userDb.host);
     redisClient.on("error", function (err) {
       console.log("error event - " + redisClient.host + ":" + redisClient.port + " - " + err);
     });
     redisClient.auth(userDb.pwd, function() {
-       console.log('redis auth done');
-       //redisClient.stream.on('connect', cb);
     });
     cb(redisClient);
   }
@@ -47,12 +44,19 @@ exports.handler = (function() {
           cb(false);
           return;
         }
+        console.log('storeBearerToken/handler.js +50');
+        console.log(storageInfo);
+        console.log(options);
         var req = lib.request(options, function(res) {
           if(res.statusCode==200 || res.statusCode==404) {
             cb(true);
           } else {
             cb(false);
           }
+        });
+        req.on('error', function(e) {
+          console.log('legit test errored: '+e.message);
+          cb(false);
         });
         req.end();
         return;
