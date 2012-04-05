@@ -1,15 +1,7 @@
-- it's slow
-  - hit libredocs.org
-    3s
-  - click 'Sign In'
-    8s
-  - select user address to use
-    11s
-  - Agree to the ToC
-    70s
-  - Click '+ New Document'
-    8s
-  - Start typing
-- in allowRemoteStorage state, the buttons are not visible
-- the '<-' to doc list doesn't make sense when you're not logged in on a shared pad
-- check the token in /squat/handler.js
+0:00:07 <michiel_l> (or http://libredocs.org if you don't want security)
+00:45:58 <michiel_l> galfert: jancborchardt: my LibreDocs content is not loading anymore from my 5apps remoteStorage - I get a regular page and the titles are visible but the document content keeps 'Loading'.
+00:46:29 <michiel_l> BTW: When I try to open LibreDocs with Konqueror I get a 404 Not Found /home/ubuntu/libredocs/static/missing.html
+00:48:35 <galfert> michiel_l: my 5apps remotestorage is working with other apps, so it's probably a LibreDocs problem
+00:49:59 <michiel_l> the todo app works for me as well
+00:50:25 <michiel_l> it is sort of working, I see the correct titles of my notes, but not the content
+00:54:07 <galfert> yes, same for me. so the "molto alpha" next to the title has its reasons ;)00:59:13 <michiel_l> Very different behaviour per browser for Libre Docs- Chromium normally works, Firefox doesn't do anything, Konquerer looks at the mime type (text instead of HTML) and offers to open in a text editor, Opera can't do anything - no CORS
