@@ -8,6 +8,8 @@ footer { border:none; margin:1em; }
 .page-header img { height:5em; margin:-3em -1em 1.5em -1em; }
 body#write .page-header img { height:3em; margin:-4em 0em 1em 0em }
 h1 { position:relative; font-size:4em; display:inline; color:#000; }
+h1 a { color:#000; }
+h1 a:hover, h1 a:focus { color:#333; text-decoration:none; }
 h1 span#docTitle { position:absolute; left:.08em; width:11em; white-space:nowrap; text-overflow:ellipsis; overflow:hidden; }
 h1+small { float:right; position:relative; top:-2em; right:0em; }
 h1>small { font-size:12px; position:absolute; left:16.8em; top:.5em; white-space:nowrap; }
