@@ -46,7 +46,7 @@ h1+small { float:right; position:relative; top:-2em; right:0em; }
 ul#doclist { margin:-20px; font-size:1.3em; list-style:none; clear:both; }
 ul#doclist { margin-left:-20px; font-size:1.3em; cursor:pointer; list-style:none; }
 ul#doclist #loadingdocs { background:url('../images/loading.gif') no-repeat left; margin-left:.7em; padding-left:1.2em; }
-ul#doclist li { width:102.5%; padding:.7em 0; border:none; white-space:nowrap; position:relative; }
+ul#doclist li { width:100%; padding:.7em 0; border:none; white-space:nowrap; position:relative; }
 ul#doclist li:hover { background:#f8f8f8; }
 ul#doclist li:last-child { height:1.5em; }
 ul#doclist li .doclink { cursor:pointer; text-decoration:none; }
