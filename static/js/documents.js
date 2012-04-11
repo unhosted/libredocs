@@ -2,7 +2,7 @@ define(function() {
   function loaded(doc) {
 
     // TODO: these should probably be defined elsewhere
-    var PER_PAGE = 5; 
+    var PER_PAGE = 50; 
     var MIME_TYPE_CLASSES = {
       "application/vnd.oasis.opendocument.text": "odf"
     }
