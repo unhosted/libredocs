@@ -45,7 +45,7 @@ ul#doclist li { width:100%; padding:.7em 0; border:none; white-space:nowrap; pos
 ul#doclist li:hover { background:#f8f8f8; }
 ul#doclist li:last-child { height:1.5em; }
 ul#doclist li .doclink { cursor:pointer; text-decoration:none; }
-ul#doclist strong { color:#000; padding:.7em 0 .7em 1.8em; }
+ul#doclist strong { color:#000; padding:.7em; }
 ul#doclist span { font-size:.75em; }
 ul#doclist span.preview { position:absolute; top:0; padding:1em 2em 1em .5em; overflow:hidden; white-space:nowrap; color:#555; }
 ul#doclist time { position:absolute; right:1.2em; font-size:.75em; }
