@@ -31,18 +31,11 @@ h1+small { float:right; position:relative; top:-2em; right:0em; }
 
 .checkmark { position:absolute; font-size:15em; left:.15em; top:.6em; color:#005580; opacity: 0.5 }
 
-#current-state { min-height:100px; }
-#easyfreedom-signup { margin-bottom:3em; }
-#firstName, #lastName { width:10em; }
 .progress { display:block; height:3em; margin:0 0 1.5em 0; }
 .progress .bar { height:3.5em; }
 .progress .bar p { padding:.7em; display:inline; position:absolute; }
 
 .box { margin-left:.7em; padding-left:2em; padding-top:.7em; height: 2em; width: 11em; border: dotted 3px gray; border-radius: 5px; float: left; font-size:1.3em; cursor: pointer;}
-.box:hover { margin-left:.7em; padding-left:2em; height: 2em; width: 11em; border: dotted 3px black; border-radius: 5px; float: left; font-size:1.3em;}
-#new-document { background:url('../images/plus.png') no-repeat left;}
-#upload-document { background:url('../images/down_arrow.png') no-repeat left;}
-#trashbox { background:url('../images/trash.png') no-repeat left;}
 ul#doclist { margin:-20px; font-size:1.3em; list-style:none; clear:both; }
 ul#doclist { margin-left:-20px; font-size:1.3em; cursor:pointer; list-style:none; }
 ul#doclist #loadingdocs { background:url('../images/loading.gif') no-repeat left; margin-left:.7em; padding-left:1.2em; }
