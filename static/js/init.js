@@ -37,7 +37,12 @@ function selectView() {
 
 function getDocFromHash(cb) {
   var hashed = location.hash.split('/');
-  hashed.shift();
+  // make sure both /#/owner/ and /#owner/ work
+  if(hashed[0] === '#') {
+    hashed.shift();
+  } else {
+    hashed[0] = hashed[0].substr(1);
+  }
   if(hashed.length < 2) {cb(); return;}
   var owner = hashed.shift();
   var link = hashed.join('/');

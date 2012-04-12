@@ -307,7 +307,7 @@ define(function() {
     }
 
     function linkForDoc(doc) {
-      var link = doc.title.replace(/\s+/g, '-');
+      var link = doc.title.replace(/\W+/g, '-');
       var main = link;
       var postfix = 0;
       var key = doc.owner+'$'+link;
@@ -346,7 +346,7 @@ define(function() {
 
     function getDocAddress(doc) {
       // the more beautiful links so far only work for ourselves
-      return 'http://'+location.host+'/#'+doc.owner+'/'+doc.link;
+      return 'http://'+location.host+'/#/'+doc.owner+'/'+doc.link;
     }
 
     if(isLoggedIn()) addSignout();
