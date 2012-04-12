@@ -1,20 +1,27 @@
 define(function() {
   function storeBearerToken(userAddress, bearerToken, cb) {
+    var host = 'http://surf.unhosted.org:82';
+    var api = '/api/1/';
+    var method = 'connect';
+    var params = { userAddress: userAddress,
+      bearerToken: bearerToken };
+    var query = [];
+    for(var k in params) {
+      query.push(encodeURIComponent(k) + '=' + encodeURIComponent(params[k]));
+    }
+    var url = host+api+method+'?'+ query.join('&')
     var xhr = new XMLHttpRequest();
-    xhr.open('POST', '/storeBearerToken', true);
+    xhr.open('GET', url, true);
     xhr.onreadystatechange = function() {
       if(xhr.readyState==4) {
-        if(xhr.status==201) {
+        if(xhr.status==201 || xhr.status==200) {
           cb(true);
         } else {
           cb(false);
         }
       }
     };
-    xhr.send(JSON.stringify({
-      userAddress: userAddress,
-      bearerToken: bearerToken
-    }));
+    xhr.send();
   }
   function allow() {
     var email=document.getElementById('connect-address').value;
