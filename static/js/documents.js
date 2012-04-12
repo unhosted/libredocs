@@ -171,9 +171,10 @@ define(function() {
         timestamp: time
       };
       saveDocument(doc);
-      docRow = myDocumentRow(doc);
+      docRow = documentRow(doc);
       $('#doclist').append(docRow);
       activateLi(docRow);
+      docRow.show();
     }
 
     var uploadFiles = function(e) {
