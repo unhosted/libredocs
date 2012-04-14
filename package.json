@@ -11,6 +11,4 @@
     "start": "server.js"
   },
   "version": "0.0.0-55",
-  "dependencies": {
-  }
 }
