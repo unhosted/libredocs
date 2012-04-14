@@ -10,9 +10,5 @@ exports.config = {
     'libredocs.org': '/static',
     'mich.libredocs.org': '/static',
     'libredocs.local': '/static'
-  },
-  pathHandler: {
-    'libredocs.org/storeBearerToken': './storeBearerToken',
-    'libredocs.local/storeBearerToken': './storeBearerToken'
   }
 };

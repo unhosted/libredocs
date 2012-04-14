@@ -6,15 +6,11 @@
     "www.libredocs.org",
     "libredoc.org",
     "www.libredoc.org",
-    "proxy.libredocs.org"
   ],
   "scripts": {
     "start": "server.js"
   },
   "version": "0.0.0-55",
   "dependencies": {
-    "requirejs": ">=1.0.7",
-    "redis": ">=0.7.1",
-    "cradle": ">=0.5.8"
   }
 }

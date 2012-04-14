@@ -1,2 +1,3 @@
 This is http://libredocs.org/
-Fill in */config.js files with our IrisCouch data, then use 'jitsu deploy' to deploy to nodejitsu.
+
+It's only statics but currently ships with a mini node server and handler.
