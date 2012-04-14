@@ -5,7 +5,7 @@
     "libredocs.org",
     "www.libredocs.org",
     "libredoc.org",
-    "www.libredoc.org",
+    "www.libredoc.org"
   ],
   "scripts": {
     "start": "server.js"
