@@ -20,7 +20,7 @@ describe("ConnectPad", function() {
   it("builds the right api urls", function() {
     var funct = "myTestFunction";
     var params = {a: "value", another: "one"};
-    expect(connectPad.urlFor(funct, params)).toEqual("http://surf.unhosted.org:82/ownapi/1/myTestFunction?a=value&another=one");
+    expect(connectPad.urlFor(funct, params)).toEqual("http://ownpad.unhosted.org:82/ownapi/1/myTestFunction?a=value&another=one");
   });
 
   it("builds params from session Obj", function () {

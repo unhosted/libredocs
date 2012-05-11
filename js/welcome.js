@@ -1,6 +1,6 @@
 define(function() {
   function storeBearerToken(userAddress, bearerToken, cb) {
-    var host = 'http://surf.unhosted.org:82';
+    var host = 'http://ownpad.unhosted.org:82';
     var api = '/api/1/';
     var method = 'connect';
     var params = { userAddress: userAddress,

@@ -1,5 +1,5 @@
 connectPad = (function() {
-  var host = "http://surf.unhosted.org:82";
+  var host = "http://ownpad.unhosted.org:82";
   var api = "/ownapi/1/";
 
   function urlFor(functionName, params){
