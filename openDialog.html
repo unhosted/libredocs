@@ -26,12 +26,6 @@ require(['./js/src/remoteStorage'], function(remoteStorage) {
           }), location.protocol+'//'+location.host);
           window.close();
         } else {
-          if(storageInfo.template.substring(0, 'http://owncube.com/'.length)=='http://owncube.com/') {
-            storageInfo.template= 'https://owncube.com/'+storageInfo.template.substring('http://owncube.com/'.length);
-          }
-          if(storageInfo.auth.substring(0, 'http://owncube.com/'.length)=='http://owncube.com/') {
-            storageInfo.auth= 'https://owncube.com/'+storageInfo.auth.substring('http://owncube.com/'.length);
-          }
           localStorage.setItem('_juggleStorageInfo', JSON.stringify(storageInfo));
           var oauthAddress = remoteStorage.createOAuthAddress(storageInfo, categories, location.protocol+'//'+location.host+libPath+'/closeDialog.html');
           window.location = oauthAddress;
