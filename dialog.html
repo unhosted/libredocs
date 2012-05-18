@@ -9,7 +9,7 @@
         if(bearerToken) {
           document.write('And back to the application &hellip;');
           localStorage.setItem('_unhosted$bearerToken', bearerToken);
-          localStorage.setItem('_unhosted:dialogResult', JSON.stringify({
+          localStorage.setItem('_unhosted$dialogResult', JSON.stringify({
             err: null
           }));
           window.close();
@@ -20,7 +20,7 @@
           var categories = JSON.parse(localStorage.getItem('_unhosted$categories'));
           remoteStorage.getStorageInfo(userAddress, function(err, storageInfo) {
             if(err) {
-              localStorage.setItem('_unhosted:dialogResult', JSON.stringify({
+              localStorage.setItem('_unhosted$dialogResult', JSON.stringify({
                 err: err
               }));
               document.write('<br>Oops! That didn\'t work for "'+userAddress+'". Are you sure you have remote storage at that address? If not, <a href="http://unhosted.org">get a user address with remote storage</a>.');

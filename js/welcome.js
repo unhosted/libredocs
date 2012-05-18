@@ -92,14 +92,9 @@ define(function() {
     }, 100);
   }
 
-  var registered = false;
+  localStorage.clear();
   window.addEventListener('storage', function(event) {
-    if(registered) {
-      return;
-    } else {
-      registered = true;
-    }
-    if(event.key=='_unhosted:dialogResult' && event.newValue) {
+    if(event.key=='_unhosted$dialogResult' && event.newValue) {
       var result, storageInfo, bearerToken;
       try{
         result = JSON.parse(event.newValue);
