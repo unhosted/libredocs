@@ -77,10 +77,9 @@ define(function() {
 
   function connect(userAddress, categories) {
     var libPath = '';
-    window.open(libPath+'/openDialog.html'
-        +'?userAddress='+encodeURIComponent(userAddress)
-        +'&categories='+encodeURIComponent(JSON.stringify(categories))
-        +'&libPath='+encodeURIComponent(libPath));
+    localStorage.setItem('_unhosted$userAddress', userAddress);
+    localStorage.setItem('_unhosted$categories', JSON.stringify(categories));
+    window.open(libPath+'/dialog.html');
   }
 
   function loaded() {
@@ -93,13 +92,25 @@ define(function() {
     }, 100);
   }
 
-  window.addEventListener('message', function(event) {
-    if(event.origin == location.protocol +'//'+ location.host) {
-    if(event.data.substring(0, 5) == 'conn:') {
-      var data = JSON.parse(event.data.substring(5));
-      connected(data.err, data.storageInfo, data.bearerToken);
+  var registered = false;
+  window.addEventListener('storage', function(event) {
+    if(registered) {
+      return;
+    } else {
+      registered = true;
     }
-  }
+    if(event.key=='_unhosted:dialogResult' && event.newValue) {
+      var result, storageInfo, bearerToken;
+      try{
+        result = JSON.parse(event.newValue);
+        storageInfo = JSON.parse(localStorage.getItem('_unhosted$storageInfo'));
+      } catch(e) {
+        alert('dialog did not go well');
+        return;
+      }
+      bearerToken = localStorage.getItem('_unhosted$bearerToken');
+      connected(result.err, storageInfo, bearerToken);
+    }
   }, false);
 
   return {
