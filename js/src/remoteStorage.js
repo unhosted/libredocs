@@ -2,57 +2,78 @@ define(
   ['require', './lib/platform', './lib/couch', './lib/dav', './lib/webfinger', './lib/hardcoded'],
   function (require, platform, couch, dav, webfinger, hardcoded) {
     var getStorageInfo = function (userAddress, cb) {
-        webfinger.getStorageInfo(userAddress, {timeout: 3000}, function(err, storageInfo) {
-          if(err) {
-            hardcoded.guessStorageInfo(userAddress, {timeout: 3000}, function(err2, data) {
-              cb(err2, data);
-            });
-          } else {
-            cb(err, storageInfo);
-          }
-        });
+        if(typeof(userAddress) != 'string') {
+          cb('user address should be a string');
+        } else {
+          webfinger.getStorageInfo(userAddress, {timeout: 3000}, function(err, storageInfo) {
+            if(err) {
+              hardcoded.guessStorageInfo(userAddress, {timeout: 3000}, function(err2, data) {
+                cb(err2, data);
+              });
+            } else {
+              storageInfo.rel=storageInfo.type;//support both while we settle down the syntax
+              cb(err, storageInfo);
+            }
+          });
+        }
       },
-      createOAuthAddress = function (storageInfo, categories, redirectUri) {
+      createOAuthAddress = function (storageInfo, scopes, redirectUri) {
+        if(storageInfo.type=='https://www.w3.org/community/rww/wiki/read-write-web-00#simple') {
+          scopesStr = scopes.join(' ');
+        } else {
+          var legacyScopes = [];
+          for(var i=0; i<scopes.length; i++) {
+            legacyScopes.push(scopes[i].split(':')[0].split('/')[0]);
+          }
+          scopesStr = legacyScopes.join(',');          
+        }
         var terms = [
           'redirect_uri='+encodeURIComponent(redirectUri),
-          'scope='+encodeURIComponent(categories.join(',')),
+          'scope='+encodeURIComponent(scopesStr),
           'response_type=token',
           'client_id='+encodeURIComponent(redirectUri)
         ];
-        return storageInfo.auth + (storageInfo.auth.indexOf('?') === -1?'?':'&') + terms.join('&');
+        var authHref = storageInfo.properties['http://oauth.net/core/1.0/endpoint/request'];
+        return authHref + (authHref.indexOf('?') === -1?'?':'&') + terms.join('&');
       },
-      getDriver = function (api, cb) {
-        cb(api === 'CouchDB'?couch:dav);
+      getDriver = function (type, cb) {
+        cb(type === 'pds-remotestorage-00#couchdb'?couch:dav);
       },
-      createClient = function (storageInfo, category, token) {
-        var storageAddress = webfinger.resolveTemplate(storageInfo.template, category);
+      resolveKey = function(storageInfo, basePath, relPath) {
+        var itemPathParts = ((basePath.length?(basePath + '/'):'') + relPath).split('/');
+        var item = itemPathParts.splice(1).join('_');
+        return storageInfo.href + '/' + itemPathParts[0]
+          + (storageInfo.legacySuffix ? storageInfo.legacySuffix : '')
+          + '/' + (item[0] == '_' ? 'u' : '') + item;
+      },
+      createClient = function (storageInfo, basePath, token) {
         return {
           get: function (key, cb) {
-            if(typeof('key') != 'string') {
+            if(typeof(key) != 'string') {
               cb('argument "key" should be a string');
             } else {
-              getDriver(storageInfo.api, function (d) {
-                d.get(storageAddress, token, key, cb);
+              getDriver(storageInfo.type, function (d) {
+                d.get(resolveKey(storageInfo, basePath, key), token, cb);
               });
             }
           },
           put: function (key, value, cb) {
-            if(typeof('key') != 'string') {
+            if(typeof(key) != 'string') {
               cb('argument "key" should be a string');
-            } else if(typeof('value') != 'string') {
+            } else if(typeof(value) != 'string') {
               cb('argument "value" should be a string');
             } else {
-              getDriver(storageInfo.api, function (d) {
-                d.put(storageAddress, token, key, value, cb);
+              getDriver(storageInfo.type, function (d) {
+                d.put(resolveKey(storageInfo, basePath, key), value, token, cb);
               });
             }
           },
           'delete': function (key, cb) {
-            if(typeof('key') != 'string') {
+            if(typeof(key) != 'string') {
               cb('argument "key" should be a string');
             } else {
-              getDriver(storageInfo.api, function (d) {
-                d['delete'](storageAddress, token, key, cb);
+              getDriver(storageInfo.type, function (d) {
+                d['delete'](resolveKey(storageInfo, basePath, key), token, cb);
               });
             }
           }

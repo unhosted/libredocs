@@ -7,15 +7,15 @@ define(
     ///////////////
 
     function userAddress2hostMetas(userAddress, cb) {
-      var parts = userAddress.split('@');
+      var parts = userAddress.toLowerCase().split('@');
       if(parts.length < 2) {
         cb('That is not a user address. There is no @-sign in it');
       } else if(parts.length > 2) {
         cb('That is not a user address. There is more than one @-sign in it');
       } else {
-        if(!(/^[\.0-9A-Za-z]+$/.test(parts[0]))) {
+        if(!(/^[\.0-9a-z\-\_]+$/.test(parts[0]))) {
           cb('That is not a user address. There are non-dotalphanumeric symbols before the @-sign: "'+parts[0]+'"');
-        } else if(!(/^[\.0-9A-Za-z\-]+$/.test(parts[1]))) {
+        } else if(!(/^[\.0-9a-z\-]+$/.test(parts[1]))) {
           cb('That is not a user address. There are non-dotalphanumeric symbols after the @-sign: "'+parts[1]+'"');
         } else {
           cb(null, [
@@ -90,8 +90,9 @@ define(
         return;
       }
       var links = {};
-      if(obj && obj.links) {
-        for(var i=0; i<obj.links.length;i++) {
+      for(var i=0; i<obj.links.length; i++) {
+        //just take the first one of each rel:
+        if(obj.links[i].rel) {
           links[obj.links[i].rel]=obj.links[i];
         }
       }
@@ -109,12 +110,62 @@ define(
               if(hostMetaLinks['lrdd'] && hostMetaLinks['lrdd'].template) {
                 var parts = hostMetaLinks['lrdd'].template.split('{uri}');
                 var lrddAddresses=[parts.join('acct:'+userAddress), parts.join(userAddress)];
-                fetchXrd(lrddAddresses, options.timeout, function(err4, lrddLinks) {
+                 fetchXrd(lrddAddresses, options.timeout, function(err4, lrddLinks) {
                   if(err4) {
                     cb('could not fetch lrdd for '+userAddress);
                   } else {
-                    if(lrddLinks['remoteStorage']) {
-                      cb(null, lrddLinks['remoteStorage']);
+                     //FROM:
+                    //{
+                    //  api: 'WebDAV',
+                    //  template: 'http://host/foo/{category}/bar',
+                    //  auth: 'http://host/auth'
+                    //}
+                    //TO:
+                    //{
+                    //  type: 'https://www.w3.org/community/unhosted/wiki/remotestorage-2011.10#webdav',
+                    //  href: 'http://host/foo/',
+                    //  legacySuffix: '/bar'
+                    //  properties: {
+                    //    'access-methods': ['http://oauth.net/core/1.0/parameters/auth-header'],
+                    //    'auth-methods': ['http://oauth.net/discovery/1.0/consumer-identity/static'],
+                    //    'http://oauth.net/core/1.0/endpoint/request': 'http://host/auth'
+                    //  }
+                    //}
+                    if(lrddLinks['remoteStorage'] && lrddLinks['remoteStorage']['auth'] && lrddLinks['remoteStorage']['api'] && lrddLinks['remoteStorage']['template']) {
+                      var storageInfo = {};
+                      if(lrddLinks['remoteStorage']['api'] == 'simple') {
+                        storageInfo['type'] = 'https://www.w3.org/community/unhosted/wiki/remotestorage-2011.10#simple';
+                      } else if(lrddLinks['remoteStorage']['api'] == 'WebDAV') {
+                        storageInfo['type'] = 'https://www.w3.org/community/unhosted/wiki/remotestorage-2011.10#webdav';
+                      } else if(lrddLinks['remoteStorage']['api'] == 'CouchDB') {
+                        storageInfo['type'] = 'https://www.w3.org/community/unhosted/wiki/remotestorage-2011.10#couchdb';
+                      } else {
+                        cb('api not recognized');
+                        return;
+                      }
+
+                      var templateParts = lrddLinks['remoteStorage']['template'].split('{category}');
+                      if(templateParts[0].substring(templateParts[0].length-1)=='/') {
+                        storageInfo['href'] = templateParts[0].substring(0, templateParts[0].length-1);
+                      } else {
+                        storageInfo['href'] = templateParts[0];
+                      }
+                      if(templateParts.length == 2 && templateParts[1] != '/') {
+                        storageInfo['legacySuffix'] = templateParts[1];
+                      }
+                      storageInfo.properties = {
+                        "access-methods": ["http://oauth.net/core/1.0/parameters/auth-header"],
+                        "auth-methods": ["http://oauth.net/discovery/1.0/consumer-identity/static"],
+                        "http://oauth.net/core/1.0/endpoint/request": lrddLinks['remoteStorage']['auth']
+                      };
+                      cb(null, storageInfo);
+                    } else if(lrddLinks['remotestorage']
+                        && lrddLinks['remotestorage']['href']
+                        && lrddLinks['remotestorage']['type']
+                        && lrddLinks['remotestorage']['properties']
+                        && lrddLinks['remotestorage']['properties']['http://oauth.net/core/1.0/endpoint/request']
+                        ) {
+                      cb(null, lrddLinks['remotestorage']);
                     } else {
                       cb('could not extract storageInfo from lrdd');
                     }
@@ -128,15 +179,7 @@ define(
         }
       });
     }
-    function resolveTemplate(template, dataCategory) {
-      var parts = template.split('{category}');
-      if(parts.length != 2) {
-        return 'cannot-resolve-template:'+template;
-      }
-      return parts[0]+dataCategory+parts[1];
-    }
     return {
-      getStorageInfo: getStorageInfo,
-      resolveTemplate: resolveTemplate
+      getStorageInfo: getStorageInfo
     }
 });
