@@ -30,3 +30,7 @@ node_modules
 
 # Cloud9IDE
 .settings.xml
+
+libredocs.esproj/Project.espressostorage
+
+libredocs.esproj/user.benoit.espressostorage
