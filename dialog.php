@@ -1,6 +1,9 @@
-<!DOCTYPE html>
+<?php 
+	session_start();
+	include("localization.php");
+?><!DOCTYPE html>
   <head>
-    <title>Connecting your remote storage</title>
+    <title><?php echo _("Connecting your remote storage"); ?></title>
     <meta charset="utf-8">
     <script src="js/require.js"></script>
     <script>

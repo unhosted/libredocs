@@ -1,8 +1,14 @@
+<?php 
+	session_start();
+	include("session.php");
+	include("localization.php");
+?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Write with Libre Docs &ndash; liberate your ideas</title>
+    
+    <title><?php echo _("Write with Libre Docs &ndash; liberate your ideas") ?></title>
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/webodf.css" rel="stylesheet">
     <link href="css/bootstrap-responsive.min.css" rel="stylesheet">
@@ -20,14 +26,19 @@
     <script src="js/init.js"></script>
   </head>
   <body>
+  
+  	
+  	
+  	
+  	
     <div class="container">
       <div class="page-header" id="header">
         <img alt="" src="images/libredocs.png" />
-        <h1><a href="#">Libre Docs</a> <small>molto alpha</small></h1><small id="signout"></small>
+        <h1><a href="#">Libre Docs</a> <small>molto alpha</small></h1><small id="signout"></small><ul id="lang"><?php include ('menu_lang.php') ?></ul>
       </div>
       <div id="error" class="alert alert-block alert-error fade in" style="display:none;">
         <h4 id="error-heading" class="alert-heading"><!-- ERROR HEAD --></h4>
-        <div>Sorry, there are some issues with sign up. Please help us fix them and join our chat room below: </div>
+        <div><?php echo _("Sorry, there are some issues with sign up. Please help us fix them and join our chat room below: "); ?></div>
         <div id="error-chat" style="display:none;"></div>
         <pre id="error-message"></pre>
         <pre id="error-debug" style="display:none;"></pre>
@@ -36,7 +47,7 @@
         <!-- CONTENT -->
       </div>
       <footer>
-        <p><a href="/">Libre Docs</a> is a <a href="https://github.com/unhosted/libredocs">free software</a> app by <a href="http://unhosted.org">Unhosted</a> for a more open web.</p>
+        <p><a href="/">Libre Docs</a> <?php echo _("is a <a href='https://github.com/unhosted/libredocs'>free software</a>app by <a href='http://unhosted.org'>Unhosted</a> for a more open web."); ?></p>
       </footer>
     </div> <!-- /container -->
     <!-- fallback to local, thanks to HTML5 Boilerplate -->

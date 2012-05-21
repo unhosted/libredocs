@@ -12,7 +12,7 @@ function load() {
 
 function htmlLoaded(view, cb){
   if(!$('#'+view).length){
-    $('#content').load(view+'.html', cb);
+    $('#content').load(view+'.php', cb);
   } else {
     cb();
   }

@@ -1,4 +1,7 @@
-<html>
+<?php 
+	session_start();
+	include("localization.php");
+?><html>
  <head>
   <link rel="stylesheet" type="text/css" href="css/webodf.css"/>
   <script src="js/require.js"></script>
@@ -24,7 +27,7 @@ function getCurrDocOwner() {
   if(location.hash.length) {
     return location.hash.split('/')[0].substring(1);
   } else {
-    window.location.href = 'welcome.html';
+    window.location.href = 'welcome.php';
   }
 }
 
@@ -32,7 +35,7 @@ function getCurrDocLink() {
   if(location.hash.length) {
     return location.hash.substr(location.hash.indexOf('/') + 1);
   } else {
-    window.location.href = 'welcome.html';
+    window.location.href = 'welcome.php';
   }
 }
 

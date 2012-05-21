@@ -79,7 +79,7 @@ define(function() {
     var libPath = '';
     localStorage.setItem('_unhosted$userAddress', userAddress);
     localStorage.setItem('_unhosted$categories', JSON.stringify(categories));
-    window.open(libPath+'/dialog.html');
+    window.open(libPath+'/dialog.php');
   }
 
   function loaded() {
