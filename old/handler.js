@@ -7,7 +7,7 @@ exports.handler = (function() {
    
   function serve(req, res, baseDir) {
     var uripath = url.parse(req.url).pathname
-      .replace(new RegExp('/$', 'g'), '/index.php');
+      .replace(new RegExp('/$', 'g'), '/index.html');
     var host = req.headers.host;
     if(config.redirect && config.redirect[host]) {
       res.writeHead(302, {'Location': config.redirect[host]});

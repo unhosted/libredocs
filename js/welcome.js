@@ -77,9 +77,10 @@ define(function() {
 
   function connect(userAddress, categories) {
     var libPath = '';
-    localStorage.setItem('_unhosted$userAddress', userAddress);
-    localStorage.setItem('_unhosted$categories', JSON.stringify(categories));
-    window.open(libPath+'/dialog.php');
+    window.open(libPath+'/openDialog.html'
+        +'?userAddress='+encodeURIComponent(userAddress)
+        +'&categories='+encodeURIComponent(JSON.stringify(categories))
+        +'&libPath='+encodeURIComponent(libPath));
   }
 
   function loaded() {
@@ -92,20 +93,13 @@ define(function() {
     }, 100);
   }
 
-  localStorage.clear();
-  window.addEventListener('storage', function(event) {
-    if(event.key=='_unhosted$dialogResult' && event.newValue) {
-      var result, storageInfo, bearerToken;
-      try{
-        result = JSON.parse(event.newValue);
-        storageInfo = JSON.parse(localStorage.getItem('_unhosted$storageInfo'));
-      } catch(e) {
-        alert('dialog did not go well');
-        return;
-      }
-      bearerToken = localStorage.getItem('_unhosted$bearerToken');
-      connected(result.err, storageInfo, bearerToken);
+  window.addEventListener('message', function(event) {
+    if(event.origin == location.protocol +'//'+ location.host) {
+    if(event.data.substring(0, 5) == 'conn:') {
+      var data = JSON.parse(event.data.substring(5));
+      connected(data.err, data.storageInfo, data.bearerToken);
     }
+  }
   }, false);
 
   return {

@@ -8,6 +8,7 @@
 .cvsignore
 Thumbs.db
 .DS_Store
+*.esproj
 *.py[co]
 _darcs/*
 CVS/*

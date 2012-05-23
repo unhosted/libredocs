@@ -1,11 +1,8 @@
-<?php 
-	session_start();
-	include("localization.php");
-?><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title><?php echo _("Setting your enroll step in localStorage"); ?></title>
+    <title>Setting your enroll step in localStorage</title>
     <script>
       var sessionObj = JSON.parse(localStorage.sessionObj);
       sessionObj.step = location.search.substring(1);
@@ -13,6 +10,6 @@
     </script>
   </head>
   <body>
-    <p><?php echo _("Done. Go <a href='welcome.php'>back to the main page</a>."); ?></p>
+    <p>Done. Go <a href="welcome.html">Retour à la page principale</a>.</p>
   </body>
 </html>

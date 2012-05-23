@@ -17,41 +17,33 @@ define(
       //  templateSuffix: '/{category}/'
       //},
       'iriscouch.com': {
-        type: 'https://www.w3.org/community/unhosted/wiki/remotestorage-2011.10#couchdb',
+        api: 'CouchDB',
         authPrefix: 'http://proxy.unhosted.org/OAuth.html?userAddress=',
-        hrefPrefix: 'http://proxy.unhosted.org/CouchDb',
-        pathFormat: 'host/user'
+        authSuffix: '',
+        templatePrefix: 'http://proxy.unhosted.org/IrisCouch/',
+        templateSuffix: '/{category}/'
       }
     };
     (function() {
-      var surfnetSaml= {
-        type: 'https://www.w3.org/community/unhosted/wiki/remotestorage-2011.10#simple',
-        authPrefix: 'https://storage.surfnetlabs.nl/saml/oauth/authorize?user_address=',
-        hrefPrefix: 'https://storage.surfnetlabs.nl/saml',
-        pathFormat: 'user@host'
+      var surfnet= {
+        api: 'simple',
+        authPrefix: 'http://surf.unhosted.org:4000/_oauth/',
+        authSuffix: '',
+        templatePrefix: 'http://surf.unhosted.org:4000/',
+        templateSuffix: '/{category}/'
       };
-      var surfnetBrowserId= {
-        type: 'https://www.w3.org/community/unhosted/wiki/remotestorage-2011.10#simple',
-        authPrefix: 'https://storage.surfnetlabs.nl/browserid/oauth/authorize?user_address=',
-        hrefPrefix: 'https://storage.surfnetlabs.nl/browserid',
-        pathFormat: 'user@host'
-      };
-      var dutchUniversitiesNoSaml= ['leidenuniv.nl', 'leiden.edu', 'uva.nl', 'vu.nl', 'eur.nl', 'maastrichtuniversity.nl',
-        'ru.nl', 'rug.nl', 'uu.nl', 'tudelft.nl', 'utwente.nl', 'tue.nl', 'tilburguniversity.edu', 'uvt.n', 'wur.nl',
-        'wageningenuniversity.nl', 'ou.nl', 'lumc.nl', 'amc.nl', 'tuxed.net'];
-      var dutchUniversitiesSaml= ['surfnet.nl'];
-      for(var i=0;i<dutchUniversitiesSaml.length;i++) {
-        guesses[dutchUniversitiesSaml[i]]=surfnetSaml;
-      }
-      for(var i=0;i<dutchUniversitiesNoSaml.length;i++) {
-        guesses[dutchUniversitiesNoSaml[i]]=surfnetBrowserId;
+      var dutchUniversities= ['leidenuniv.nl', 'leiden.edu', 'uva.nl', 'vu.nl', 'eur.nl', 'maastrichtuniversity.nl',
+        'ru.nl', 'rug.nl', 'uu.nl', 'tudelft.nl', 'utwente.nl', 'tue.nl', 'tilburguniversity.edu', 'wur.nl',
+        'wageningenuniversity.nl', 'ou.nl', 'lumc.nl', 'amc.nl'];
+      for(var i=0;i<dutchUniversities.length;i++) {
+        guesses[dutchUniversities[i]]=surfnet;
       }
     })();
 
     function testIrisCouch(userAddress, options, cb) {
       platform.ajax({
-        url: 'http://proxy.unhosted.org/irisCouchCheck?q=acct:'+userAddress,
-        //url: 'http://proxy.unhosted.org/lookup?q=acct:'+userAddress,
+        //url: 'http://proxy.unhosted.org/irisCouchCheck',
+        url: 'http://proxy.unhosted.org/lookup?q=acct:'+userAddress,
         success: function(data) {
           var obj;
           try {
@@ -95,14 +87,9 @@ define(
             if(guesses[parts[1]]) {
               blueprint=guesses[parts[1]];
               cb(null, {
-                rel: 'https://www.w3.org/community/unhosted/wiki/personal-data-service-00',
-                type: blueprint.type,
-                href: blueprint.hrefPrefix+'/'+(blueprint.pathFormat=='user@host'?userAddress:parts[1]+'/'+parts[0]),
-                properties: {
-                  'access-methods': ['http://oauth.net/core/1.0/parameters/auth-header'],
-                  'auth-methods': ['http://oauth.net/discovery/1.0/consumer-identity/static'],
-                  'http://oauth.net/core/1.0/endpoint/request': blueprint.authPrefix+userAddress
-                }
+                api: blueprint.api,
+                auth: blueprint.authPrefix+userAddress+blueprint.authSuffix,
+                template: blueprint.templatePrefix+userAddress+blueprint.templateSuffix
               });
               return;
             }
