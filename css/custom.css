@@ -14,20 +14,32 @@ h1 span#docTitle { position:absolute; left:.08em; width:11em; white-space:nowrap
 h1+small { float:right; position:relative; top:-2em; right:0em; }
 h1>small { font-size:12px; position:absolute; left:16.8em; top:.5em; white-space:nowrap; }
 
+#lang { float:right; position:relative; top:-2em; right:3em; }
+#lang li {display: inline-block; text-transform: uppercase;	margin: 0 .3em; }
+
+
+#locale { float: right; margin-top: -3em; }
+#locale li { float: left; list-style: none; }
+#locale img { padding: 0; margin: 0; height: auto!important; }
+#locale li a { padding: 1em .5em.5em; margin: 0; }
+
+#locale a:hover, #locale a.selected { background: rgba(200, 200, 200, 0.7); border-bottom-left-radius: .5em; border-bottom-right-radius: .5em; box-shadow: #fff 0 1px 0; }
+
+
 #signin { margin-top:5.5em; padding:0 8em 1em 7em; white-space:nowrap; height:2.6em; }
 #write #signin { position:relative; float:right; top:1em; margin:0; }
-.content #welcome { height:29em; }
+.content #welcome { height:32em; }
 #steps { position:absolute; top:22em; }
 .step, .step.done, .step.done:hover { opacity:.5; position:relative; }
 .step.active, .step:hover { opacity:1; }
 .step.remotestorage { position:absolute; width:20em; left:0; }
 .step.remotestorage img, .step.write img { position:relative; left:20%; }
 .step.remotestorage img { margin:2em 0; width:12em; }
-.step.connect { position:absolute; width:18em; left:21em; }
-.step.connect #connect { position:absolute; width:15em; }
-.step.connect #connect-address { position:absolute; margin:4em 0 .5em; width:9.35em; padding-right:6em; height:2.5em; padding-left:3em; background:url('../images/remoteStorage-icon.png') no-repeat .3em center; }
-.step.connect #connect-button { position:absolute; margin:4.6em -3em 0 0; right:0; }
-.step.write { position:absolute; width:20em; left:41em; }
+.step.connect { position:absolute; width:19em; left:23em; }
+.step.connect #connect { position:absolute; width:16em; }
+.step.connect #connect-address { position:absolute; margin:4em 0 .5em -2em; width:9.35em; padding-right:7em; height:2.5em; padding-left:3em; background:url('../images/remoteStorage-icon.png') no-repeat .3em center; }
+.step.connect #connect-button { position:absolute; margin:4.6em -1em 0 0; right:0; }
+.step.write { position:absolute; width:18em; left:42em; }
 .step.write img { margin-top:-1em; }
 .step>h3 { position:absolute; top:7.3em; white-space:nowrap; }
 .step>p { position:absolute; top:12.5em; }

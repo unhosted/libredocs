@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Write with Libre Docs &ndash; liberate your ideas</title>
+    <title class="translatable">Write with Libre Docs &ndash; liberate your ideas</title>
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/webodf.css" rel="stylesheet">
     <link href="css/bootstrap-responsive.min.css" rel="stylesheet">
@@ -10,6 +10,7 @@
     <link rel="shortcut icon" href="images/libredocs.png">
     <link rel="apple-touch-icon" href="images/libredocs.png">
     <script src="js/require.js"></script>
+     
     <script>
       require(['js/src/remoteStorage'], function(drop) {
         remoteStorage=drop;
@@ -18,12 +19,17 @@
     <script src="js/models/document.js"></script>
     <script src="js/sync.js"></script>
     <script src="js/init.js"></script>
+    
+    
   </head>
   <body>
+  	
     <div class="container">
       <div class="page-header" id="header">
         <img alt="" src="images/libredocs.png" />
         <h1><a href="#">Libre Docs</a> <small>molto alpha</small></h1><small id="signout"></small>
+        
+        <ul id="locale"><li><span class="translatable">Translation Test</span> || </li></ul>
       </div>
       <div id="error" class="alert alert-block alert-error fade in" style="display:none;">
         <h4 id="error-heading" class="alert-heading"><!-- ERROR HEAD --></h4>
@@ -36,12 +42,14 @@
         <!-- CONTENT -->
       </div>
       <footer>
-        <p><a href="/">Libre Docs</a> is a <a href="https://github.com/unhosted/libredocs">free software</a> app by <a href="http://unhosted.org">Unhosted</a> for a more open web.</p>
+        <p class="translatable"><a href="/">Libre Docs</a> is a <a href='https://github.com/unhosted/libredocs'>free software</a> app by <a href='http://unhosted.org'>Unhosted</a> for a more open web.</p>
       </footer>
     </div> <!-- /container -->
     <!-- fallback to local, thanks to HTML5 Boilerplate -->
+    
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
     <script>window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')</script>
+    
     <script src="js/load.js"></script>
     <script src="js/ieblock.js"></script>
     <script src="js/features.js"></script>
@@ -53,6 +61,10 @@
     <script src="js/bootstrap-modal.js"></script>
     <script src="/lib/runtime.js"></script>
     <script src="js/etherpad.js"></script>
+    
+    <!-- Test traduction   -->
+    <script type="text/javascript" src="js/jquery.cookie.js"></script>
+    <script src="js/default.js"></script>
 
     <!-- SCRIPTS -->
   </body>
